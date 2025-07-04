@@ -8,14 +8,18 @@ export const useUserStore = defineStore("user", {
 	}),
 	getters: {
 		isAuthenticated: state => !!state.accessToken,
+		isAdmin: state => state.profile?.isAdmin ?? false,
 	},
 	actions: {
 		async refreshAccessToken() {
 			try {
 				// TODO check casing
-				const res = await apiClient.post<{ accessToken: string }>("/auth/refresh", {
-					refreshToken: this.refreshToken,
-				});
+				const res = await apiClient.post<{ accessToken: string }>(
+					"/auth/refresh",
+					{
+						refreshToken: this.refreshToken,
+					}
+				);
 				this.setAccessToken(res.accessToken);
 				return true;
 			} catch (err) {
