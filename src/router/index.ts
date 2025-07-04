@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
+import EventsView from "@/views/EventsView.vue"; // Keep this eagerly loaded if it's the main view
 
-import CreateEvent from "@/views/CreateEventView.vue";
-import EventsView from "@/views/EventsView.vue";
-import JoinedEventsView from "@/views/JoinedEventsView.vue";
-import NotFound from "@/views/NotFoundView.vue";
-import LogIn from "@/views/LogIn.vue";
+const CreateEvent = () => import("@/views/CreateEventView.vue");
+const JoinedEventsView = () => import("@/views/JoinedEventsView.vue");
+const NotFound = () => import("@/views/NotFoundView.vue");
+const LogIn = () => import("@/views/LogIn.vue");
+const AdminRequiredView = () => import("@/views/AdminRequiredView.vue");
+const UsersView = () => import("@/views/UsersView.vue");
+
+import { useUserStore } from "@/stores/userStore";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,13 +36,26 @@ const router = createRouter({
 					path: "create",
 					name: "create-event",
 					component: CreateEvent,
+					meta: { requiredAdmin: true },
 				},
 			],
+		},
+		{
+			path: "/users",
+			name: "users",
+			component: UsersView,
+			meta: { requiresAuth: true, requiredAdmin: true },
 		},
 		{
 			path: "/login",
 			name: "login",
 			component: LogIn,
+			meta: { requiresGuest: true },
+		},
+		{
+			path: "/admin-required",
+			name: "admin-required",
+			component: AdminRequiredView,
 		},
 		{
 			path: "/:pathMatch(.*)*",
@@ -46,6 +63,26 @@ const router = createRouter({
 			component: NotFound,
 		},
 	],
+});
+
+router.beforeEach((to, _, next) => {
+	const userStore = useUserStore();
+
+	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+	const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
+	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
+
+	if (requiresAuth && !userStore.isAuthenticated) {
+		return next("/login");
+	} else if (requiresGuest && userStore.isAuthenticated) {
+		return next("/events");
+	}
+
+	if (requiresAdmin && !userStore.isAdmin) {
+		return next("/admin-required");
+	}
+
+	next();
 });
 
 export default router;
