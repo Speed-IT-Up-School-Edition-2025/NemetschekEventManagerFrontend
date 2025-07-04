@@ -1,4 +1,4 @@
-const baseUrl = "http:/localhost:8080";
+const baseUrl = "http://localhost:8080";
 
 import { useUserStore } from "@/stores/userStore";
 
@@ -7,7 +7,8 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 const request = async <TResponse>(
 	method: HttpMethod,
 	url: string,
-	body?: any
+	body?: any,
+	firstTry = true
 ): Promise<TResponse> => {
 	const authStore = useUserStore();
 
@@ -33,9 +34,13 @@ const request = async <TResponse>(
 
 	const res = await fetch(fullUrl, fetchOptions);
 
-	const contentType = res.headers.get("Content-Type");
-	if (contentType?.includes("application/json")) {
-		return res.json() as Promise<TResponse>;
+	if (res.status == 401 && firstTry) {
+		const success = authStore.refreshAccessToken();
+		if (!success) {
+			throw new Error("Unauthorized: Unable to refresh token.");
+		} else {
+			return request<TResponse>(method, url, body, false);
+		}
 	}
 
 	if (!res.ok) {
@@ -43,6 +48,12 @@ const request = async <TResponse>(
 		throw new Error(`Request failed: ${res.status} - ${errText}`);
 	}
 
+	const contentType = res.headers.get("Content-Type");
+	if (contentType?.includes("application/json")) {
+		return res.json() as Promise<TResponse>;
+	}
+
+	//! probably not a real case
 	return res.text() as unknown as TResponse;
 };
 
