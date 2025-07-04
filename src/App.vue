@@ -11,6 +11,6 @@ import Toaster from "./components/Toaster.vue";
 	</header>
 
 	<main>
-		<RouterView />
-	</main>
+    <RouterView />
+  </main>
 </template>
