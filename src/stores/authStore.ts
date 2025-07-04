@@ -1,8 +1,9 @@
+import { apiClient } from "@/utils/api";
 import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
 	state: () => ({
 		accessToken: null as string | null,
-		profile: null,
+		profile: null as UserProfile | null,
 	}),
 	getters: {
 		isAuthenticated: state => !!state.accessToken,
@@ -15,6 +16,15 @@ export const useUserStore = defineStore("user", {
 			this.accessToken = null;
 			this.profile = null;
 		},
-		fetchUserProfile() {},
+		fetchUserProfile() {
+			apiClient.get<UserProfile>("/users/me");
+		},
 	},
 });
+
+interface UserProfile {
+	id: string;
+	username: string;
+	email: string;
+	isAdmin: boolean;
+}
