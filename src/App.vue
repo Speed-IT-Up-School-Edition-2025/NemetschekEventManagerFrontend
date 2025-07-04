@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import NavBar from "./components/NavBar.vue";
+import NavbarComponent from "./components/NavbarComponent.vue";
 import Toaster from "./components/Toaster.vue";
 </script>
 
 <template>
-	<Toaster />
-	<header>
-		<NavBar />
-	</header>
+	<div class="h-screen flex flex-col bg-grey text-white font-roboto">
+		<Toaster />
 
-	<main>
-    <RouterView />
-  </main>
+		<header>
+			<NavbarComponent />
+		</header>
+
+		<main class="flex-1 overflow-hidden">
+			<RouterView />
+		</main>
+	</div>
 </template>
