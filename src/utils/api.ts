@@ -1,6 +1,6 @@
 const baseUrl = "http:/localhost:8080";
 
-import { useUserStore } from "@/stores/authStore";
+import { useUserStore } from "@/stores/userStore";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -20,7 +20,7 @@ const request = async <TResponse>(
 		headers["Authorization"] = `Bearer ${token}`;
 	}
 
-	let fullUrl = baseUrl + url;
+	const fullUrl = baseUrl + url;
 
 	const fetchOptions: RequestInit = {
 		method,
