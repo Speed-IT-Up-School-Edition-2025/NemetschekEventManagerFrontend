@@ -1,13 +1,13 @@
 <template>
 	<div
 		v-if="ui.showToast"
-		class="fixed bottom-4 right-4 md:right-1/3 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded shadow-lg w-64 z-10">
+		class="fixed bottom-4 right-4 bg-yellow text-grey p-4 rounded shadow-lg w-64 z-10">
 		{{ ui.toastMessage }}
-		<div class="mt-2 h-1 bg-white rounded-full overflow-hidden">
+		<div class="mt-2 h-2 bg-dark-grey rounded-full overflow-hidden">
 			<div
 				:key="animationKey"
 				:style="{ animationDuration: `${duration}ms` }"
-				class="h-full bg-gray-300 rounded-full animate-progress"></div>
+				class="h-full bg-white rounded-full animate-progress"></div>
 		</div>
 	</div>
 </template>

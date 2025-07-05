@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import EventsView from "@/views/EventsView.vue"; // Keep this eagerly loaded if it's the main view
 
-const CreateEvent = () => import("@/views/CreateEventView.vue");
+const EventsView = () => import("@/views/EventsView.vue");
 const JoinedEventsView = () => import("@/views/JoinedEventsView.vue");
-const NotFound = () => import("@/views/NotFoundView.vue");
-const LogIn = () => import("@/views/LogIn.vue");
-const AdminRequiredView = () => import("@/views/AdminRequiredView.vue");
+const CreateEvent = () => import("@/views/CreateEventView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
+const LogInView = () => import("@/views/LogInView.vue");
+const NotFoundView = () => import("@/views/NotFoundView.vue");
 
 import { useUserStore } from "@/stores/userStore";
+import { useUIStore } from "@/stores/uiStore";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,37 +49,45 @@ const router = createRouter({
 		{
 			path: "/login",
 			name: "login",
-			component: LogIn,
+			component: LogInView,
 			meta: { requiresGuest: true },
-		},
-		{
-			path: "/admin-required",
-			name: "admin-required",
-			component: AdminRequiredView,
 		},
 		{
 			path: "/:pathMatch(.*)*",
 			name: "not-found",
-			component: NotFound,
+			component: NotFoundView,
 		},
 	],
 });
 
 router.beforeEach((to, _, next) => {
 	const userStore = useUserStore();
+	const { triggerToast } = useUIStore();
 
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
 	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
 
 	if (requiresAuth && !userStore.isAuthenticated) {
+		triggerToast(
+			"You need to be logged in to access this page.",
+			"warning"
+		);
+
 		return next("/login");
 	} else if (requiresGuest && userStore.isAuthenticated) {
-		return next("/events");
+		triggerToast("You are already logged in.", "warning");
+
+		return next("/");
 	}
 
 	if (requiresAdmin && !userStore.isAdmin) {
-		return next("/admin-required");
+		triggerToast(
+			"You need admin privileges to access this page.",
+			"warning"
+		);
+
+		return next("/");
 	}
 
 	next();
