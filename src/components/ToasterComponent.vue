@@ -6,11 +6,11 @@
 			toastBgClass,
 		]">
 		{{ ui.toastMessage }}
-		<div class="mt-2 h-2 bg-dark-grey rounded-full overflow-hidden">
+		<div class="mt-2 h-1 bg-white rounded-full overflow-hidden">
 			<div
 				:key="animationKey"
 				:style="{ animationDuration: `${duration}ms` }"
-				class="h-full bg-white rounded-full animate-progress"></div>
+				class="h-full bg-gray-300 rounded-full animate-progress"></div>
 		</div>
 	</div>
 </template>
