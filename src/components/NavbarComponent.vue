@@ -7,6 +7,7 @@ const userStore = useUserStore();
 
 <template>
 	<nav
+		v-if="userStore.isAuthenticated"
 		class="bg-dark-grey text-white px-6 py-4 flex items-center justify-between shadow-md">
 		<!-- Left side -->
 		<div class="flex items-center gap-10">
@@ -40,9 +41,9 @@ const userStore = useUserStore();
 				Create Event
 			</RouterLink>
 			<RouterLink
-				to="/login"
+				to="/logout"
 				class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
-				Log In
+				Log Out
 			</RouterLink>
 		</div>
 	</nav>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import NavbarComponent from "./components/NavbarComponent.vue";
-import Toaster from "./components/Toaster.vue";
+import ToasterComponent from "./components/ToasterComponent.vue";
 </script>
 
 <template>
 	<div class="h-screen flex flex-col bg-grey text-white font-roboto">
-		<Toaster />
+		<ToasterComponent />
 
 		<header>
 			<NavbarComponent />
