@@ -1,16 +1,23 @@
 <template>
 	<div
 		v-if="ui.showToast"
+		@mouseenter="pauseTimer"
+		@mouseleave="resumeTimer"
+		@click.right.prevent="dismissToast"
 		:class="[
-			'fixed bottom-4 right-4 md:right-1/3 text-white p-4 rounded shadow-lg w-64 z-10',
+			'fixed bottom-4 right-4 bg-dark-grey  p-4 rounded-lg shadow-lg z-10 border-2 select-none',
+			'max-w-xl',
 			toastBgClass,
 		]">
 		{{ ui.toastMessage }}
-		<div class="mt-2 h-1 bg-white rounded-full overflow-hidden">
+		<div class="mt-4 h-1 bg-white rounded-full overflow-hidden">
 			<div
 				:key="animationKey"
-				:style="{ animationDuration: `${duration}ms` }"
-				class="h-full bg-gray-300 rounded-full animate-progress"></div>
+				:style="{
+					animationDuration: `${duration}ms`,
+					animationPlayState: isPaused ? 'paused' : 'running',
+				}"
+				:class="['h-full rounded-full animate-progress', progressColor]"></div>
 		</div>
 	</div>
 </template>
@@ -22,22 +29,71 @@ import { useUIStore } from "@/stores/uiStore";
 const ui = useUIStore();
 const animationKey = ref(0);
 const duration = 3000; // milliseconds
-
+const isPaused = ref(false);
+let remainingTime = duration;
+let startTime: number | null = null;
+const progressColor = computed(() => {
+	switch (ui.toastType) {
+		case "success":
+			return "bg-cyan";
+		case "error":
+			return "bg-red";
+		case "warning":
+			return "bg-yellow";
+		case "info":
+		default:
+			return "bg-cyan";
+	}
+});
 const toastBgClass = computed(() => {
 	switch (ui.toastType) {
 		case "success":
-			return "bg-gradient-to-r from-green-500 to-emerald-400";
+			return "text-cyan border-cyan";
 		case "error":
-			return "bg-gradient-to-r from-red-500 to-pink-500";
+			return "text-red border-red";
 		case "warning":
-			return "bg-gradient-to-r from-yellow-500 to-orange-400 text-black";
+			return "text-yellow border-yellow";
 		case "info":
+		// TODO rework or remove
 		default:
-			return "bg-gradient-to-r from-purple-500 to-pink-500";
+			return "text-cyan border-cyan";
 	}
 });
 
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+const pauseTimer = () => {
+	if (timeoutId) {
+		clearTimeout(timeoutId);
+		isPaused.value = true;
+		if (startTime) {
+			remainingTime -= Date.now() - startTime;
+		}
+	}
+};
+
+const resumeTimer = () => {
+	isPaused.value = false;
+	startTime = Date.now();
+	if (remainingTime > 0) {
+		timeoutId = setTimeout(() => {
+			ui.showToast = false;
+			ui.toastMessage = "";
+			timeoutId = null;
+		}, remainingTime);
+	}
+};
+
+const dismissToast = () => {
+	console.log("dismissing toast");
+	if (timeoutId) {
+		clearTimeout(timeoutId);
+	}
+	ui.showToast = false;
+	ui.toastMessage = "";
+	timeoutId = null;
+	isPaused.value = false;
+};
 
 watch(
 	() => ui.toastMessage,
@@ -45,9 +101,13 @@ watch(
 		if (newVal) {
 			ui.showToast = true;
 			animationKey.value++;
+			remainingTime = duration;
+			startTime = Date.now();
+
 			if (timeoutId) {
 				clearTimeout(timeoutId);
 			}
+
 			timeoutId = setTimeout(() => {
 				ui.showToast = false;
 				ui.toastMessage = "";
@@ -61,10 +121,10 @@ watch(
 <style scoped>
 @keyframes progress {
 	from {
-		transform: translateX(0);
+		transform: translateX(-100%);
 	}
 	to {
-		transform: translateX(100%);
+		transform: translateX(0);
 	}
 }
 
@@ -73,6 +133,5 @@ watch(
 	animation-timing-function: linear;
 	animation-fill-mode: forwards;
 	animation-direction: normal;
-	transform: translateX(-100%);
 }
 </style>
