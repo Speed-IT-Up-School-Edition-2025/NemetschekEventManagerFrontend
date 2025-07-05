@@ -1,24 +1,22 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import { useUserStore } from "@/stores/userStore";
+import { useUIStore } from "@/stores/uiStore";
+
 const EventsView = () => import("@/views/EventsView.vue");
+const EventDetailsView = () => import("@/views/EventDetailsView.vue");
 const JoinedEventsView = () => import("@/views/JoinedEventsView.vue");
 const CreateEvent = () => import("@/views/CreateEventView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
 const LogInView = () => import("@/views/LogInView.vue");
 const NotFoundView = () => import("@/views/NotFoundView.vue");
 
-import { useUserStore } from "@/stores/userStore";
-import { useUIStore } from "@/stores/uiStore";
-
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
-			path: "/",
-			redirect: "/events",
-		},
-		{
 			path: "/events",
+			alias: ["/"],
 			name: "events",
 			meta: { requiresAuth: true },
 			children: [
@@ -26,6 +24,11 @@ const router = createRouter({
 					path: "",
 					name: "events-list",
 					component: EventsView,
+				},
+				{
+					path: ":id",
+					name: "event-details",
+					component: EventDetailsView,
 				},
 				{
 					path: "joined",
