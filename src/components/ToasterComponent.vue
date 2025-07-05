@@ -1,7 +1,10 @@
 <template>
 	<div
 		v-if="ui.showToast"
-		class="fixed bottom-4 right-4 bg-yellow text-grey p-4 rounded shadow-lg w-64 z-10">
+		:class="[
+			'fixed bottom-4 right-4 md:right-1/3 text-white p-4 rounded shadow-lg w-64 z-10',
+			toastBgClass,
+		]">
 		{{ ui.toastMessage }}
 		<div class="mt-2 h-2 bg-dark-grey rounded-full overflow-hidden">
 			<div
@@ -13,12 +16,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useUIStore } from "@/stores/uiStore";
 
 const ui = useUIStore();
 const animationKey = ref(0);
 const duration = 3000; // milliseconds
+
+const toastBgClass = computed(() => {
+	switch (ui.toastType) {
+		case "success":
+			return "bg-gradient-to-r from-green-500 to-emerald-400";
+		case "error":
+			return "bg-gradient-to-r from-red-500 to-pink-500";
+		case "warning":
+			return "bg-gradient-to-r from-yellow-500 to-orange-400 text-black";
+		case "info":
+		default:
+			return "bg-gradient-to-r from-purple-500 to-pink-500";
+	}
+});
 
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
