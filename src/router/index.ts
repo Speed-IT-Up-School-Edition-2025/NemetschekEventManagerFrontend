@@ -16,12 +16,12 @@ const router = createRouter({
 	routes: [
 		{
 			path: "/events",
-			alias: ["/"],
 			name: "events",
 			meta: { requiresAuth: true },
 			children: [
 				{
 					path: "",
+					alias: ["/"],
 					name: "events-list",
 					component: EventsView,
 				},
@@ -72,10 +72,7 @@ router.beforeEach((to, _, next) => {
 	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
 
 	if (requiresAuth && !userStore.isAuthenticated) {
-		triggerToast(
-			"You need to be logged in to access this page.",
-			"warning"
-		);
+		triggerToast("You need to be logged in to access this page.", "warning");
 
 		return next("/login");
 	} else if (requiresGuest && userStore.isAuthenticated) {
@@ -85,10 +82,7 @@ router.beforeEach((to, _, next) => {
 	}
 
 	if (requiresAdmin && !userStore.isAdmin) {
-		triggerToast(
-			"You need admin privileges to access this page.",
-			"warning"
-		);
+		triggerToast("You need admin privileges to access this page.", "warning");
 
 		return next("/");
 	}
