@@ -42,7 +42,7 @@
 						v-model="form.confirmPassword"
 						required
 						class="w-full px-3 py-2 border rounded focus:outline-none focus:border-white text-yellow" />
-					<div v-if="errors.confirmPassword" class="text-red text-sm mt-1">
+					<div v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">
 						{{ errors.confirmPassword }}
 					</div>
 				</div>
@@ -68,8 +68,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/userStore";
+import { authApi } from "@/utils/api";
+import { useAsync } from "@/composables/useAsync";
 
 const isLogin = ref(true);
 const form = reactive({
@@ -79,6 +82,13 @@ const form = reactive({
 });
 const errors = reactive<{ email?: string; password?: string; confirmPassword?: string }>({});
 const router = useRouter();
+const userStore = useUserStore();
+
+const { execute, data } = useAsync(() =>
+	isLogin.value
+		? authApi.login(form.email, form.password)
+		: authApi.register(form.email, form.password)
+);
 
 function toggleMode() {
 	isLogin.value = !isLogin.value;
@@ -108,8 +118,11 @@ function handleSubmit() {
 	if (hasError) {
 		return;
 	}
-
-	console.log(`${isLogin.value ? "Logging in" : "Registering"} with`, form);
-	router.push("/home");
+	execute().then(() => {
+		if (data.value) {
+			userStore.setAccessToken(data.value.accessToken);
+			router.push("/home");
+		}
+	});
 }
 </script>
