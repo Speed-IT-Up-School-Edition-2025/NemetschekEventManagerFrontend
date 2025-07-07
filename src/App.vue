@@ -12,7 +12,7 @@ import ToasterComponent from "./components/ToasterComponent.vue";
 			<NavbarComponent />
 		</header>
 
-		<main class="flex-1 overflow-hidden">
+		<main class="flex-1 overflow-auto">
 			<RouterView />
 		</main>
 	</div>

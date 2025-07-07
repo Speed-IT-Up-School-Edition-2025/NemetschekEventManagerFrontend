@@ -25,6 +25,24 @@ const events: Event[] = [
 		date: "2025-10-15",
 		signUpDeadline: "2025-10-01",
 		location: "San Francisco, CA",
+	},
+	{
+		id: "3",
+		title: "Tech Conference 2023",
+		description:
+			"A conference for tech enthusiasts to explore the latest trends in technology.",
+		date: "2025-10-15",
+		signUpDeadline: "2025-10-01",
+		location: "San Francisco, CA",
+	},
+	{
+		id: "4",
+		title: "Tech Conference 2023",
+		description:
+			"A conference for tech enthusiasts to explore the latest trends in technology.",
+		date: "2025-10-15",
+		signUpDeadline: "2025-10-01",
+		location: "San Francisco, CA",
 	}
 ];
 
