@@ -26,7 +26,7 @@ const closeMobileMenu = () => {
 			<div class="flex items-stretch">
 				<RouterLink
 					to="/"
-					class="flex items-center justify-center h-full transition-all hover:scale-105">
+					class="flex items-center justify-center h-full mr-5 transition-all hover:scale-105">
 					<NemetschekIcon />
 				</RouterLink>
 				<RouterLink
@@ -71,7 +71,9 @@ const closeMobileMenu = () => {
 		<div class="md:hidden">
 			<!-- Mobile Header -->
 			<div class="flex items-center justify-between py-4">
-				<HamburgerIcon @click="toggleMobileMenu" :is-mobile-menu-open="isMobileMenuOpen" />
+				<HamburgerIcon
+					@click="toggleMobileMenu"
+					:is-mobile-menu-open="isMobileMenuOpen" />
 
 				<RouterLink
 					to="/"

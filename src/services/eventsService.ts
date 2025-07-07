@@ -43,11 +43,15 @@ const events: Event[] = [
 		date: "2025-10-15",
 		signUpDeadline: "2025-10-01",
 		location: "San Francisco, CA",
-	}
+	},
 ];
 
 export function getEvents() {
 	return events;
+}
+
+export function getJoinedEvents() {
+	return events.filter(event => event.id !== "1");
 }
 
 export function getEventById(id: string) {
