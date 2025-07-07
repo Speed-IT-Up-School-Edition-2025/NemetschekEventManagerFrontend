@@ -21,10 +21,7 @@ const { event } = defineProps<{
 		<div class="space-y-4">
 			<!-- Date -->
 			<div class="flex items-start gap-3">
-				<div
-					class="w-6 h-6 rounded-full bg-yellow flex items-center justify-center flex-shrink-0 mt-1">
-					<CalendarIcon />
-				</div>
+				<CalendarIcon />
 				<div>
 					<h3 class="text-lg font-semibold text-white">Event Date</h3>
 					<p class="text-white/80">
@@ -44,10 +41,7 @@ const { event } = defineProps<{
 
 			<!-- Location -->
 			<div class="flex items-start gap-3">
-				<div
-					class="w-6 h-6 rounded-full bg-yellow flex items-center justify-center flex-shrink-0 mt-1">
-					<LocationIcon />
-				</div>
+				<LocationIcon />
 				<div>
 					<h3 class="text-lg font-semibold text-white">Location</h3>
 					<p class="text-white/80">{{ event.location }}</p>
@@ -56,10 +50,7 @@ const { event } = defineProps<{
 
 			<!-- Sign Up Deadline -->
 			<div class="flex items-start gap-3">
-				<div
-					class="w-6 h-6 rounded-full bg-yellow flex items-center justify-center flex-shrink-0 mt-1">
-					<ClockIcon />
-				</div>
+				<ClockIcon />
 				<div>
 					<h3 class="text-lg font-semibold text-white">
 						Registration Deadline
