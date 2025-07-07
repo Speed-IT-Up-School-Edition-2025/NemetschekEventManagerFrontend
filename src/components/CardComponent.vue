@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex flex-col items-start justify-evenly py-4 pl-4 pr-10 border-yellow rounded-lg border-2 border-solid bg-dark-grey transition delay-100 duration-300 ease-in-out hover:shadow-xl/30">
+		class="flex flex-col items-start justify-evenly py-4 pl-4 pr-10 border-yellow rounded-lg border-2 border-solid bg-dark-grey transition delay-100 duration-300 ease-in-out hover:shadow-xl/30" @click = "redirect">
 		<h1 class="text-x1 place-self-center pt-3 text-yellow text-3xl font-semibold text-center">
 			{{ event.title }}
 		</h1>
@@ -33,10 +33,15 @@ import type { Event } from "@/services/eventsService";
 import LocationIcon from "./icons/LocationIcon.vue";
 import ClockIcon from "./icons/ClockIcon.vue";
 import InfoIcon from "./icons/InfoIcon.vue";
+import { useRouter } from "vue-router";
 
 const { event } = defineProps<{ event: Event }>();
-
+const router = useRouter();
 const shortenedDescription = event.description
 	? event.description.slice(0, 50) + (event.description.length > 50 ? "..." : "")
 	: "";
+
+	function redirect(){
+		router.push(`/events/${event.id}`);
+	}
 </script>
