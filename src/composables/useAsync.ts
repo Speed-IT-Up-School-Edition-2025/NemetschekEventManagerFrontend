@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 export function useAsync<T>(fn: () => Promise<T>) {
 	const loading = ref(false);
-	const error = ref<null | Error>(null);
+	const error = ref<Error | null>(null);
 	const data = ref<T | null>(null);
 
 	const execute = async () => {
