@@ -67,3 +67,17 @@ export const apiClient = {
 	delete: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
 		request<TResponse, TBody>("DELETE", url, body),
 };
+
+export const authApi = {
+  login: (email: string, password: string) =>
+    apiClient.post<{ accessToken: string }>("/auth/login", { email, password }),
+  register: (email: string, password: string) =>
+    apiClient.post<{ accessToken: string }>("/auth/register", { email, password }),
+};
+
+export const authApi = {
+  login: (email: string, password: string) =>
+    apiClient.post<{ accessToken: string }>("/auth/login", { email, password }),
+  register: (email: string, password: string) =>
+    apiClient.post<{ accessToken: string }>("/auth/register", { email, password }),
+};
