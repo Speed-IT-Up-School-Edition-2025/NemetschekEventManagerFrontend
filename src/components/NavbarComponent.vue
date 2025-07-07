@@ -19,7 +19,7 @@ const closeMobileMenu = () => {
 <template>
 	<nav
 		v-if="userStore.isAuthenticated"
-		class="bg-dark-grey text-white px-6 shadow-md">
+		class="bg-dark-grey text-white px-6 shadow-md relative z-50">
 		<!-- Desktop Navigation -->
 		<div class="hidden md:flex items-stretch justify-between">
 			<!-- Left side -->
@@ -31,18 +31,21 @@ const closeMobileMenu = () => {
 				</RouterLink>
 				<RouterLink
 					to="/"
-					class="hover:text-yellow transition-colors px-4 flex items-center py-4">
+					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
+					exact-active-class="text-yellow border-b-2 border-yellow">
 					Events</RouterLink
 				>
 				<RouterLink
 					to="/events/joined"
-					class="hover:text-yellow transition-colors px-4 flex items-center py-4">
+					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
+					active-class="text-yellow border-b-2 border-yellow">
 					Joined Events
 				</RouterLink>
 				<RouterLink
 					v-if="userStore.isAdmin"
 					to="/users"
-					class="hover:text-yellow transition-colors px-4 flex items-center py-4">
+					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
+					active-class="text-yellow border-b-2 border-yellow">
 					Users
 				</RouterLink>
 			</div>
@@ -52,7 +55,8 @@ const closeMobileMenu = () => {
 				<RouterLink
 					v-if="userStore.isAdmin"
 					to="/events/create"
-					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
+					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium"
+					active-class="bg-yellow opacity-90 shadow-md">
 					Create Event
 				</RouterLink>
 				<RouterLink
@@ -66,7 +70,7 @@ const closeMobileMenu = () => {
 		<!-- Mobile Navigation -->
 		<div class="md:hidden">
 			<!-- Mobile Header -->
-			<div class="flex items-center justify-between">
+			<div class="flex items-center justify-between py-4">
 				<HamburgerIcon
 					@click="toggleMobileMenu"
 					:is-mobile-menu-open="isMobileMenuOpen" />
@@ -88,40 +92,46 @@ const closeMobileMenu = () => {
 				leave-to-class="opacity-0 -translate-y-4">
 				<div
 					v-if="isMobileMenuOpen"
-					class="mt-4 space-y-2 border-t border-white/20 pt-4">
-					<RouterLink
-						to="/"
-						@click="closeMobileMenu"
-						class="block py-2 hover:text-yellow transition-colors">
-						Events
-					</RouterLink>
-					<RouterLink
-						to="/events/joined"
-						@click="closeMobileMenu"
-						class="block py-2 hover:text-yellow transition-colors">
-						Joined Events
-					</RouterLink>
-					<RouterLink
-						v-if="userStore.isAdmin"
-						to="/users"
-						@click="closeMobileMenu"
-						class="block py-2 hover:text-yellow transition-colors">
-						Users
-					</RouterLink>
-					<div class="pt-2 space-y-2">
+					class="absolute top-full left-0 right-0 bg-dark-grey border-y border-white/50 shadow-lg z-40 px-6 py-4">
+					<div class="space-y-2">
+						<RouterLink
+							to="/"
+							@click="closeMobileMenu"
+							class="block py-2 hover:text-yellow transition-colors"
+							exact-active-class="text-yellow bg-white/10 px-2 -mx-2 rounded">
+							Events
+						</RouterLink>
+						<RouterLink
+							to="/events/joined"
+							@click="closeMobileMenu"
+							class="block py-2 hover:text-yellow transition-colors"
+							active-class="text-yellow bg-white/10 px-2 -mx-2 rounded">
+							Joined Events
+						</RouterLink>
 						<RouterLink
 							v-if="userStore.isAdmin"
-							to="/events/create"
+							to="/users"
 							@click="closeMobileMenu"
-							class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center">
-							Create Event
+							class="block py-2 hover:text-yellow transition-colors"
+							active-class="text-yellow bg-white/10 px-2 -mx-2 rounded">
+							Users
 						</RouterLink>
-						<RouterLink
-							to="/logout"
-							@click="closeMobileMenu"
-							class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center">
-							Log Out
-						</RouterLink>
+						<div class="pt-2 space-y-2">
+							<RouterLink
+								v-if="userStore.isAdmin"
+								to="/events/create"
+								@click="closeMobileMenu"
+								class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center"
+								active-class="bg-yellow opacity-90 shadow-md">
+								Create Event
+							</RouterLink>
+							<RouterLink
+								to="/logout"
+								@click="closeMobileMenu"
+								class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center">
+								Log Out
+							</RouterLink>
+						</div>
 					</div>
 				</div>
 			</transition>
