@@ -2,7 +2,7 @@
 import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
-import HamburgerIcon from "@/components/HamburgerIcon.vue";
+import HamburgerIcon from "@/components/icons/HamburgerIcon.vue";
 
 const userStore = useUserStore();
 const isMobileMenuOpen = ref(false);
@@ -17,28 +17,38 @@ const closeMobileMenu = () => {
 </script>
 
 <template>
-	<nav v-if="userStore.isAuthenticated" class="bg-dark-grey text-white px-6 py-4 shadow-md">
+	<nav
+		v-if="userStore.isAuthenticated"
+		class="bg-dark-grey text-white px-6 shadow-md">
 		<!-- Desktop Navigation -->
-		<div class="hidden md:flex items-center justify-between">
+		<div class="hidden md:flex items-stretch justify-between">
 			<!-- Left side -->
-			<div class="flex items-center gap-10">
-				<RouterLink to="/" class="text-yellow font-bold text-xl hover:underline">
+			<div class="flex items-stretch">
+				<RouterLink
+					to="/"
+					class="text-yellow font-bold text-xl hover:underline px-4 -ml-4 flex items-center py-4">
 					Event Manager
 				</RouterLink>
-				<RouterLink to="/" class="hover:text-yellow transition-colors"> Events</RouterLink>
-				<RouterLink to="/events/joined" class="hover:text-yellow transition-colors">
+				<RouterLink
+					to="/"
+					class="hover:text-yellow transition-colors px-4 flex items-center py-4">
+					Events</RouterLink
+				>
+				<RouterLink
+					to="/events/joined"
+					class="hover:text-yellow transition-colors px-4 flex items-center py-4">
 					Joined Events
 				</RouterLink>
 				<RouterLink
 					v-if="userStore.isAdmin"
 					to="/users"
-					class="hover:text-yellow transition-colors">
+					class="hover:text-yellow transition-colors px-4 flex items-center py-4">
 					Users
 				</RouterLink>
 			</div>
 
 			<!-- Right side -->
-			<div class="flex items-center gap-4">
+			<div class="flex items-center gap-4 py-4">
 				<RouterLink
 					v-if="userStore.isAdmin"
 					to="/events/create"
@@ -57,9 +67,13 @@ const closeMobileMenu = () => {
 		<div class="md:hidden">
 			<!-- Mobile Header -->
 			<div class="flex items-center justify-between">
-				<HamburgerIcon @click="toggleMobileMenu" :is-mobile-menu-open="isMobileMenuOpen" />
+				<HamburgerIcon
+					@click="toggleMobileMenu"
+					:is-mobile-menu-open="isMobileMenuOpen" />
 
-				<RouterLink to="/" class="text-yellow font-bold text-xl hover:underline">
+				<RouterLink
+					to="/"
+					class="text-yellow font-bold text-xl hover:underline">
 					Event Manager
 				</RouterLink>
 			</div>
@@ -72,7 +86,9 @@ const closeMobileMenu = () => {
 				leave-active-class="transition-all duration-300 ease-in"
 				leave-from-class="opacity-100 translate-y-0"
 				leave-to-class="opacity-0 -translate-y-4">
-				<div v-if="isMobileMenuOpen" class="mt-4 space-y-2 border-t border-white/20 pt-4">
+				<div
+					v-if="isMobileMenuOpen"
+					class="mt-4 space-y-2 border-t border-white/20 pt-4">
 					<RouterLink
 						to="/"
 						@click="closeMobileMenu"
