@@ -4,10 +4,10 @@ import { useUserStore } from "@/stores/userStore";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-const request = async <TResponse>(
+const request = async <TResponse, TBody = unknown>(
 	method: HttpMethod,
-	url: string,
-	body?: any,
+	endpoint: string,
+	body?: TBody,
 	firstTry = true
 ): Promise<TResponse> => {
 	const authStore = useUserStore();
@@ -21,7 +21,7 @@ const request = async <TResponse>(
 		headers["Authorization"] = `Bearer ${token}`;
 	}
 
-	const fullUrl = baseUrl + url;
+	const fullUrl = `${baseUrl}${endpoint}`;
 
 	const fetchOptions: RequestInit = {
 		method,
@@ -36,10 +36,11 @@ const request = async <TResponse>(
 
 	if (res.status == 401 && firstTry) {
 		const success = authStore.refreshAccessToken();
+
 		if (!success) {
 			throw new Error("Unauthorized: Unable to refresh token.");
 		} else {
-			return request<TResponse>(method, url, body, false);
+			return request<TResponse, TBody>(method, endpoint, body, false);
 		}
 	}
 
@@ -58,8 +59,11 @@ const request = async <TResponse>(
 };
 
 export const apiClient = {
-	get: <T>(url: string) => request<T>("GET", url),
-	post: <T>(url: string, body?: any) => request<T>("POST", url, body),
-	put: <T>(url: string, body?: any) => request<T>("PUT", url, body),
-	delete: <T>(url: string) => request<T>("DELETE", url),
+	get: <TResponse>(url: string) => request<TResponse>("GET", url),
+	post: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
+		request<TResponse, TBody>("POST", url, body),
+	put: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
+		request<TResponse, TBody>("PUT", url, body),
+	delete: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
+		request<TResponse, TBody>("DELETE", url, body),
 };
