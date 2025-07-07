@@ -72,17 +72,17 @@ router.beforeEach((to, _, next) => {
 	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
 
 	if (requiresAuth && !userStore.isAuthenticated) {
-		triggerToast("You need to be logged in to access this page.", "warning");
+		triggerToast("Трябва да бъдете вписани, за да имате достъп до тази страница!", "warning");
 
 		return next("/login");
 	} else if (requiresGuest && userStore.isAuthenticated) {
-		triggerToast("You are already logged in.", "warning");
+		triggerToast("Вие вече сте вписани!", "warning"); //You are already logged in.
 
 		return next("/");
 	}
 
 	if (requiresAdmin && !userStore.isAdmin) {
-		triggerToast("You need admin privileges to access this page.", "warning");
+		triggerToast("Нуждаете се от администраторски права, за да достъпите до тази страница!", "warning"); //You need admin privileges to access this page.
 
 		return next("/");
 	}
