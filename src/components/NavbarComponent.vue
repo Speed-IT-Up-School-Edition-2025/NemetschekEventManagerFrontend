@@ -62,7 +62,7 @@ const closeMobileMenu = () => {
 				<RouterLink
 					to="/logout"
 					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
-					Изход
+					Излизане
 				</RouterLink>
 			</div>
 		</div>
@@ -97,14 +97,14 @@ const closeMobileMenu = () => {
 							@click="closeMobileMenu"
 							class="block py-2 hover:text-yellow transition-colors"
 							exact-active-class="text-yellow bg-white/10 px-2 -mx-2 rounded">
-							Events
+							Събития
 						</RouterLink>
 						<RouterLink
 							to="/events/joined"
 							@click="closeMobileMenu"
 							class="block py-2 hover:text-yellow transition-colors"
 							active-class="text-yellow bg-white/10 px-2 -mx-2 rounded">
-							Joined Events
+							Присъединени събития
 						</RouterLink>
 						<RouterLink
 							v-if="userStore.isAdmin"
@@ -112,7 +112,7 @@ const closeMobileMenu = () => {
 							@click="closeMobileMenu"
 							class="block py-2 hover:text-yellow transition-colors"
 							active-class="text-yellow bg-white/10 px-2 -mx-2 rounded">
-							Users
+							Потребители
 						</RouterLink>
 						<div class="pt-2 space-y-2">
 							<RouterLink
@@ -121,13 +121,13 @@ const closeMobileMenu = () => {
 								@click="closeMobileMenu"
 								class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center"
 								active-class="bg-yellow opacity-90 shadow-md">
-								Create Event
+								Създай събитие
 							</RouterLink>
 							<RouterLink
 								to="/logout"
 								@click="closeMobileMenu"
 								class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center">
-								Log Out
+								Излизане
 							</RouterLink>
 						</div>
 					</div>

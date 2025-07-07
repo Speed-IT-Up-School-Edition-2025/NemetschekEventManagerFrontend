@@ -26,7 +26,7 @@ const { event } = defineProps<{
 					<h3 class="text-lg font-semibold text-white">Дата на събитие</h3>
 					<p class="text-white/80">
 						{{
-							new Date(event.date).toLocaleDateString("en-US", {
+							new Date(event.date).toLocaleDateString("bg-BG", {
 								weekday: "long",
 								year: "numeric",
 								month: "long",
@@ -52,10 +52,10 @@ const { event } = defineProps<{
 			<div class="flex items-start gap-3">
 				<ClockIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">Краен срок на регистрация</h3>
+					<h3 class="text-lg font-semibold text-white">Краен срок на записване</h3>
 					<p class="text-white/80">
 						{{
-							new Date(event.signUpDeadline).toLocaleDateString("en-US", {
+							new Date(event.signUpDeadline).toLocaleDateString("bg-BG", {
 								weekday: "long",
 								year: "numeric",
 								month: "long",
