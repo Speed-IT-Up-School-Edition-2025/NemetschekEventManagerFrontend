@@ -1,5 +1,6 @@
 @import "./base.css";
 @import "tailwindcss";
+@plugin "tailwind-scrollbar";
 
 @theme {
 	--color-dark-grey: #1f222e;
