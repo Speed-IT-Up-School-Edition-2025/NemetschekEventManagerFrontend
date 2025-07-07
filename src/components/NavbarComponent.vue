@@ -3,7 +3,7 @@ import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
 import HamburgerIcon from "@/components/icons/HamburgerIcon.vue";
-
+import NemetschekIcon from "./icons/NemetschekIcon.vue";
 const userStore = useUserStore();
 const isMobileMenuOpen = ref(false);
 
@@ -26,27 +26,27 @@ const closeMobileMenu = () => {
 			<div class="flex items-stretch">
 				<RouterLink
 					to="/"
-					class="text-yellow font-bold text-xl hover:underline px-4 -ml-4 flex items-center py-4">
-					Event Manager
+					class="flex items-center justify-center h-full transition-all hover:scale-105">
+					<NemetschekIcon />
 				</RouterLink>
 				<RouterLink
 					to="/"
 					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
 					exact-active-class="text-yellow border-b-2 border-yellow">
-					Events</RouterLink
-				>
+					Събития
+				</RouterLink>
 				<RouterLink
 					to="/events/joined"
 					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
 					active-class="text-yellow border-b-2 border-yellow">
-					Joined Events
+					Присъединени събития
 				</RouterLink>
 				<RouterLink
 					v-if="userStore.isAdmin"
 					to="/users"
 					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
 					active-class="text-yellow border-b-2 border-yellow">
-					Users
+					Потребители
 				</RouterLink>
 			</div>
 
@@ -57,12 +57,12 @@ const closeMobileMenu = () => {
 					to="/events/create"
 					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium"
 					active-class="bg-yellow opacity-90 shadow-md">
-					Create Event
+					Създай събитие
 				</RouterLink>
 				<RouterLink
 					to="/logout"
 					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
-					Log Out
+					Изход
 				</RouterLink>
 			</div>
 		</div>
@@ -71,14 +71,12 @@ const closeMobileMenu = () => {
 		<div class="md:hidden">
 			<!-- Mobile Header -->
 			<div class="flex items-center justify-between py-4">
-				<HamburgerIcon
-					@click="toggleMobileMenu"
-					:is-mobile-menu-open="isMobileMenuOpen" />
+				<HamburgerIcon @click="toggleMobileMenu" :is-mobile-menu-open="isMobileMenuOpen" />
 
 				<RouterLink
 					to="/"
-					class="text-yellow font-bold text-xl hover:underline">
-					Event Manager
+					class="flex items-center justify-center h-full transition-all hover:scale-105">
+					<NemetschekIcon />
 				</RouterLink>
 			</div>
 
