@@ -2,7 +2,7 @@
 import { RouterLink } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
-import HamburgerIcon from "@/components/HamburgerIcon.vue";
+import HamburgerIcon from "@/components/icons/HamburgerIcon.vue";
 
 const userStore = useUserStore();
 const isMobileMenuOpen = ref(false);
