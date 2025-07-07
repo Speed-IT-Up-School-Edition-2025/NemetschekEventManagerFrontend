@@ -21,7 +21,7 @@ const event = getEventById(route.params.id);
 		</template>
 		<template #right>
 			<div class="text-center text-white/60 py-8">
-				<h3 class="text-xl font-semibold mb-2">Sign Up</h3>
+				<h3 class="text-xl font-semibold mb-2">Запиши се</h3>
 				<p>Sign up form will appear here</p>
 			</div>
 		</template>

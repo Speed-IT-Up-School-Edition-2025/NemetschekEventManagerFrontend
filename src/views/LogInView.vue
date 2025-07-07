@@ -70,10 +70,9 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { authApi } from "@/services/authService";
 import { useUserStore } from "@/stores/userStore";
-import { authApi } from "@/utils/api";
 import { useAsync } from "@/composables/useAsync";
-
 const isLogin = ref(true);
 const form = reactive({
 	email: "",

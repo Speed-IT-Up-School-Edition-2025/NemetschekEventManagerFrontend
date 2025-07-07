@@ -1,3 +1,3 @@
 <template>
-	<h1>Create event form here</h1>
+	<h1>Създай събитие тук</h1>
 </template>
