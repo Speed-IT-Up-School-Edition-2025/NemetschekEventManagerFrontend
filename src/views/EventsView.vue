@@ -7,7 +7,7 @@ const events = getEvents();
 
 <template>
 	<div
-		class="pl-5 pt-10 pr-5 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6 justify-items-center overflow-y-auto">
+		class="p-10 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10 justify-items-center overflow-y-auto">
 		<CardComponent class="max-w-md" v-for="event in events" :event="event" :key="event.id" />
 	</div>
 </template>
