@@ -2,6 +2,7 @@
 	<div class="min-h-screen flex items-center justify-center bg-grey">
 		<form
 			@submit.prevent="handleSubmit"
+			novalidate
 			class="bg-dark-grey p-8 rounded-lg shadow-md w-full max-w-sm">
 			<h2 class="text-yellow text-2xl font-semibold text-center mb-6">
 				{{ isLogin ? "Вписване" : "Регистрация" }}
@@ -15,36 +16,46 @@
 						v-model="form.email"
 						required
 						class="w-full px-3 py-2 border rounded focus:outline-none focus:border-white text-yellow" />
+					<div v-if="errors.email" class="text-red text-sm mt-1">
+						{{ errors.email }}
+					</div>
 				</div>
 
 				<div>
-					<label class="text-white mb-1" for="password"> Парола </label>
+					<label class="text-white mb-1" for="password">Парола</label>
 					<input
 						id="password"
 						type="password"
 						v-model="form.password"
 						required
 						class="w-full px-3 py-2 border rounded focus:outline-none focus:border-white text-yellow" />
+					<div v-if="errors.password" class="text-red text-sm mt-1">
+						{{ errors.password }}
+					</div>
 				</div>
+
 				<div v-if="!isLogin">
-					<label class="text-white mb-1" for="confirmPassword"> Потвърди парола </label>
+					<label class="text-white mb-1" for="confirmPassword">Потвърди парола</label>
 					<input
 						id="confirmPassword"
 						type="password"
 						v-model="form.confirmPassword"
 						required
 						class="w-full px-3 py-2 border rounded focus:outline-none focus:border-white text-yellow" />
+					<div v-if="errors.confirmPassword" class="text-red text-sm mt-1">
+						{{ errors.confirmPassword }}
+					</div>
 				</div>
 			</div>
+
 			<button
 				type="submit"
 				class="mt-6 w-full bg-yellow text-dark-grey py-2 rounded hover:bg-yellow-dark cursor-pointer">
 				{{ isLogin ? "Впиши се" : "Регистрирай се" }}
 			</button>
+
 			<div class="mt-4 text-center text-sm">
-				<span class="text-white">
-					{{ isLogin ? "Нямаш акаунт?" : "Имаш акаунт?" }}
-				</span>
+				<span class="text-white">{{ isLogin ? "Нямаш акаунт?" : "Имаш акаунт?" }}</span>
 				<button
 					type="button"
 					@click="toggleMode"
@@ -59,23 +70,46 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+
 const isLogin = ref(true);
 const form = reactive({
 	email: "",
 	password: "",
 	confirmPassword: "",
 });
+const errors = reactive<{ email?: string; password?: string; confirmPassword?: string }>({});
 const router = useRouter();
+
 function toggleMode() {
 	isLogin.value = !isLogin.value;
-	form.confirmPassword = ""; // Reset confirm password field when toggling
+	errors.email = errors.password = errors.confirmPassword = "";
 }
+
+function validateEmail(email: string): string | null {
+	if (!email) return "Имейлът е задължителен.";
+	const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	if (!re.test(email)) return "Моля, въведи валиден имейл адрес.";
+	return null;
+}
+
 function handleSubmit() {
-	if (!isLogin.value && form.password !== form.confirmPassword) {
-		alert("Паролите не съвпадат!");
+	errors.email = validateEmail(form.email) || "";
+	errors.password = form.password ? "" : "Паролата е задължителна.";
+
+	if (!isLogin.value) {
+		errors.confirmPassword = form.confirmPassword
+			? form.password === form.confirmPassword
+				? ""
+				: "Паролите не съвпадат."
+			: "Полето за потвърждение на парола е задължително.";
+	}
+
+	const hasError = Object.values(errors).some(msg => msg);
+	if (hasError) {
 		return;
 	}
+
 	console.log(`${isLogin.value ? "Logging in" : "Registering"} with`, form);
-	router.push("/home"); // Change to your app's route
+	router.push("/home");
 }
 </script>
