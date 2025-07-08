@@ -15,8 +15,8 @@ defineEmits(["submit-form"]);
 const fields = ref<FormField[]>(props.fields || []);
 const addField = (fieldType: "text" | "checkbox" | "radio") => {
 	const newField: FormField = {
-		id: `${fieldType}-${Date.now()}`,
-		option: fieldType,
+		id: fields.value[fields.value.length - 1].id + 1,
+		type: fieldType,
 		name: "new field",
 		required: false,
 		options: [],
@@ -39,8 +39,13 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 				:key="field.id"
 				class="bg-grey-800 p-4 rounded-lg shadow-md border-l-4 border-yellow transition-transform duration-200 ease-in-out hover:scale-[1.03] hover:shadow-xl/30 hover:z-10">
 				<div class="flex items-center justify-between mb-2 gap-4">
-					<label :for="field.id" class="flex text-lg font-medium text-white flex-1">
-						<InputField class="flex-1" :id="field.id" v-model="field.name"></InputField>
+					<label
+						:for="`field-${field.id}`"
+						class="flex text-lg font-medium text-white flex-1">
+						<InputField
+							class="flex-1"
+							:id="`field-${field.id}`"
+							v-model="field.name"></InputField>
 					</label>
 					<label
 						:for="`${field.id}-required`"
@@ -61,7 +66,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 					</button>
 				</div>
 
-				<div v-if="field.option === 'text'">
+				<div v-if="field.type === 'text'">
 					<input
 						type="text"
 						disabled
@@ -70,16 +75,16 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 				</div>
 
 				<div
-					v-else-if="field.option === 'checkbox' || field.option === 'radio'"
+					v-else-if="field.type === 'checkbox' || field.type === 'radio'"
 					class="space-y-2">
 					<div
 						v-for="(option, index) in field.options"
-						:key="`${field.id}-${index}`"
+						:key="`field-${field.id}-${index}`"
 						class="flex items-center">
 						<input
 							:id="`${field.id}-${index}`"
-							:type="field.option"
-							:name="field.id"
+							:type="field.type"
+							:name="`field-${field.id}`"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
 						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
 							<InputField
