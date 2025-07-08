@@ -60,6 +60,17 @@ const router = createRouter({
 			name: "not-found",
 			component: NotFoundView,
 		},
+		{
+			path: "/logout",
+  			name: "logout",
+  			component: LogInView,
+  			beforeEnter: (to, from, next) => {
+    			const userStore = useUserStore();
+    			userStore.logout();
+   				next({ path: "/login" });
+  			},
+  			meta: { requiresAuth: true },
+		},
 	],
 });
 
@@ -76,13 +87,13 @@ router.beforeEach((to, _, next) => {
 
 		return next("/login");
 	} else if (requiresGuest && userStore.isAuthenticated) {
-		triggerToast("Вие вече сте вписани!", "warning"); //You are already logged in.
+		triggerToast("Вие вече сте вписани!", "warning");
 
 		return next("/");
 	}
 
 	if (requiresAdmin && !userStore.isAdmin) {
-		triggerToast("Нуждаете се от администраторски права, за да достъпите до тази страница!", "warning"); //You need admin privileges to access this page.
+		triggerToast("Нуждаете се от администраторски права, за да достъпите до тази страница!", "warning");
 
 		return next("/");
 	}
