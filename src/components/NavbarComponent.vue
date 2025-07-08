@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
 import HamburgerIcon from "@/components/icons/HamburgerIcon.vue";
 import NemetschekIcon from "./icons/NemetschekIcon.vue";
+
+const router = useRouter();
+
 const userStore = useUserStore();
+
 const isMobileMenuOpen = ref(false);
 
 const toggleMobileMenu = () => {
@@ -13,6 +17,15 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
 	isMobileMenuOpen.value = false;
+};
+
+const logout = async () => {
+	router.push("/login");
+	try {
+		await userStore.logout();
+	} catch (error) {
+		console.error("Logout failed:", error);
+	}
 };
 </script>
 
@@ -59,11 +72,11 @@ const closeMobileMenu = () => {
 					active-class="bg-yellow opacity-90 shadow-md">
 					Създай събитие
 				</RouterLink>
-				<RouterLink
-					to="/logout"
+				<button
+					@click="logout"
 					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
 					Излизане
-				</RouterLink>
+				</button>
 			</div>
 		</div>
 
@@ -71,9 +84,7 @@ const closeMobileMenu = () => {
 		<div class="md:hidden">
 			<!-- Mobile Header -->
 			<div class="flex items-center justify-between py-4">
-				<HamburgerIcon
-					@click="toggleMobileMenu"
-					:is-mobile-menu-open="isMobileMenuOpen" />
+				<HamburgerIcon @click="toggleMobileMenu" :is-mobile-menu-open="isMobileMenuOpen" />
 
 				<RouterLink
 					to="/"
@@ -125,12 +136,11 @@ const closeMobileMenu = () => {
 								active-class="bg-yellow opacity-90 shadow-md">
 								Създай събитие
 							</RouterLink>
-							<RouterLink
-								to="/logout"
-								@click="closeMobileMenu"
-								class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium text-center">
+							<button
+								@click="logout"
+								class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
 								Излизане
-							</RouterLink>
+							</button>
 						</div>
 					</div>
 				</div>

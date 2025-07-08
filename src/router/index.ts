@@ -59,18 +59,7 @@ const router = createRouter({
 			path: "/:pathMatch(.*)*",
 			name: "not-found",
 			component: NotFoundView,
-		},
-		{
-			path: "/logout",
-  			name: "logout",
-  			component: LogInView,
-  			beforeEnter: (to, from, next) => {
-    			const userStore = useUserStore();
-    			userStore.logout();
-   				next({ path: "/login" });
-  			},
-  			meta: { requiresAuth: true },
-		},
+		}
 	],
 });
 
