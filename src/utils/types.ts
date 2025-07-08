@@ -1,6 +1,6 @@
 export interface FormField {
-	id: string;
-	option: "checkbox" | "text" | "radio";
+	id: number;
+	type: "checkbox" | "text" | "radio";
 	name: string;
 	required: boolean;
 	options: string[];

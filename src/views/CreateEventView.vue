@@ -9,8 +9,8 @@ const fields: FormField[] = [
 	{
 		name: "fddfs",
 		required: true,
-		option: "text",
-		id: "dfdfsdfs",
+		type: "text",
+		id: 0,
 		options: [],
 	},
 ];
