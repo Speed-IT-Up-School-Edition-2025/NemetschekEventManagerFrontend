@@ -1,45 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineProps, defineEmits } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import CancelIcon from "@/components/icons/CancelIcon.vue";
 import FieldAdder from "@/components/FormCreator/FieldAdder.vue";
+import type { FormField } from "@/utils/types.ts";
 
-interface FormField {
-	id: string;
-	option: "checkbox" | "text" | "radio";
-	name: string;
-	required: boolean;
-	options: string[];
-}
+const props = defineProps<{
+	actionName: string;
+	fields: FormField[];
+}>();
 
-const fields = ref<FormField[]>([
-	{
-		id: "name",
-		option: "text",
-		name: "ljgl",
-		required: true,
-		options: [],
-	},
-	{
-		id: "random",
-		option: "radio",
-		name: "random",
-		required: true,
-		options: ["random", "random2", "random3"],
-	},
-	{
-		id: "hilary",
-		option: "checkbox",
-		name: "hilary",
-		required: true,
-		options: ["hilary", "hilary2", "hilary3"],
-	},
-]);
+defineEmits(["submit-form"]);
 
-const handleSubmit = () => {
-	console.log(fields.value);
-	alert("Form submitted!");
-};
+const fields = ref<FormField[]>(props.fields || []);
 const addField = (fieldType: "text" | "checkbox" | "radio") => {
 	const newField: FormField = {
 		id: `${fieldType}-${Date.now()}`,
@@ -59,7 +32,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
-		<form @submit.prevent="handleSubmit" class="space-y-6">
+		<form class="space-y-6">
 			<h1 class="text-2xl font-semibold text-white text-center">Form Creator</h1>
 			<div
 				v-for="(field, index) in fields"
@@ -131,9 +104,9 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 
 			<div class="pt-4">
 				<button
-					@click.prevent="handleSubmit"
+					@click.prevent="$emit('submit-form', fields)"
 					class="inline-flex justify-center py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out">
-					Create Form
+					{{ actionName }}
 				</button>
 			</div>
 		</form>
