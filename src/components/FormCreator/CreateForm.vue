@@ -15,7 +15,7 @@ defineEmits(["submit-form"]);
 const fields = ref<FormField[]>(props.fields || []);
 const addField = (fieldType: "text" | "checkbox" | "radio") => {
 	const newField: FormField = {
-		id: fields.value[fields.value.length - 1].id + 1,
+		id: (fields.value[fields.value.length - 1]?.id ?? 0) + 1,
 		type: fieldType,
 		name: "new field",
 		required: false,
