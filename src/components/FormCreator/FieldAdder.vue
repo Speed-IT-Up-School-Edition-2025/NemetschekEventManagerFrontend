@@ -2,16 +2,16 @@
 	<div class="flex items-end space-x-4 pt-4">
 		<div class="relative flex-grow">
 			<label for="new-field-select" class="absolute text-grey-200 text-xs left-3 top-1 z-10"
-				>Field Type</label
+				>Вид поле</label
 			>
 			<div class="relative">
 				<select
 					id="new-field-select"
 					v-model="newFieldType"
 					class="block appearance-none w-full bg-grey-400 border-b-2 border-grey-200 text-white pt-5 pb-2 px-3 rounded-t-lg focus:outline-none focus:ring-0 focus:border-yellow">
-					<option value="text">Text</option>
-					<option value="radio">Radio</option>
-					<option value="checkbox">Checkbox</option>
+					<option value="text">Свободен текст</option>
+					<option value="radio">Единичен избор</option>
+					<option value="checkbox">Множествен избор</option>
 				</select>
 				<div
 					class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
@@ -28,7 +28,7 @@
 		<button
 			@click.prevent="$emit('add-field', newFieldType)"
 			class="flex-shrink-0 px-6 py-2.5 bg-yellow text-grey-900 font-medium rounded-full shadow-md hover:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow focus:ring-offset-2 focus:ring-offset-dark-grey transition-colors duration-150 ease-in-out">
-			Add Field
+			Добави поле
 		</button>
 	</div>
 </template>

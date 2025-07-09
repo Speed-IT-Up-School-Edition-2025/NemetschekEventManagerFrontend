@@ -32,14 +32,10 @@ const formData = reactive<Omit<CreateEventDto, "fields">>({
 </script>
 
 <template>
-	<div
-		class="sticky top-6 p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto">
-		<form
-			:ref="formRef"
-			@submit.prevent="emit('submit', toRaw(formData))"
-			class="space-y-6">
+	<div class="sticky top-6 p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto">
+		<form :ref="formRef" @submit.prevent="emit('submit', toRaw(formData))" class="space-y-6">
 			<div class="flex flex-col gap-4">
-				<h2 class="text-yellow text-2xl font-semibold text-center mb-6">
+				<h2 class="text-white text-2xl font-semibold text-center mb-6">
 					Информация за събитието
 				</h2>
 
@@ -64,9 +60,7 @@ const formData = reactive<Omit<CreateEventDto, "fields">>({
 				</div>
 
 				<div>
-					<label class="text-white mb-1" for="location"
-						>Местоположение</label
-					>
+					<label class="text-white mb-1" for="location">Местоположение</label>
 					<input
 						id="location"
 						v-model="formData.location"
@@ -89,9 +83,7 @@ const formData = reactive<Omit<CreateEventDto, "fields">>({
 				</div>
 
 				<div>
-					<label class="text-white mb-1" for="description"
-						>Описание</label
-					>
+					<label class="text-white mb-1" for="description">Описание</label>
 					<textarea
 						id="description"
 						v-model="formData.description"
