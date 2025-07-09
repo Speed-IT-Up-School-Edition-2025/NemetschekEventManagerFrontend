@@ -74,7 +74,7 @@ const logout = async () => {
 				</RouterLink>
 				<button
 					@click="logout"
-					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
+					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer">
 					Излизане
 				</button>
 			</div>
@@ -138,7 +138,7 @@ const logout = async () => {
 							</RouterLink>
 							<button
 								@click="logout"
-								class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
+								class="block bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
 								Излизане
 							</button>
 						</div>
