@@ -35,7 +35,19 @@ function validateEmail(email: string): string | null {
 function handleSubmit() {
 	errors.email = validateEmail(form.email) || "";
 	errors.password = form.password ? "" : "Паролата е задължителна.";
-
+	if (form.password && form.password.length < 8) {
+		errors.password = "Паролата трябва да e поне 8 символа.";
+	} else if (form.password && form.password.includes(" ")) {
+		errors.password = "Паролата не трябва да съдържа интервали.";
+	} else if (form.password && !/[A-Z]/.test(form.password)) {
+		errors.password = "Паролата трябва да съдържа поне една главна буква.";
+	} else if (form.password && !/[a-z]/.test(form.password)) {
+		errors.password = "Паролата трябва да съдържа поне една малка буква.";
+	} else if (form.password && !/[0-9]/.test(form.password)) {
+		errors.password = "Паролата трябва да съдържа поне една цифра.";
+	} else if (form.password && !/[!@#$%^&*(),.?":{}|<>]/.test(form.password)) {
+		errors.password = "Паролата трябва да съдържа поне един специален символ.";
+	}
 	if (!isLogin.value) {
 		errors.confirmPassword = form.confirmPassword
 			? form.password === form.confirmPassword
