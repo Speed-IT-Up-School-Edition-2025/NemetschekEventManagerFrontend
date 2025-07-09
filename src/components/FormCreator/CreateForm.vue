@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from "vue";
+import { ref } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import CancelIcon from "@/components/icons/CancelIcon.vue";
 import FieldAdder from "@/components/FormCreator/FieldAdder.vue";
@@ -31,7 +31,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 </script>
 
 <template>
-	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
+	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto">
 		<form class="space-y-6" @submit.prevent="$emit('submit-form', fields)">
 			<h1 class="text-2xl font-semibold text-white text-center">Конфигурация на формат</h1>
 			<div

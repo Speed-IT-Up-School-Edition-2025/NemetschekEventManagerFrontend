@@ -5,3 +5,21 @@ export interface FormField {
 	required: boolean;
 	options: string[];
 }
+
+export interface Event {
+	id: string;
+	name: string;
+	description: string;
+	date: string;
+	signUpDeadline: string;
+	location: string;
+}
+
+export interface CreateEventDto {
+	name: string;
+	description: string;
+	date: string;
+	signUpDeadline: string;
+	location: string;
+	fields: FormField[];
+}
