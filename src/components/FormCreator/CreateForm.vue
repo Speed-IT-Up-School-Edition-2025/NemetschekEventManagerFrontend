@@ -15,9 +15,9 @@ defineEmits(["submit-form"]);
 const fields = ref<FormField[]>(props.fields || []);
 const addField = (fieldType: "text" | "checkbox" | "radio") => {
 	const newField: FormField = {
-		id: fields.value[fields.value.length - 1].id + 1,
+		id: (fields.value[fields.value.length - 1]?.id ?? 0) + 1,
 		type: fieldType,
-		name: "new field",
+		name: "New field",
 		required: false,
 		options: [],
 	};
@@ -32,7 +32,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
-		<form class="space-y-6">
+		<form class="space-y-6" @submit.prevent="$emit('submit-form', fields)">
 			<h1 class="text-2xl font-semibold text-white text-center">Form Creator</h1>
 			<div
 				v-for="(field, index) in fields"
@@ -109,7 +109,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 
 			<div class="pt-4">
 				<button
-					@click.prevent="$emit('submit-form', fields)"
+					type="submit"
 					class="inline-flex justify-center py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out">
 					{{ actionName }}
 				</button>
