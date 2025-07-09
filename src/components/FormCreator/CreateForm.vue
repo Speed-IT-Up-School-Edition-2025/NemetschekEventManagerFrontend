@@ -43,6 +43,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 						:for="`field-${field.id}`"
 						class="flex text-lg font-medium text-white flex-1">
 						<InputField
+							:required="true"
 							class="flex-1"
 							:id="`field-${field.id}`"
 							v-model="field.name"></InputField>
@@ -88,6 +89,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
 						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
 							<InputField
+								:required="true"
 								:id="`${field.id}-${index}`"
 								v-model="field.options[index]"></InputField>
 						</label>

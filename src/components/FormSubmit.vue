@@ -36,9 +36,7 @@ defineEmits(["submit-form"]);
 				:key="fieldIndex"
 				class="bg-grey-800 p-4 rounded-lg shadow-md border-l-4 border-yellow transition-transform duration-200 ease-in-out hover:scale-[1.03] hover:shadow-xl/30 hover:z-10">
 				<div class="flex items-center justify-between mb-2 gap-4">
-					<h1
-						:for="`field-${field.id}`"
-						class="flex text-lg font-medium text-white flex-1">
+					<h1 class="flex text-lg font-medium text-white flex-1">
 						{{ field.name }}
 						<span v-if="field.required" class="text-red-500 ml-1">*</span>
 					</h1>
@@ -50,7 +48,6 @@ defineEmits(["submit-form"]);
 						id="`field-${field.id}`"
 						v-model="submission[fieldIndex].options[0]" />
 				</div>
-
 				<div
 					v-else-if="field.type === 'checkbox' || field.type === 'radio'"
 					class="space-y-2">
@@ -64,7 +61,9 @@ defineEmits(["submit-form"]);
 							:type="field.type"
 							:name="`field-${field.id}`"
 							:value="field.options[index]"
-							:required="field.required"
+							:required="
+								field.required && submission[fieldIndex].options.length === 0
+							"
 							v-model="submission[fieldIndex].options"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
 						<input

@@ -24,7 +24,7 @@ const fields: FormField[] = [
 	},
 	{
 		name: "fddfs2",
-		required: true,
+		required: false,
 		type: "radio",
 		id: 1,
 		options: ["Option 1", "Option 2", "Option 3"],
