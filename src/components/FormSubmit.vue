@@ -30,7 +30,7 @@ defineEmits(["submit-form"]);
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
 		<form class="space-y-6" @submit.prevent="$emit('submit-form', submission)">
-			<h1 class="text-2xl font-semibold text-white text-center">Form Viewer</h1>
+			<h1 class="text-2xl font-semibold text-white text-center">Преглед на формуляр</h1>
 			<div
 				v-for="(field, fieldIndex) in fields"
 				:key="fieldIndex"
