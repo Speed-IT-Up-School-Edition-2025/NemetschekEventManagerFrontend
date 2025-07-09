@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from "vue";
+import { ref } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import CancelIcon from "@/components/icons/CancelIcon.vue";
 import FieldAdder from "@/components/FormCreator/FieldAdder.vue";

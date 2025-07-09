@@ -6,7 +6,7 @@ const emit = defineEmits<{
 	(e: "submit", formData: Omit<CreateEventDto, "fields">): void;
 }>();
 
-const { event } = withDefaults(
+const props = withDefaults(
 	defineProps<{
 		formRef: string;
 		event: Omit<CreateEventDto, "fields">;
@@ -23,11 +23,11 @@ const { event } = withDefaults(
 );
 
 const formData = reactive<Omit<CreateEventDto, "fields">>({
-	name: event.name,
-	date: event.date,
-	location: event.location,
-	signUpDeadline: event.signUpDeadline,
-	description: event.description,
+	name: props.event.name,
+	date: props.event.date,
+	location: props.event.location,
+	signUpDeadline: props.event.signUpDeadline,
+	description: props.event.description,
 });
 </script>
 
