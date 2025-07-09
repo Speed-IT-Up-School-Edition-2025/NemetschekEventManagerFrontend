@@ -8,7 +8,7 @@
 				<select
 					id="new-field-select"
 					v-model="newFieldType"
-					class="block appearance-none w-full bg-grey-400 border-b-2 border-grey-200 text-white pt-5 pb-2 px-3 rounded-t-lg focus:outline-none focus:ring-0 focus:border-yellow">
+					class="block appearance-none w-full bg-grey-400 border-b-2 border-grey-200 text-white pt-5 pb-2 px-3 rounded-t-lg focus:outline-none focus:ring-0 focus:border-yellow cursor-pointer">
 					<option value="text">Свободен текст</option>
 					<option value="radio">Единичен избор</option>
 					<option value="checkbox">Множествен избор</option>
@@ -27,7 +27,7 @@
 		</div>
 		<button
 			@click.prevent="$emit('add-field', newFieldType)"
-			class="flex-shrink-0 px-6 py-2.5 bg-yellow text-grey-900 font-medium rounded-full shadow-md hover:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow focus:ring-offset-2 focus:ring-offset-dark-grey transition-colors duration-150 ease-in-out">
+			class="flex-shrink-0 px-6 py-2.5 bg-yellow text-grey-900 font-medium rounded-full shadow-md hover:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow focus:ring-offset-2 focus:ring-offset-dark-grey transition-colors duration-150 ease-in-out cursor-pointer">
 			Добави поле
 		</button>
 	</div>

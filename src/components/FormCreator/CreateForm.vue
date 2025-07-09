@@ -61,7 +61,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 						<span class="ml-3 text-sm font-medium text-white-900">Задължително</span>
 					</label>
 					<button
-						class="border border-red text-red hover:bg-red hover:text-white focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-1.5 text-center transition-colors"
+						class="border border-red text-red hover:bg-red hover:text-white focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-1.5 text-center transition-colors cursor-pointer"
 						@click="fields.splice(index, 1)">
 						Премахни поле
 					</button>
@@ -86,7 +86,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 							:id="`${field.id}-${index}`"
 							:type="field.type"
 							:name="`field-${field.id}`"
-							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
+							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm cursor-pointer" />
 						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
 							<InputField
 								:required="true"
@@ -94,13 +94,13 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 								v-model="field.options[index]"></InputField>
 						</label>
 						<button
-							class="ml-3 w-8 h-8 flex-shrink-0 flex items-center justify-center text-red-400 rounded-full hover:bg-red-400/20 transition-colors"
+							class="ml-3 w-8 h-8 flex-shrink-0 flex items-center justify-center text-red-400 rounded-full hover:bg-red-400/20 transition-colors cursor-pointer"
 							@click.prevent="field.options.splice(index, 1)">
 							<CancelIcon class="fill-red" />
 						</button>
 					</div>
 					<button
-						class="mt-2 text-yellow-400 hover:bg-yellow-400/20 text-sm font-medium rounded-md px-3 py-1.5 transition-colors"
+						class="mt-2 text-yellow-400 hover:bg-yellow-400/20 text-sm font-medium rounded-md px-3 py-1.5 transition-colors cursor-pointer"
 						@click.prevent="field.options.push(`Oпция ${field.options.length + 1}`)">
 						Добави опция
 					</button>
@@ -112,7 +112,7 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 			<div class="pt-4">
 				<button
 					type="submit"
-					class="inline-flex justify-center py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out">
+					class="inline-flex justify-center py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out cursor-pointer">
 					{{ actionName }}
 				</button>
 			</div>
