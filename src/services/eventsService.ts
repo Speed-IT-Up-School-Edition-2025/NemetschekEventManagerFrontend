@@ -1,16 +1,9 @@
-export interface Event {
-	id: string;
-	title: string;
-	description: string;
-	date: string;
-	signUpDeadline: string;
-	location: string;
-}
+import type { Event } from "@/utils/types";
 
 const events: Event[] = [
 	{
 		id: "1",
-		title: "Tech Conference 2023",
+		name: "Tech Conference 2023",
 		description:
 			"A conference for tech enthusiasts to explore the latest trends in technology.",
 		date: "2025-10-15",
@@ -19,7 +12,7 @@ const events: Event[] = [
 	},
 	{
 		id: "2",
-		title: "Tech Conference 2023",
+		name: "Tech Conference 2023",
 		description:
 			"A conference for tech enthusiasts to explore the latest trends in technology.",
 		date: "2025-10-15",
@@ -28,7 +21,7 @@ const events: Event[] = [
 	},
 	{
 		id: "3",
-		title: "Tech Conference 2023",
+		name: "Tech Conference 2023",
 		description:
 			"A conference for tech enthusiasts to explore the latest trends in technology.",
 		date: "2025-10-15",
@@ -37,7 +30,7 @@ const events: Event[] = [
 	},
 	{
 		id: "4",
-		title: "Tech Conference 2023",
+		name: "Tech Conference 2023",
 		description:
 			"A conference for tech enthusiasts to explore the latest trends in technology.",
 		date: "2025-10-15",

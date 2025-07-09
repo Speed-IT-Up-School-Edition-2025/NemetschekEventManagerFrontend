@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Event } from "@/services/eventsService";
+import type { Event } from "@/utils/types";
 
 import CalendarIcon from "./icons/CalendarIcon.vue";
 import LocationIcon from "./icons/LocationIcon.vue";
@@ -11,10 +11,10 @@ const { event } = defineProps<{
 </script>
 
 <template>
-	<div class="space-y-6">
+	<div class="sticky top-6 space-y-6">
 		<!-- Event Title -->
 		<div class="border-b border-white/20 pb-4">
-			<h1 class="text-3xl font-bold text-yellow">{{ event.title }}</h1>
+			<h1 class="text-3xl font-bold text-yellow">{{ event.name }}</h1>
 		</div>
 
 		<!-- Event Details Grid -->
@@ -23,7 +23,9 @@ const { event } = defineProps<{
 			<div class="flex items-start gap-3">
 				<CalendarIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">Дата на събитие</h3>
+					<h3 class="text-lg font-semibold text-white">
+						Дата на събитие
+					</h3>
 					<p class="text-white/80">
 						{{
 							new Date(event.date).toLocaleDateString("bg-BG", {
@@ -52,17 +54,22 @@ const { event } = defineProps<{
 			<div class="flex items-start gap-3">
 				<ClockIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">Краен срок на записване</h3>
+					<h3 class="text-lg font-semibold text-white">
+						Краен срок на записване
+					</h3>
 					<p class="text-white/80">
 						{{
-							new Date(event.signUpDeadline).toLocaleDateString("bg-BG", {
-								weekday: "long",
-								year: "numeric",
-								month: "long",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-							})
+							new Date(event.signUpDeadline).toLocaleDateString(
+								"bg-BG",
+								{
+									weekday: "long",
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+									hour: "2-digit",
+									minute: "2-digit",
+								}
+							)
 						}}
 					</p>
 				</div>
