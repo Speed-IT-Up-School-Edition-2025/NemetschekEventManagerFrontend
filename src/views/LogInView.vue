@@ -1,3 +1,61 @@
+<script setup lang="ts">
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { authApi } from "@/services/authService";
+import { useUserStore } from "@/stores/userStore";
+import { useAsync } from "@/composables/useAsync";
+const isLogin = ref(true);
+const form = reactive({
+	email: "",
+	password: "",
+	confirmPassword: "",
+});
+const errors = reactive<{ email?: string; password?: string; confirmPassword?: string }>({});
+const router = useRouter();
+const userStore = useUserStore();
+
+const { execute, data } = useAsync(() =>
+	isLogin.value
+		? authApi.login(form.email, form.password)
+		: authApi.register(form.email, form.password)
+);
+
+function toggleMode() {
+	isLogin.value = !isLogin.value;
+	errors.email = errors.password = errors.confirmPassword = "";
+}
+
+function validateEmail(email: string): string | null {
+	if (!email) return "Имейлът е задължителен.";
+	const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	if (!re.test(email)) return "Моля, въведи валиден имейл адрес.";
+	return null;
+}
+
+function handleSubmit() {
+	errors.email = validateEmail(form.email) || "";
+	errors.password = form.password ? "" : "Паролата е задължителна.";
+
+	if (!isLogin.value) {
+		errors.confirmPassword = form.confirmPassword
+			? form.password === form.confirmPassword
+				? ""
+				: "Паролите не съвпадат."
+			: "Полето за потвърждение на парола е задължително.";
+	}
+
+	const hasError = Object.values(errors).some(msg => msg);
+	if (hasError) {
+		return;
+	}
+	execute().then(() => {
+		if (data.value) {
+			userStore.setAccessToken(data.value.accessToken);
+			router.push("/home");
+		}
+	});
+}
+</script>
 <template>
 	<div class="min-h-screen flex items-center justify-center bg-grey">
 		<form
@@ -66,62 +124,3 @@
 		</form>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
-import { authApi } from "@/services/authService";
-import { useUserStore } from "@/stores/userStore";
-import { useAsync } from "@/composables/useAsync";
-const isLogin = ref(true);
-const form = reactive({
-	email: "",
-	password: "",
-	confirmPassword: "",
-});
-const errors = reactive<{ email?: string; password?: string; confirmPassword?: string }>({});
-const router = useRouter();
-const userStore = useUserStore();
-
-const { execute, data } = useAsync(() =>
-	isLogin.value
-		? authApi.login(form.email, form.password)
-		: authApi.register(form.email, form.password)
-);
-
-function toggleMode() {
-	isLogin.value = !isLogin.value;
-	errors.email = errors.password = errors.confirmPassword = "";
-}
-
-function validateEmail(email: string): string | null {
-	if (!email) return "Имейлът е задължителен.";
-	const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	if (!re.test(email)) return "Моля, въведи валиден имейл адрес.";
-	return null;
-}
-
-function handleSubmit() {
-	errors.email = validateEmail(form.email) || "";
-	errors.password = form.password ? "" : "Паролата е задължителна.";
-
-	if (!isLogin.value) {
-		errors.confirmPassword = form.confirmPassword
-			? form.password === form.confirmPassword
-				? ""
-				: "Паролите не съвпадат."
-			: "Полето за потвърждение на парола е задължително.";
-	}
-
-	const hasError = Object.values(errors).some(msg => msg);
-	if (hasError) {
-		return;
-	}
-	execute().then(() => {
-		if (data.value) {
-			userStore.setAccessToken(data.value.accessToken);
-			router.push("/home");
-		}
-	});
-}
-</script>
