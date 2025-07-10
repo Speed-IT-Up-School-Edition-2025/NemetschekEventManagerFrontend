@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+import { ref } from "vue";
+
+const emit = defineEmits<{
+	(e: "add-field", fieldType: "text" | "checkbox" | "radio"): void;
+}>();
+
+const newFieldType = ref<"text" | "checkbox" | "radio">("text");
+</script>
+
 <template>
 	<div class="flex items-end space-x-4 pt-4">
 		<div class="relative flex-grow">
@@ -26,17 +36,13 @@
 			</div>
 		</div>
 		<button
-			@click.prevent="$emit('add-field', newFieldType)"
+			@click.prevent="emit('add-field', newFieldType)"
 			class="flex-shrink-0 px-6 py-2.5 bg-yellow text-grey-900 font-medium rounded-full shadow-md hover:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow focus:ring-offset-2 focus:ring-offset-dark-grey transition-colors duration-150 ease-in-out cursor-pointer">
 			Добави поле
 		</button>
 	</div>
 </template>
-<script lang="ts" setup>
-import { ref } from "vue";
 
-const newFieldType = ref<"text" | "checkbox" | "radio">("text");
-</script>
 <style>
 input[type="text"]:focus,
 select:focus {

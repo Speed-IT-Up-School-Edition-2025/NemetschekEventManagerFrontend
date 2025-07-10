@@ -1,6 +1,5 @@
 <template>
-	<div
-		class="w-6 h-6 rounded-full bg-yellow flex items-center justify-center flex-shrink-0 mt-1">
+	<div class="w-6 h-6 rounded-full bg-yellow flex items-center justify-center flex-shrink-0 mt-1">
 		<svg class="w-4 h-4 text-grey" fill="currentColor" viewBox="0 0 20 20">
 			<path
 				fill-rule="evenodd"

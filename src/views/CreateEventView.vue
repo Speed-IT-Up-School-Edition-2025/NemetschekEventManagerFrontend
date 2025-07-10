@@ -1,50 +1,38 @@
 <script setup lang="ts">
 import EventInformationFormComponent from "@/components/EventInformationFormComponent.vue";
 import CreateForm from "@/components/FormCreator/CreateForm.vue";
-import FourPanelLayout from "@/components/FourPanelLayout.vue";
-import type { CreateEventDto, FormField } from "@/utils/types.ts";
+import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
+import { useTemplateRef } from "vue";
 
-const fields: FormField[] = [
-	{
-		name: "fddfs",
-		required: true,
-		type: "text",
-		id: 0,
-		options: [],
-	},
-];
+const createEventInformationRef = useTemplateRef("createEventInformationRef");
+const createEventFormRef = useTemplateRef("createEventFormRef");
 
-const eventInformationSubmitHandler = (
-	formData: Omit<CreateEventDto, "fields">
-) => {
-	console.log(formData);
-};
+function handleSubmit() {
+	const eventInformation = createEventInformationRef.value?.getState();
+	const formFields = createEventFormRef.value?.getState();
+
+	console.log({
+		eventInformation,
+		formFields,
+	});
+}
 </script>
 
 <template>
-	<FourPanelLayout>
-		<template #top>
-			<h1 class="text-yellow text-3xl font-semibold text-center my-6">
-				Създаване на ново събитие
-			</h1>
-		</template>
-		<template #left>
-			<EventInformationFormComponent
-				@submit="eventInformationSubmitHandler"
-				form-ref="eventInformationForm"
-				:event="{
-					name: '',
-					date: '',
-					location: '',
-					signUpDeadline: '',
-					description: '',
-				}" />
-		</template>
-		<template #right>
-			<CreateForm
-				action-name="CreateForm"
-				:fields="fields"
-				@submit-form="console.log" />
-		</template>
-	</FourPanelLayout>
+	<form @submit.prevent="handleSubmit">
+		<TwoPanelLayout action-name="Създаване на ново събитие">
+			<template #left>
+				<EventInformationFormComponent ref="createEventInformationRef" />
+			</template>
+			<template #right>
+				<CreateForm ref="createEventFormRef" />
+
+				<button
+					type="submit"
+					class="w-full bg-yellow text-dark-grey py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer mt-6">
+					Запази информацията
+				</button>
+			</template>
+		</TwoPanelLayout>
+	</form>
 </template>
