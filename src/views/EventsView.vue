@@ -1,24 +1,49 @@
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
 import { getEvents } from "@/services/eventsService";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import FilterComponent from "@/components/FilterComponent.vue";
+import { useAsync } from "@/composables/useAsync";
+import LoaderComponent from "@/components/LoaderComponent.vue";
 import type { Event } from "@/utils/types";
 
-const events = ref(getEvents());
+const { execute, data: events, error, loading } = useAsync(getEvents);
+
 const searchedEvents = ref<Event[]>([]);
+
+onMounted(() => {
+	execute();
+});
 </script>
 
 <template>
-	<h2 class="text-3xl md:text-4xl pl-10 pt-6 font-bold text-yellow">Събития</h2>
-	<FilterComponent v-model:events="events" v-model:searched-events="searchedEvents" />
+	<h2 class="text-3xl md:text-4xl pl-10 pt-6 font-bold text-yellow">
+		Събития
+	</h2>
+
+	<div v-if="loading"><LoaderComponent /></div>
+	<div v-else-if="error" class="p-10 text-center text-red">
+		Error: {{ error }}
+	</div>
 	<div
-		class="p-10 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10 justify-items-center overflow-y-auto">
-		<CardComponent
-			class="max-w-md"
-			v-for="event in searchedEvents.length === 0 ? events : searchedEvents"
-			:event="event"
-			:key="event.id" />
+		v-else-if="!events || events.length === 0"
+		class="p-10 text-center text-white">
+		No events found
+	</div>
+	<div v-else>
+		<FilterComponent
+			v-model:events="events"
+			v-model:searched-events="searchedEvents" />
+		<div
+			class="p-10 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10 justify-items-center overflow-y-auto">
+			<CardComponent
+				class="max-w-md"
+				v-for="event in searchedEvents.length === 0
+					? events
+					: searchedEvents"
+				:event="event"
+				:key="event.id" />
+		</div>
 	</div>
 </template>
 

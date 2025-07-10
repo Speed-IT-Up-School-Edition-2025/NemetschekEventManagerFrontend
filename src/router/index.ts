@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { useUIStore } from "@/stores/uiStore";
 
+const HomeView = () => import("@/views/HomeView.vue");
 const EventsView = () => import("@/views/EventsView.vue");
 const EventDetailsView = () => import("@/views/EventDetailsView.vue");
 const JoinedEventsView = () => import("@/views/JoinedEventsView.vue");
@@ -15,13 +16,17 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
+			path: "/",
+			name: "home",
+			component: HomeView,
+		},
+		{
 			path: "/events",
 			name: "events",
 			meta: { requiresAuth: true },
 			children: [
 				{
 					path: "",
-					alias: ["/"],
 					name: "events-list",
 					component: EventsView,
 				},
@@ -56,9 +61,13 @@ const router = createRouter({
 			meta: { requiresGuest: true },
 		},
 		{
-			path: "/:pathMatch(.*)*",
+			path: "/not-found",
 			name: "not-found",
 			component: NotFoundView,
+		},
+		{
+			path: "/:pathMatch(.*)*",
+			redirect: { name: "not-found" },
 		},
 	],
 });
@@ -68,17 +77,26 @@ router.beforeEach((to, _, next) => {
 	const { triggerToast } = useUIStore();
 
 	if (userStore.refreshToken && !userStore.accessToken) {
-		userStore.refreshAccessToken().then(success => {
-			if (!success) {
-				triggerToast("Неуспешно обновяване на токена. Моля, впишете се отново.", "error");
-				return next("/login");
-			}
+		userStore
+			.refreshAccessToken()
+			.then(success => {
+				if (!success) {
+					triggerToast(
+						"Неуспешно обновяване на токена. Моля, впишете се отново.",
+						"error"
+					);
+					return next("/login");
+				}
 
-			next();
-		}).catch(() => {
-			triggerToast("Неуспешно обновяване на токена. Моля, впишете се отново.", "error");
-			next("/login");
-		});
+				next();
+			})
+			.catch(() => {
+				triggerToast(
+					"Неуспешно обновяване на токена. Моля, впишете се отново.",
+					"error"
+				);
+				next("/login");
+			});
 
 		return;
 	}
@@ -88,7 +106,10 @@ router.beforeEach((to, _, next) => {
 	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
 
 	if (requiresAuth && !userStore.isAuthenticated) {
-		triggerToast("Трябва да бъдете вписани, за да имате достъп до тази страница!", "warning");
+		triggerToast(
+			"Трябва да бъдете вписани, за да имате достъп до тази страница!",
+			"warning"
+		);
 
 		return next("/login");
 	} else if (requiresGuest && userStore.isAuthenticated) {

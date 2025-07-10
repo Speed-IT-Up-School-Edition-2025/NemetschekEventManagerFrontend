@@ -16,11 +16,12 @@ const filtersOpen = ref(false);
 const date = ref<[Date, Date] | null>(null);
 const activeEvent = ref<boolean | null>(null);
 const sortOpened = ref(false);
-const endPoint = "http://172.16.17.21:5000";
 const sort = ref<"new" | "old" | "az" | "za" | null>(null);
 
 const events = defineModel<Event[]>("events", { required: true });
-const searchedEvents = defineModel<Event[]>("searched-events", { required: true });
+const searchedEvents = defineModel<Event[]>("searched-events", {
+	required: true,
+});
 
 onMounted(() => {
 	const startDate = new Date();
@@ -68,7 +69,9 @@ async function filterBy(): Promise<void> {
 		date.value?.[1].setMilliseconds(59);
 		formattedEndDate.value = date.value?.[0].toISOString();
 	}
-	parameters.push(formattedStartDate.value ? "fromDate=${formattedStartDate.value}" : "");
+	parameters.push(
+		formattedStartDate.value ? "fromDate=${formattedStartDate.value}" : ""
+	);
 	parameters.push(formattedEndDate.value ? "toDate=${formatedEndDate}" : "");
 	parameters.push(activeEvent.value ? "activeOnly=${activeEvent}" : "");
 	switch (sort.value) {
@@ -80,13 +83,14 @@ async function filterBy(): Promise<void> {
 			parameters.push("sortDescending=true");
 	}
 	const query = parameters.join("&");
-	events.value = await apiClient.get<Event[]>(endPoint + "/events?" + query);
+	events.value = await apiClient.get<Event[]>("/events?" + query);
 }
 </script>
 <template>
 	<div class="hidden md:flex justify-between items-start">
 		<span class="flex items-center">
-			<div class="relative inline-block text-left sm:gap-0 md:gap-2 pl-10 pt-10">
+			<div
+				class="relative inline-block text-left sm:gap-0 md:gap-2 pl-10 pt-10">
 				<button
 					type="button"
 					@click="filtersOpen = !filtersOpen"
@@ -108,7 +112,9 @@ async function filterBy(): Promise<void> {
 							class="absolute mt-1 flex flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
 							<div
 								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center">Период: </span>
+								<span class="text-white text-lg self-center"
+									>Период:
+								</span>
 								<DatePicker
 									class="w-md"
 									v-model="date"
@@ -122,7 +128,8 @@ async function filterBy(): Promise<void> {
 									lang="bg"
 									dark />
 							</div>
-							<div class="flex flex-row justify-between items-center pl-6 pr-3">
+							<div
+								class="flex flex-row justify-between items-center pl-6 pr-3">
 								<span class="flex gap-4">
 									<input
 										type="checkbox"
@@ -130,7 +137,9 @@ async function filterBy(): Promise<void> {
 										id="active"
 										v-model="activeEvent"
 										class="w-5 h-5" />
-									<label for="active" class="text-lg self-center"
+									<label
+										for="active"
+										class="text-lg self-center"
 										>Активно събитие</label
 									>
 								</span>
@@ -218,7 +227,9 @@ async function filterBy(): Promise<void> {
 								class="absolute mt-1 flex flex-1 flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
 								<div
 									class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-									<span class="text-white text-lg self-center">Период: </span>
+									<span class="text-white text-lg self-center"
+										>Период:
+									</span>
 									<DatePicker
 										class="w-md"
 										v-model="date"
@@ -232,7 +243,8 @@ async function filterBy(): Promise<void> {
 										lang="bg"
 										dark />
 								</div>
-								<div class="flex flex-row justify-between items-center pl-6 pr-3">
+								<div
+									class="flex flex-row justify-between items-center pl-6 pr-3">
 									<span class="flex gap-4">
 										<input
 											type="checkbox"
@@ -240,7 +252,9 @@ async function filterBy(): Promise<void> {
 											id="active"
 											v-model="activeEvent"
 											class="w-5 h-5" />
-										<label for="active" class="text-lg self-center"
+										<label
+											for="active"
+											class="text-lg self-center"
 											>Активно събитие</label
 										>
 									</span>
@@ -272,8 +286,12 @@ async function filterBy(): Promise<void> {
 							leave-to="opacity-0 -translate-y-3">
 							<div
 								class="absolute flex justify-evenly mt-3 flex-col h-30 w-40 rounded-2xl origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
-								<button class="text-white hover:text-yellow">Най-нови</button>
-								<button class="text-white hover:text-yellow">Най-стари</button>
+								<button class="text-white hover:text-yellow">
+									Най-нови
+								</button>
+								<button class="text-white hover:text-yellow">
+									Най-стари
+								</button>
 								<button class="text-white hover:text-yellow">
 									Азбучен ред: А до Я
 								</button>
