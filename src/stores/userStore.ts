@@ -15,7 +15,7 @@ export const useUserStore = defineStore("user", {
 			try {
 				// TODO check casing
 				const res = await apiClient.post<{ accessToken: string }>(
-					"/auth/refresh",
+					"/refresh",
 					{
 						refreshToken: this.refreshToken,
 					}
@@ -31,6 +31,10 @@ export const useUserStore = defineStore("user", {
 		setAccessToken(token: string) {
 			this.accessToken = token;
 		},
+		setRefreshToken(token: string) {
+  			this.refreshToken = token;
+  			localStorage.setItem("refreshToken", token);
+		},
 		async logout() {
 			this.accessToken = null;
 			this.profile = null;
@@ -38,10 +42,12 @@ export const useUserStore = defineStore("user", {
 			localStorage.removeItem("refreshToken");
 
 			try {
-        		await apiClient.post("/logout", { refreshToken: this.refreshToken });
-     	 	} catch (err) {
-        		console.error("Server logout failed:", err);
-    		}
+				await apiClient.post("/logout", {
+					refreshToken: this.refreshToken,
+				});
+			} catch (err) {
+				console.error("Server logout failed:", err);
+			}
 		},
 		async fetchUserProfile() {
 			this.profile = await apiClient.get<UserProfile>("/users/me");

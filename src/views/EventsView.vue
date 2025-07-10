@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
 import { getEvents } from "@/services/eventsService";
-import "@vuepic/vue-datepicker/dist/main.css";
+import { ref } from "vue";
 import FilterComponent from "@/components/FilterComponent.vue";
 import type { Event } from "@/utils/types";
-import { ref } from "vue";
 
 const events = ref(getEvents());
 const searchedEvents = ref<Event[]>([]);
