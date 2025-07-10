@@ -38,10 +38,12 @@ export const useUserStore = defineStore("user", {
 			localStorage.removeItem("refreshToken");
 
 			try {
-        		await apiClient.post("/logout", { refreshToken: this.refreshToken });
-     	 	} catch (err) {
-        		console.error("Server logout failed:", err);
-    		}
+				await apiClient.post("/logout", {
+					refreshToken: this.refreshToken,
+				});
+			} catch (err) {
+				console.error("Server logout failed:", err);
+			}
 		},
 		async fetchUserProfile() {
 			this.profile = await apiClient.get<UserProfile>("/users/me");

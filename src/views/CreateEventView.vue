@@ -2,7 +2,10 @@
 import EventInformationFormComponent from "@/components/EventInformationFormComponent.vue";
 import CreateForm from "@/components/FormCreator/CreateForm.vue";
 import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
+import { useCurrentEventStore } from "@/stores/currentEventStore";
 import { useTemplateRef } from "vue";
+
+const { currentEvent } = useCurrentEventStore();
 
 const createEventInformationRef = useTemplateRef("createEventInformationRef");
 const createEventFormRef = useTemplateRef("createEventFormRef");
@@ -22,10 +25,14 @@ function handleSubmit() {
 	<form @submit.prevent="handleSubmit">
 		<TwoPanelLayout action-name="Създаване на ново събитие">
 			<template #left>
-				<EventInformationFormComponent ref="createEventInformationRef" />
+				<EventInformationFormComponent
+					ref="createEventInformationRef"
+					v-bind="{ event: currentEvent ?? undefined }" />
 			</template>
 			<template #right>
-				<CreateForm ref="createEventFormRef" />
+				<CreateForm
+					ref="createEventFormRef"
+					v-bind="{ fields: currentEvent?.fields ?? [] }" />
 
 				<button
 					type="submit"
