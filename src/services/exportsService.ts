@@ -36,28 +36,3 @@ export const downloadFile = async (endpoint: string, filename: string, type: str
 		);
 	}
 };
-
-// export const exportToCSV = () => {
-// 	if (!eventId.value) {
-// 		console.error("Event ID is not available for CSV export.");
-// 		return;
-// 	}
-// 	const url = `${baseUrl}/csv/${eventId.value}`;
-// 	const filename = `event_${eventId.value}.csv`;
-// 	const contentType = "text/csv"; // Or 'application/csv'
-// 	console.log(`Exporting to CSV from: ${url}`);
-// 	downloadFile(url, filename, contentType);
-// };
-//
-// export const exportToXLSX = () => {
-// 	if (!eventId.value) {
-// 		console.error("Event ID is not available for XLSX export.");
-// 		return;
-// 	}
-// 	// Assuming baseUrl is also applicable for XLSX or adjust as needed
-// 	const url = `${baseUrl}/xlsx/${eventId.value}`;
-// 	const filename = `event_${eventId.value}.xlsx`;
-// 	const contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-// 	console.log(`Exporting to XLSX from: ${url}`);
-// 	downloadFile(url, filename, contentType);
-// };
