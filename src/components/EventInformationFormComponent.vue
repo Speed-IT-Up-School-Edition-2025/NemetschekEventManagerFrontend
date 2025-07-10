@@ -9,16 +9,23 @@ const props = withDefaults(
 	{
 		event: () => ({
 			name: "",
-			date: new Date().toISOString(),
+			date: "",
 			location: "",
-			signUpDeadline: new Date().toISOString(),
+			signUpDeadline: "",
 			description: "",
 		}),
 	}
 );
 
 defineExpose({
-	getState: () => toRaw(formData.value),
+	getState: () => {
+		const rawData = toRaw(formData.value);
+
+		return {
+			...rawData,
+			signUpDeadline: rawData.signUpDeadline || undefined,
+		};
+	},
 });
 
 const formData = ref<Omit<CreateEventDto, "fields">>({
@@ -27,7 +34,8 @@ const formData = ref<Omit<CreateEventDto, "fields">>({
 </script>
 
 <template>
-	<div class="sticky top-6 p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto space-y-6">
+	<div
+		class="sticky top-6 p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto space-y-6">
 		<div class="flex flex-col gap-4">
 			<h2 class="text-white text-2xl font-semibold text-center mb-3">
 				Информация за събитието

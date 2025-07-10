@@ -13,16 +13,18 @@ export interface Event {
 	date: string;
 	signUpDeadline: string;
 	location: string;
+	fields: FormField[];
 }
 
 export interface CreateEventDto {
 	name: string;
 	description: string;
 	date: string;
-	signUpDeadline: string;
+	signUpDeadline?: string;
 	location: string;
 	fields: FormField[];
 }
+
 
 export interface FilledField {
 	id: number;
@@ -35,4 +37,8 @@ export interface GetSubmissionDto {
 	date: string;
 	// userEmail: string;
 	userId: string;
+}
+
+export interface CreateEventResponse {
+	id: string;
 }
