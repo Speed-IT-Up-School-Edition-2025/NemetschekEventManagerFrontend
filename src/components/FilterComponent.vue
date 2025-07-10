@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import SearchIcon from "@/components/icons/SearchIcon.vue";
-import { getEvents } from "@/services/eventsService";
 import { ref, watch, onMounted } from "vue";
 import { TransitionRoot, TransitionChild } from "@headlessui/vue";
 import DatePicker from "@vuepic/vue-datepicker";
@@ -9,14 +8,19 @@ import ChevronDownIcon from "@/components/icons/ChevronDownIcon.vue";
 import ChevronUp from "@/components/icons/ChevronUp.vue";
 import FilterIcon from "./icons/FilterIcon.vue";
 import SortIcon from "./icons/SortIcon.vue";
+import { apiClient } from "@/utils/api";
+import type { Event } from "@/utils/types";
 
 const search = ref("");
-const events = getEvents();
-const sortedEvents = ref();
 const filtersOpen = ref(false);
 const date = ref<[Date, Date] | null>(null);
-const activeEvent = ref(false);
+const activeEvent = ref<boolean | null>(null);
 const sortOpened = ref(false);
+const endPoint = "http://172.16.17.21:5000";
+const sort = ref<"new" | "old" | "az" | "za" | null>(null);
+
+const events = defineModel<Event[]>("events", { required: true });
+const searchedEvents = defineModel<Event[]>("searched-events", { required: true });
 
 onMounted(() => {
 	const startDate = new Date();
@@ -27,29 +31,56 @@ onMounted(() => {
 const textInputOptions = {
 	format: "dd.MM.yyyy",
 };
-async function sortBy(text: string): Promise<void> {
-	await new Promise(resolve => setTimeout(resolve, 100));
-	sortedEvents.value = events.filter(
-		currentEvent => currentEvent.title.includes(text) || currentEvent.description.includes(text)
-	);
+
+async function sortBy(text: string) {
+	const keywords = text
+		.toLowerCase()
+		.split(" ")
+		.filter(word => word.trim().length > 0);
+	searchedEvents.value =
+		events.value.filter(currentEvent =>
+			keywords.every(
+				key =>
+					currentEvent.name.toLowerCase().includes(key) ||
+					currentEvent.description.toLowerCase().includes(key)
+			)
+		) ?? null;
 }
 watch(search, async changedValue => {
 	if (changedValue) {
 		await sortBy(changedValue);
 	} else {
-		sortedEvents.value = null;
+		searchedEvents.value = [];
 	}
 });
 async function filterBy(): Promise<void> {
-	/*await new Promise(resolve => setTimeout(resolve, 100));
-	const info = search.value.split(" ");
-	sortedEvents.value = events.filter(
-		currentEvent => {
-			info.some(sub => currentEvent.title.toLowerCase().includes(sub) || currentEvent.description.toLowerCase().includes(sub))
-			const date = 
-			const yesActive = currentEvent.signUpDeadline > 
-		}
-	);*/
+	const formattedStartDate = ref("");
+	const formattedEndDate = ref("");
+	const parameters: string[] = [];
+	if (date.value?.[0] != null && date.value?.[1] != null) {
+		date.value?.[0].setHours(0);
+		date.value?.[0].setMinutes(0);
+		date.value?.[0].setMilliseconds(0);
+		formattedStartDate.value = date.value?.[0].toISOString();
+
+		date.value?.[1].setHours(23);
+		date.value?.[1].setMinutes(59);
+		date.value?.[1].setMilliseconds(59);
+		formattedEndDate.value = date.value?.[0].toISOString();
+	}
+	parameters.push(formattedStartDate.value ? "fromDate=${formattedStartDate.value}" : "");
+	parameters.push(formattedEndDate.value ? "toDate=${formatedEndDate}" : "");
+	parameters.push(activeEvent.value ? "activeOnly=${activeEvent}" : "");
+	switch (sort.value) {
+		case "az":
+			parameters.push("alphabetical=true");
+			break;
+		case "za":
+			parameters.push("alphabetical=true");
+			parameters.push("sortDescending=true");
+	}
+	const query = parameters.join("&");
+	events.value = await apiClient.get<Event[]>(endPoint + "/events?" + query);
 }
 </script>
 <template>
@@ -131,12 +162,24 @@ async function filterBy(): Promise<void> {
 						leave-to="opacity-0 -translate-y-3">
 						<div
 							class="absolute flex justify-evenly mt-3 flex-col h-30 w-40 rounded-2xl origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
-							<button class="text-white hover:text-yellow">Най-нови</button>
-							<button class="text-white hover:text-yellow">Най-стари</button>
-							<button class="text-white hover:text-yellow">
+							<button
+								class="text-white hover:text-yellow active:text-yellow"
+								@click="sort = sort === 'new' ? 'new' : null">
+								Най-нови
+							</button>
+							<button
+								class="text-white hover:text-yellow active:text-yellow"
+								@click="sort = sort === 'old' ? 'old' : null">
+								Най-стари
+							</button>
+							<button
+								class="text-white hover:text-yellow active:text-yellow"
+								@click="sort = sort === 'az' ? 'az' : null">
 								Азбучен ред: А до Я
 							</button>
-							<button class="text-white hover:text-yellow">
+							<button
+								class="text-white hover:text-yellow"
+								@click="sort = sort === 'za' ? 'za' : null">
 								Азбучен ред: Я до А
 							</button>
 						</div>
