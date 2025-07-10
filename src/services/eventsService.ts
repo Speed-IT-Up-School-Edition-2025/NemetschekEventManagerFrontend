@@ -3,7 +3,7 @@ import type { Event } from "@/utils/types";
 const events: Event[] = [
 	{
 		id: "1",
-		name: "Tech Conference 2023",
+		name: "Tech Conference 2022",
 		description:
 			"A conference for tech enthusiasts to explore the latest trends in technology.",
 		date: "2025-10-15",
@@ -13,7 +13,7 @@ const events: Event[] = [
 	},
 	{
 		id: "2",
-		name: "Tech Conference 2023",
+		name: "Tech Conference 2021",
 		description:
 			"A conference for tech enthusiasts to explore the latest trends in technology.",
 		date: "2025-10-15",
@@ -91,3 +91,4 @@ export function getEventById(id: string) {
 
 	return event;
 }
+
