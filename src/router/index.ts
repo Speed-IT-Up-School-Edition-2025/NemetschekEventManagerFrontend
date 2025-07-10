@@ -10,6 +10,7 @@ const CreateEvent = () => import("@/views/CreateEventView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
 const LogInView = () => import("@/views/LogInView.vue");
 const NotFoundView = () => import("@/views/NotFoundView.vue");
+const SubmissionsView = () => import("@/views/SubmissionsView.vue");
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +40,13 @@ const router = createRouter({
 					path: "create",
 					name: "create-event",
 					component: CreateEvent,
-					meta: { requiredAdmin: true },
+					meta: { requiresAdmin: true },
+				},
+				{
+					path: ":id/submissions",
+					name: "submissions",
+					component: SubmissionsView,
+					meta: { requiresAuth: true, requiresAdmin: true },
 				},
 			],
 		},
@@ -47,7 +54,7 @@ const router = createRouter({
 			path: "/users",
 			name: "users",
 			component: UsersView,
-			meta: { requiresAuth: true, requiredAdmin: true },
+			meta: { requiresAuth: true, requiresAdmin: true },
 		},
 		{
 			path: "/login",
@@ -69,7 +76,7 @@ router.beforeEach((to, _, next) => {
 
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
-	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
+	const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
 
 	if (requiresAuth && !userStore.isAuthenticated) {
 		triggerToast("Трябва да бъдете вписани, за да имате достъп до тази страница!", "warning");

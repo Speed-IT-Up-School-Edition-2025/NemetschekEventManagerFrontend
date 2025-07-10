@@ -23,3 +23,16 @@ export interface CreateEventDto {
 	location: string;
 	fields: FormField[];
 }
+
+export interface FilledField {
+	id: number;
+	name: string;
+	options: string[];
+}
+
+export interface GetSubmissionDto {
+	submissions: FilledField[];
+	date: string;
+	// userEmail: string;
+	userId: string;
+}

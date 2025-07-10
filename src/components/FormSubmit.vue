@@ -1,29 +1,23 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
-import type { FormField } from "@/utils/types.ts";
-
-interface filledField {
-	id: number;
-	name: string;
-	options: string[];
-}
+import type { FilledField, FormField } from "@/utils/types.ts";
 
 const props = defineProps<{
 	actionName: string;
 	fields: FormField[];
 }>();
 
-const formField = (fields: FormField[]): filledField[] => {
+const formField = (fields: FormField[]): FilledField[] => {
 	return fields.map(field => {
 		return {
 			id: field.id,
 			name: field.name,
 			options: [],
-		} as filledField;
+		} as FilledField;
 	});
 };
-const submission = ref<filledField[]>(formField(props.fields));
+const submission = ref<FilledField[]>(formField(props.fields));
 defineEmits(["submit-form"]);
 </script>
 
