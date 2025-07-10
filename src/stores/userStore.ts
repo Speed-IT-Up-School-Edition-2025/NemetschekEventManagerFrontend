@@ -15,7 +15,7 @@ export const useUserStore = defineStore("user", {
 			try {
 				// TODO check casing
 				const res = await apiClient.post<{ accessToken: string }>(
-					"/auth/refresh",
+					"/refresh",
 					{
 						refreshToken: this.refreshToken,
 					}
@@ -30,6 +30,10 @@ export const useUserStore = defineStore("user", {
 		},
 		setAccessToken(token: string) {
 			this.accessToken = token;
+		},
+		setRefreshToken(token: string) {
+  			this.refreshToken = token;
+  			localStorage.setItem("refreshToken", token);
 		},
 		async logout() {
 			this.accessToken = null;
