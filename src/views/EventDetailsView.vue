@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import EventInformationComponent from "@/components/EventInformationComponent.vue";
-import FourPanelLayout from "@/components/FourPanelLayout.vue";
+import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
 import { getEventById } from "@/services/eventsService";
 import { useRoute } from "vue-router";
 import FormSubmit from "@/components/FormSubmit.vue";
@@ -40,16 +40,12 @@ const fields: FormField[] = [
 </script>
 
 <template>
-	<FourPanelLayout>
+	<TwoPanelLayout action-name="">
 		<template #left>
 			<EventInformationComponent :event="event" />
 		</template>
 		<template #right>
-			<FormSubmit :fields="fields" action-name="Hehe" @submit-form="console.log"></FormSubmit>
-			<!--			<div class="text-center text-white/60 py-8">-->
-			<!--				<h3 class="text-xl font-semibold mb-2">Запиши се</h3>-->
-			<!--				<p>Sign up form will appear here</p>-->
-			<!--			</div>-->
+			<FormSubmit :fields="fields" action-name="Hehe" @submit-form="console.log" />
 		</template>
-	</FourPanelLayout>
+	</TwoPanelLayout>
 </template>

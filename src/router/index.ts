@@ -59,7 +59,7 @@ const router = createRouter({
 			path: "/:pathMatch(.*)*",
 			name: "not-found",
 			component: NotFoundView,
-		}
+		},
 	],
 });
 
@@ -82,7 +82,10 @@ router.beforeEach((to, _, next) => {
 	}
 
 	if (requiresAdmin && !userStore.isAdmin) {
-		triggerToast("Нуждаете се от администраторски права, за да достъпите до тази страница!", "warning");
+		triggerToast(
+			"Нуждаете се от администраторски права, за да достъпите до тази страница!",
+			"warning"
+		);
 
 		return next("/");
 	}
