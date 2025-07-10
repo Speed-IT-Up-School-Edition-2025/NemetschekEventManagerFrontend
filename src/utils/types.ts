@@ -25,6 +25,20 @@ export interface CreateEventDto {
 	fields: FormField[];
 }
 
+
+export interface FilledField {
+	id: number;
+	name: string;
+	options: string[];
+}
+
+export interface GetSubmissionDto {
+	submissions: FilledField[];
+	date: string;
+	// userEmail: string;
+	userId: string;
+}
+
 export interface CreateEventResponse {
 	id: string;
 }
