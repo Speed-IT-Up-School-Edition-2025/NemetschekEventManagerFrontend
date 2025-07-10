@@ -1,17 +1,38 @@
-<template>
-	<CreateForm action-name="CreateForm" :fields="fields" @submit-form="console.log" />
-</template>
 <script setup lang="ts">
+import EventInformationFormComponent from "@/components/EventInformationFormComponent.vue";
 import CreateForm from "@/components/FormCreator/CreateForm.vue";
-import type { FormField } from "@/utils/types.ts";
+import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
+import { useTemplateRef } from "vue";
 
-const fields: FormField[] = [
-	{
-		name: "fddfs",
-		required: true,
-		type: "text",
-		id: 0,
-		options: [],
-	},
-];
+const createEventInformationRef = useTemplateRef("createEventInformationRef");
+const createEventFormRef = useTemplateRef("createEventFormRef");
+
+function handleSubmit() {
+	const eventInformation = createEventInformationRef.value?.getState();
+	const formFields = createEventFormRef.value?.getState();
+
+	console.log({
+		eventInformation,
+		formFields,
+	});
+}
 </script>
+
+<template>
+	<form @submit.prevent="handleSubmit">
+		<TwoPanelLayout action-name="Създаване на ново събитие">
+			<template #left>
+				<EventInformationFormComponent ref="createEventInformationRef" />
+			</template>
+			<template #right>
+				<CreateForm ref="createEventFormRef" />
+
+				<button
+					type="submit"
+					class="w-full bg-yellow text-dark-grey py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer mt-6">
+					Запази информацията
+				</button>
+			</template>
+		</TwoPanelLayout>
+	</form>
+</template>

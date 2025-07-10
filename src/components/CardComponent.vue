@@ -3,9 +3,9 @@
 		class="flex flex-col items-start py-4 pl-6 pr-10 gap-5 border-yellow rounded-lg border-2 border-solid bg-dark-grey transition delay-100 duration-300 ease-in-out hover:shadow-xl/30"
 		@click="redirect">
 		<h1 class="text-x1 place-self-center pt-3 text-yellow text-3xl font-semibold text-center">
-			{{ event.title }}
+			{{ event.name }}
 		</h1>
-		<div class = "flex flex-col gap-3">
+		<div class="flex flex-col gap-3">
 			<p class="flex pl-2 gap-3 items-start">
 				<span><LocationIcon /></span>
 				<span class="text-white text-lg">{{ event.location }}</span>
@@ -32,7 +32,7 @@
 </template>
 <script setup lang="ts">
 import CalendarIcon from "./icons/CalendarIcon.vue";
-import type { Event } from "@/services/eventsService";
+import type { Event } from "@/utils/types";
 import LocationIcon from "./icons/LocationIcon.vue";
 import ClockIcon from "./icons/ClockIcon.vue";
 import InfoIcon from "./icons/InfoIcon.vue";
