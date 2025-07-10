@@ -61,9 +61,10 @@ function handleSubmit() {
 		return;
 	}
 	execute().then(() => {
-		if (data.value) {
+		if (data.value?.accessToken && data.value?.refreshToken) {
 			userStore.setAccessToken(data.value.accessToken);
-			router.push("/home");
+			userStore.setRefreshToken(data.value.refreshToken);
+			router.push("/events");
 		}
 	});
 }
