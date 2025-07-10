@@ -1,4 +1,5 @@
-import type { Event } from "@/utils/types";
+import { apiClient } from "@/utils/api";
+import type { CreateEventDto, CreateEventResponse, Event } from "@/utils/types";
 
 const events: Event[] = [
 	{
@@ -74,8 +75,12 @@ const events: Event[] = [
 	},
 ];
 
+export function createEvent(dto: CreateEventDto) {
+	return apiClient.post<CreateEventResponse>("/events", dto);
+}
+
 export function getEvents() {
-	return events;
+	return apiClient.get<Event[]>("/events");
 }
 
 export function getJoinedEvents() {
@@ -83,11 +88,5 @@ export function getJoinedEvents() {
 }
 
 export function getEventById(id: string) {
-	const event = events.find(event => event.id === id);
-
-	if (!event) {
-		throw new Error(`Event with id ${id} not found`);
-	}
-
-	return event;
+	return apiClient.get<Event>(`/events/${id}`);
 }

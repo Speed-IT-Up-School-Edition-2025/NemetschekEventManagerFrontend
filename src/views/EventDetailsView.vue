@@ -2,50 +2,58 @@
 import EventInformationComponent from "@/components/EventInformationComponent.vue";
 import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
 import { getEventById } from "@/services/eventsService";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import FormSubmit from "@/components/FormSubmit.vue";
-import type { FormField } from "@/utils/types.ts";
+import { useAsync } from "@/composables/useAsync";
+import LoaderComponent from "@/components/LoaderComponent.vue";
+import { onMounted, watch } from "vue";
 
-const route = useRoute();
+const router = useRouter();
 
-if (!route.params.id || typeof route.params.id !== "string") {
-	// Handle the case where the event ID is not provided or is not a string
-	throw new Error("Event ID is required");
-}
+const {
+	execute,
+	data: event,
+	loading,
+	error,
+} = useAsync(() => {
+	const route = useRoute();
 
-const event = getEventById(route.params.id);
-const fields: FormField[] = [
-	{
-		name: "fddfs",
-		required: true,
-		type: "text",
-		id: 0,
-		options: [],
-	},
-	{
-		name: "fddfs2",
-		required: false,
-		type: "radio",
-		id: 1,
-		options: ["Option 1", "Option 2", "Option 3"],
-	},
-	{
-		name: "fddfs2",
-		required: false,
-		type: "checkbox",
-		id: 2,
-		options: ["Option 1", "Option 2", "Option 3"],
-	},
-];
+	if (!route.params.id || typeof route.params.id !== "string") {
+		// Handle the case where the event ID is not provided or is not a string
+		throw new Error("Event ID is required");
+	}
+
+	return getEventById(route.params.id);
+});
+
+watch(event, newEvent => {
+	if (newEvent === null) {
+		router.push("/not-found");
+	}
+});
+
+onMounted(execute);
 </script>
 
 <template>
 	<TwoPanelLayout action-name="">
 		<template #left>
-			<EventInformationComponent :event="event" />
+			<div v-if="loading"><LoaderComponent /></div>
+			<div v-else-if="error" class="p-10 text-center text-red">
+				Error: {{ error }}
+			</div>
+			<EventInformationComponent v-if="event" :event="event" />
 		</template>
 		<template #right>
-			<FormSubmit :fields="fields" action-name="Hehe" @submit-form="console.log" />
+			<div v-if="loading"><LoaderComponent /></div>
+			<div v-else-if="error" class="p-10 text-center text-red">
+				Error: {{ error }}
+			</div>
+			<FormSubmit
+				v-if="event?.fields"
+				:fields="event.fields"
+				action-name="Hehe"
+				@submit-form="console.log" />
 		</template>
 	</TwoPanelLayout>
 </template>

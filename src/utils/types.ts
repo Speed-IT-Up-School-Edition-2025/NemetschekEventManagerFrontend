@@ -24,3 +24,7 @@ export interface CreateEventDto {
 	location: string;
 	fields: FormField[];
 }
+
+export interface CreateEventResponse {
+	id: string;
+}

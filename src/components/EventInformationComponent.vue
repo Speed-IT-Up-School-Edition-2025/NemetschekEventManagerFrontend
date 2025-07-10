@@ -8,6 +8,18 @@ import ClockIcon from "./icons/ClockIcon.vue";
 const { event } = defineProps<{
 	event: Event;
 }>();
+
+// Helper function to format datetime
+const formatDateTime = (isoString: string) => {
+	return new Date(isoString).toLocaleDateString("bg-BG", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+};
 </script>
 
 <template>
@@ -23,18 +35,11 @@ const { event } = defineProps<{
 			<div class="flex items-start gap-3">
 				<CalendarIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">Дата на събитие</h3>
+					<h3 class="text-lg font-semibold text-white">
+						Дата и час на събитие
+					</h3>
 					<p class="text-white/80">
-						{{
-							new Date(event.date).toLocaleDateString("bg-BG", {
-								weekday: "long",
-								year: "numeric",
-								month: "long",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-							})
-						}}
+						{{ formatDateTime(event.date) }}
 					</p>
 				</div>
 			</div>
@@ -52,18 +57,11 @@ const { event } = defineProps<{
 			<div class="flex items-start gap-3">
 				<ClockIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">Краен срок на записване</h3>
+					<h3 class="text-lg font-semibold text-white">
+						Краен срок на записване
+					</h3>
 					<p class="text-white/80">
-						{{
-							new Date(event.signUpDeadline).toLocaleDateString("bg-BG", {
-								weekday: "long",
-								year: "numeric",
-								month: "long",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-							})
-						}}
+						{{ formatDateTime(event.signUpDeadline) }}
 					</p>
 				</div>
 			</div>
