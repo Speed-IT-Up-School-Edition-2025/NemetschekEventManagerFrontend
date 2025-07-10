@@ -32,6 +32,7 @@ const logout = async () => {
 	} catch (error) {
 		console.error("Logout failed:", error);
 		triggerToast("Грешка при излизане от профила.", "error");
+
 		closeMobileMenu();
 	}
 };
@@ -88,7 +89,7 @@ const logout = async () => {
 					v-else
 					to="/login"
 					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
-					Вход
+					Вписване
 				</RouterLink>
 			</div>
 		</div>
