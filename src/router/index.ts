@@ -67,6 +67,22 @@ router.beforeEach((to, _, next) => {
 	const userStore = useUserStore();
 	const { triggerToast } = useUIStore();
 
+	if (userStore.refreshToken && !userStore.accessToken) {
+		userStore.refreshAccessToken().then(success => {
+			if (!success) {
+				triggerToast("Неуспешно обновяване на токена. Моля, впишете се отново.", "error");
+				return next("/login");
+			}
+
+			next();
+		}).catch(() => {
+			triggerToast("Неуспешно обновяване на токена. Моля, впишете се отново.", "error");
+			next("/login");
+		});
+
+		return;
+	}
+
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
 	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
