@@ -1,4 +1,4 @@
-export const baseUrl = "http://172.16.17.21:5000";
+export const baseUrl = "http://localhost:5000";
 
 import { useUserStore } from "@/stores/userStore";
 

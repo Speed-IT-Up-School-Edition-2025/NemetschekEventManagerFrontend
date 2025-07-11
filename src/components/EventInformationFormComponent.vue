@@ -58,7 +58,7 @@ const formData = ref<Omit<CreateEventDto, "fields">>({
 				</label>
 				<input
 					id="date"
-					type="date"
+					type="datetime-local"
 					:min="new Date().toISOString().split('T')[0]"
 					v-model="formData.date"
 					required
@@ -82,7 +82,7 @@ const formData = ref<Omit<CreateEventDto, "fields">>({
 				</label>
 				<input
 					id="signUpDeadline"
-					type="date"
+					type="datetime-local"
 					:min="new Date().toISOString().split('T')[0]"
 					:max="formData.date"
 					v-model="formData.signUpDeadline"
