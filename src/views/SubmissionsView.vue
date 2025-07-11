@@ -94,13 +94,13 @@ watch(eventError, () => {
 						scope="col"
 						class="px-6 py-3 text-left text-xs font-medium text-yellow uppercase tracking-wider"
 						data-tooltip="Submission Date">
-						Submission Date
+						Дата на подаване
 					</th>
 					<th
 						scope="col"
 						class="px-6 py-3 text-left text-xs font-medium text-yellow uppercase tracking-wider"
 						data-tooltip="User Email">
-						User Email
+						Имейл на потребителя
 					</th>
 					<th
 						v-for="field in eventData.fields"
