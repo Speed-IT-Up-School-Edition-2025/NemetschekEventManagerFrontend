@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
-import { getEventById } from "@/services/eventsService";
+import { deleteEvent, getEventById } from "@/services/eventsService";
 import { useRoute, useRouter } from "vue-router";
 import FormSubmit from "@/components/FormSubmit.vue";
 import { useAsync } from "@/composables/useAsync";
 import LoaderComponent from "@/components/LoaderComponent.vue";
-import { onMounted, watch } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useUserStore } from "@/stores/userStore";
 import { useCurrentEventStore } from "@/stores/currentEventStore";
+import { useUIStore } from "@/stores/uiStore";
 import CalendarIcon from "@/components/icons/CalendarIcon.vue";
 import LocationIcon from "@/components/icons/LocationIcon.vue";
 import ClockIcon from "@/components/icons/ClockIcon.vue";
 import UserIcon from "@/components/icons/UserIcon.vue";
+import ConfirmationComponent from "@/components/ConfirmationComponent.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
 const { setEventForDuplication } = useCurrentEventStore();
+const { triggerToast } = useUIStore();
+
+// Confirmation dialog state
+const showDeleteConfirm = ref(false);
 
 // Helper function to format datetime
 const formatDateTime = (isoString: string) => {
@@ -67,6 +73,31 @@ const duplicateEvent = () => {
 		};
 		setEventForDuplication(eventToDuplicate);
 		router.push("/events/create");
+	}
+};
+
+// Function to show delete confirmation
+const showDeleteConfirmation = () => {
+	showDeleteConfirm.value = true;
+};
+
+// Function to handle delete confirmation
+const handleDeleteConfirmation = async (confirmed: boolean) => {
+	showDeleteConfirm.value = false;
+
+	if (confirmed && event.value) {
+		try {
+			await deleteEvent(event.value.id);
+
+			triggerToast("Събитието беше изтрито успешно!", "success");
+			router.push("/events");
+		} catch (error) {
+			console.error("Грешка при изтриване на събитието:", error);
+			triggerToast(
+				"Възникна грешка при изтриване на събитието. Моля, опитайте отново.",
+				"error"
+			);
+		}
 	}
 };
 </script>
@@ -194,6 +225,11 @@ const duplicateEvent = () => {
 					v-if="userStore.isAdmin"
 					class="flex justify-end gap-3 px-6">
 					<button
+						@click="showDeleteConfirmation"
+						class="bg-red text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium">
+						Изтрий
+					</button>
+					<button
 						@click="duplicateEvent"
 						class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors font-medium">
 						Дублиране
@@ -214,4 +250,14 @@ const duplicateEvent = () => {
 			</div>
 		</template>
 	</TwoPanelLayout>
+
+	<!-- Delete Confirmation Dialog -->
+	<ConfirmationComponent
+		v-if="showDeleteConfirm"
+		title="Потвърдете изтриването"
+		message="Сигурни ли сте, че искате да изтриете това събитие?"
+		@confirm="handleDeleteConfirmation(true)"
+		@cancel="handleDeleteConfirmation(false)"
+		confirmText="Изтрий"
+		cancelText="Отказ" />
 </template>
