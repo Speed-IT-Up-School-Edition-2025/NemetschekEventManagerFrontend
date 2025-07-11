@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/userStore";
 import { useUIStore } from "@/stores/uiStore";
+import { useCurrentEventStore } from "@/stores/currentEventStore";
 
 const HomeView = () => import("@/views/HomeView.vue");
 const EventsView = () => import("@/views/EventsView.vue");
@@ -86,9 +87,15 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, from, next) => {
 	const userStore = useUserStore();
 	const { triggerToast } = useUIStore();
+	const { clearCurrentEvent } = useCurrentEventStore();
+
+	// Clear current event when navigating away from create/edit event pages
+	if (from.name === "create-event" || from.name === "edit-event") {
+		clearCurrentEvent();
+	}
 
 	// Handle token refresh
 	if (userStore.refreshToken && !userStore.accessToken) {
