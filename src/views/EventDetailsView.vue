@@ -38,21 +38,25 @@ onMounted(execute);
 <template>
 	<TwoPanelLayout action-name="">
 		<template #left>
-			<div v-if="loading"><LoaderComponent /></div>
+			<div v-if="loading">
+				<LoaderComponent />
+			</div>
 			<div v-else-if="error" class="p-10 text-center text-red">
 				Възникна грешка: {{ error }}
 			</div>
 			<EventInformationComponent v-if="event" :event="event" />
 		</template>
 		<template #right>
-			<div v-if="loading"><LoaderComponent /></div>
+			<div v-if="loading">
+				<LoaderComponent />
+			</div>
 			<div v-else-if="error" class="p-10 text-center text-red">
 				Възникна грешка: {{ error }}
 			</div>
 			<FormSubmit
 				v-if="event?.fields"
 				:fields="event.fields"
-				action-name="Hehe"
+				action-name="Запиши се"
 				@submit-form="console.log" />
 		</template>
 	</TwoPanelLayout>

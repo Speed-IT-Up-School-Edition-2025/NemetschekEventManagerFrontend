@@ -1,4 +1,4 @@
-export const baseUrl = "http://localhost:5000";
+export const baseUrl = "http://172.16.17.161:5000";
 
 import { useUserStore } from "@/stores/userStore";
 
@@ -45,7 +45,7 @@ const request = async <TResponse, TBody = unknown>(
 	}
 
 	if (!res.ok) {
-		const errText = await res.json();
+		const errText = await res.text();
 
 		throw new Error(`Неуспешна заявка: ${res.status} - ${errText}`);
 	}
