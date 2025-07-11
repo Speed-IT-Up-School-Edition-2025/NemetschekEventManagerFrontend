@@ -16,6 +16,7 @@ export interface Event {
 	fields: FormField[];
 	spotsLeft: number;
 	peopleLimit?: number;
+	userSignedUp: boolean;
 }
 
 export interface CreateEventDto {

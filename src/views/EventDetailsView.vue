@@ -12,11 +12,13 @@ import CalendarIcon from "@/components/icons/CalendarIcon.vue";
 import LocationIcon from "@/components/icons/LocationIcon.vue";
 import ClockIcon from "@/components/icons/ClockIcon.vue";
 import UserIcon from "@/components/icons/UserIcon.vue";
+import { cancelSubmission } from "@/services/submissionService";
+import { useUIStore } from "@/stores/uiStore";
 
 const router = useRouter();
 const userStore = useUserStore();
 const { setEventForDuplication } = useCurrentEventStore();
-
+const uiStore = useUIStore();
 // Helper function to format datetime
 const formatDateTime = (isoString: string) => {
 	return new Date(isoString).toLocaleDateString(undefined, {
@@ -69,6 +71,18 @@ const duplicateEvent = () => {
 		router.push("/events/create");
 	}
 };
+
+const cancelSubmissionButton = () => {
+	if (event.value != null) {
+		try {
+			cancelSubmission(event.value.id.toString());
+			event.value.userSignedUp = false;
+			uiStore.triggerToast("Отписването е успешно!", "success");
+		} catch (error: any) {
+			uiStore.triggerToast(`Грешка при отписване: ${error.message}`, "error");
+		}
+	}
+};
 </script>
 
 <template>
@@ -110,9 +124,7 @@ const duplicateEvent = () => {
 						<div class="flex items-start gap-3">
 							<LocationIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">
-									Място
-								</h3>
+								<h3 class="text-lg font-semibold text-white">Място</h3>
 								<p class="text-white/80 break-words">
 									{{ event.location }}
 								</p>
@@ -136,16 +148,9 @@ const duplicateEvent = () => {
 						<div class="flex items-start gap-3">
 							<UserIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">
-									Места
-								</h3>
-								<div
-									class="text-white/80 break-words space-y-1">
-									<p
-										v-if="
-											event.peopleLimit &&
-											event.peopleLimit > 0
-										">
+								<h3 class="text-lg font-semibold text-white">Места</h3>
+								<div class="text-white/80 break-words space-y-1">
+									<p v-if="event.peopleLimit && event.peopleLimit > 0">
 										Лимит участници: {{ event.peopleLimit }}
 									</p>
 									<p v-else>Без лимит на участници</p>
@@ -170,11 +175,8 @@ const duplicateEvent = () => {
 
 					<!-- Event Description -->
 					<div class="border-t border-white/20 pt-6">
-						<h3 class="text-xl font-semibold text-yellow mb-3">
-							За събитието
-						</h3>
-						<p
-							class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
+						<h3 class="text-xl font-semibold text-yellow mb-3">За събитието</h3>
+						<p class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
 							{{ event.description }}
 						</p>
 					</div>
@@ -190,9 +192,13 @@ const duplicateEvent = () => {
 			</div>
 			<div v-if="event" class="space-y-4">
 				<!-- Admin Actions Section -->
-				<div
-					v-if="userStore.isAdmin"
-					class="flex justify-end gap-3 px-6">
+				<div v-if="userStore.isAdmin" class="flex justify-end gap-3 px-6">
+					<button
+						v-if="event.userSignedUp"
+						@click="cancelSubmissionButton()"
+						class="bg-red text-white px-4 py-2 rounded-md hover:bg-red-800 transition-colors font-medium">
+						Отпиши се
+					</button>
 					<button
 						@click="duplicateEvent"
 						class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors font-medium">
@@ -203,6 +209,11 @@ const duplicateEvent = () => {
 						class="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium">
 						Редактиране
 					</RouterLink>
+					<RouterLink
+						:to="{ name: 'submissions', params: { id: event.id } }"
+						class="bg-cyan text-white px-4 py-2 rounded-md hover:bg-cyan-800 transition-colors font-medium">
+						Виж попълванията
+					</RouterLink>
 				</div>
 
 				<!-- Submission Form -->
@@ -210,7 +221,9 @@ const duplicateEvent = () => {
 					v-if="event?.fields"
 					:event-id="event?.id"
 					:fields="event.fields"
-					action-name="Запиши се" />
+					:user-signed-up="event.userSignedUp"
+					action-name="Запиши се"
+					@signed-up="event.userSignedUp = true" />
 			</div>
 		</template>
 	</TwoPanelLayout>
