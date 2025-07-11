@@ -45,7 +45,7 @@ const request = async <TResponse, TBody = unknown>(
 	}
 
 	if (!res.ok) {
-		const errText = await res.json();
+		const errText = await res.text();
 
 		throw new Error(`Неуспешна заявка: ${res.status} - ${errText}`);
 	}
