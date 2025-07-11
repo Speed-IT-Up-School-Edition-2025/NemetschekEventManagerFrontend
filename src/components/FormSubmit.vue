@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
+import { ref } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import type { FilledField, FormField } from "@/utils/types.ts";
 
@@ -23,8 +23,12 @@ defineEmits(["submit-form"]);
 
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
-		<form class="space-y-6" @submit.prevent="$emit('submit-form', submission)">
-			<h1 class="text-2xl font-semibold text-white text-center">Преглед на формуляр</h1>
+		<form
+			class="space-y-6"
+			@submit.prevent="$emit('submit-form', submission)">
+			<h1 class="text-2xl font-semibold text-white text-center">
+				Преглед на формуляр
+			</h1>
 			<div
 				v-for="(field, fieldIndex) in fields"
 				:key="fieldIndex"
@@ -32,7 +36,9 @@ defineEmits(["submit-form"]);
 				<div class="flex items-center justify-between mb-2 gap-4">
 					<h1 class="flex text-lg font-medium text-white flex-1">
 						{{ field.name }}
-						<span v-if="field.required" class="text-red-500 ml-1">*</span>
+						<span v-if="field.required" class="text-red-500 ml-1"
+							>*</span
+						>
 					</h1>
 				</div>
 
@@ -43,7 +49,9 @@ defineEmits(["submit-form"]);
 						v-model="submission[fieldIndex].options[0]" />
 				</div>
 				<div
-					v-else-if="field.type === 'checkbox' || field.type === 'radio'"
+					v-else-if="
+						field.type === 'checkbox' || field.type === 'radio'
+					"
 					class="space-y-2">
 					<div
 						v-for="(option, index) in field.options"
@@ -56,7 +64,8 @@ defineEmits(["submit-form"]);
 							:name="`field-${field.id}`"
 							:value="field.options[index]"
 							:required="
-								field.required && submission[fieldIndex].options.length === 0
+								field.required &&
+								submission[fieldIndex].options.length === 0
 							"
 							v-model="submission[fieldIndex].options"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
@@ -69,7 +78,9 @@ defineEmits(["submit-form"]);
 							:value="option"
 							v-model="submission[fieldIndex].options[0]"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
-						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
+						<label
+							:for="`${field.id}-${index}`"
+							class="ml-3 text-base text-white">
 							{{ field.options[index] }}
 						</label>
 					</div>
