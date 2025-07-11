@@ -156,7 +156,12 @@ const duplicateEvent = () => {
 											event.spotsLeft !== null &&
 											event.spotsLeft !== undefined
 										">
-										Свободни места: {{ event.spotsLeft }}
+										Свободни места:
+										{{
+											event.spotsLeft === 0
+												? "Няма свободни места"
+												: event.spotsLeft
+										}}
 									</p>
 								</div>
 							</div>
