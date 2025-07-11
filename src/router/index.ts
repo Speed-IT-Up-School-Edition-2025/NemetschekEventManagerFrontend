@@ -8,6 +8,7 @@ const EventsView = () => import("@/views/EventsView.vue");
 const EventDetailsView = () => import("@/views/EventDetailsView.vue");
 const JoinedEventsView = () => import("@/views/JoinedEventsView.vue");
 const CreateEvent = () => import("@/views/CreateEventView.vue");
+const EditEventView = () => import("@/views/EditEventView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
 const LogInView = () => import("@/views/LogInView.vue");
 const NotFoundView = () => import("@/views/NotFoundView.vue");
@@ -45,6 +46,12 @@ const router = createRouter({
 					path: "create",
 					name: "create-event",
 					component: CreateEvent,
+					meta: { requiresAdmin: true },
+				},
+				{
+					path: ":id/edit",
+					name: "edit-event",
+					component: EditEventView,
 					meta: { requiresAdmin: true },
 				},
 				{

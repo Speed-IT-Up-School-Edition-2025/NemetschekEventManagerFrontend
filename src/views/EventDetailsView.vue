@@ -7,8 +7,10 @@ import FormSubmit from "@/components/FormSubmit.vue";
 import { useAsync } from "@/composables/useAsync";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 import { onMounted, watch } from "vue";
+import { useUserStore } from "@/stores/userStore";
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const {
 	execute,
@@ -43,7 +45,15 @@ onMounted(execute);
 			<div v-else-if="error" class="p-10 text-center text-red">
 				Възникна грешка: {{ error }}
 			</div>
-			<EventInformationComponent v-if="event" :event="event" />
+			<div v-if="event" class="relative">
+				<EventInformationComponent :event="event" />
+				<RouterLink
+					v-if="userStore.isAdmin"
+					:to="{ name: 'edit-event', params: { id: event.id } }"
+					class="absolute top-0 right-0 bg-yellow text-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
+					Редактиране
+				</RouterLink>
+			</div>
 		</template>
 		<template #right>
 			<div v-if="loading">

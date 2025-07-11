@@ -47,3 +47,12 @@ export interface User {
 	email: string;
 	roles: string[];
 }
+
+export interface UpdateEventDto {
+	name?: string;
+	description?: string;
+	date?: string;
+	signUpDeadline?: string;
+	location?: string;
+	fields?: FormField[];
+}
