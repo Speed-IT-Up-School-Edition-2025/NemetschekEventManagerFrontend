@@ -21,7 +21,6 @@ const {
 	const route = useRoute();
 
 	if (!route.params.id || typeof route.params.id !== "string") {
-		// Handle the case where the event ID is not provided or is not a string
 		throw new Error("Event ID is required");
 	}
 
@@ -40,7 +39,9 @@ onMounted(execute);
 <template>
 	<TwoPanelLayout action-name="">
 		<template #left>
-			<div v-if="loading"><LoaderComponent /></div>
+			<div v-if="loading">
+				<LoaderComponent />
+			</div>
 			<div v-else-if="error" class="p-10 text-center text-red">
 				Възникна грешка: {{ error }}
 			</div>
@@ -55,15 +56,17 @@ onMounted(execute);
 			</div>
 		</template>
 		<template #right>
-			<div v-if="loading"><LoaderComponent /></div>
+			<div v-if="loading">
+				<LoaderComponent />
+			</div>
 			<div v-else-if="error" class="p-10 text-center text-red">
 				Възникна грешка: {{ error }}
 			</div>
 			<FormSubmit
 				v-if="event?.fields"
+				:event-id="event?.id"
 				:fields="event.fields"
-				action-name="Hehe"
-				@submit-form="console.log" />
+				action-name="Запиши се"></FormSubmit>
 		</template>
 	</TwoPanelLayout>
 </template>
