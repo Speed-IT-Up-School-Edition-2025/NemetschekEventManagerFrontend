@@ -25,7 +25,7 @@ function handleSubmit() {
 		fields: formFields!,
 	})
 		.then(({ id }) => {
-			triggerToast("Събитието е създадено успешно!");
+			triggerToast("Събитието е създадено успешно!", "success");
 
 			router.push(`/events/${id}`);
 		})
@@ -33,7 +33,8 @@ function handleSubmit() {
 			console.error("Грешка при създаване на събитието:", error);
 
 			triggerToast(
-				"Възникна грешка при създаване на събитието. Моля, опитайте отново."
+				"Възникна грешка при създаване на събитието. Моля, опитайте отново.",
+				"error"
 			);
 		});
 }
