@@ -10,7 +10,7 @@ import { useAsync } from "@/composables/useAsync";
 import { useTemplateRef, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
-const { setCurrentEvent } = useCurrentEventStore();
+const { setCurrentEvent, clearCurrentEvent } = useCurrentEventStore();
 const { triggerToast } = useUIStore();
 
 const router = useRouter();
@@ -42,7 +42,9 @@ onMounted(async () => {
 		await loadEvent();
 	} catch (error) {
 		console.error("Грешка при зареждане на събитието:", error);
-		triggerToast("Възникна грешка при зареждане на събитието.");
+
+		triggerToast("Възникна грешка при зареждане на събитието.", "error");
+
 		router.push("/events");
 	}
 });
@@ -56,13 +58,17 @@ function handleSubmit() {
 		fields: formFields!,
 	})
 		.then(() => {
-			triggerToast("Събитието е обновено успешно!");
+			triggerToast("Събитието е обновено успешно!", "success");
+
 			router.push(`/events/${route.params.id}`);
+
+			clearCurrentEvent();
 		})
 		.catch(error => {
 			console.error("Грешка при обновяване на събитието:", error);
 			triggerToast(
-				"Възникна грешка при обновяване на събитието. Моля, опитайте отново."
+				"Възникна грешка при обновяване на събитието. Моля, опитайте отново.",
+				"error"
 			);
 		});
 }
