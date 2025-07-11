@@ -14,6 +14,7 @@ import LocationIcon from "@/components/icons/LocationIcon.vue";
 import ClockIcon from "@/components/icons/ClockIcon.vue";
 import UserIcon from "@/components/icons/UserIcon.vue";
 import ConfirmationComponent from "@/components/ConfirmationComponent.vue";
+import { cancelSubmission } from "@/services/submissionService.ts";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -97,6 +98,18 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 				"Възникна грешка при изтриване на събитието. Моля, опитайте отново.",
 				"error"
 			);
+		}
+	}
+};
+
+const cancelSubmissionButton = () => {
+	if (event.value != null) {
+		try {
+			cancelSubmission(event.value.id.toString());
+			event.value.userSignedUp = false;
+			triggerToast("Отписването е успешно!", "success");
+		} catch (error: any) {
+			triggerToast(`Грешка при отписване: ${error.message}`, "error");
 		}
 	}
 };
@@ -214,6 +227,12 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 						@click="showDeleteConfirmation"
 						class="bg-red text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium">
 						Изтрий
+					</button>
+					<button
+						v-if="event.userSignedUp"
+						@click="cancelSubmissionButton()"
+						class="bg-red text-white px-4 py-2 rounded-md hover:bg-red-800 transition-colors font-medium">
+						Отпиши се
 					</button>
 					<button
 						@click="duplicateEvent"
