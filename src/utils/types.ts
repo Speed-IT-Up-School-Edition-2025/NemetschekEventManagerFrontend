@@ -7,7 +7,7 @@ export interface FormField {
 }
 
 export interface Event {
-	id: string;
+	id: number;
 	name: string;
 	description: string;
 	date: string;
