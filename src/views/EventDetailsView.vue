@@ -137,7 +137,7 @@ const duplicateEvent = () => {
 							<UserIcon />
 							<div class="min-w-0 flex-1">
 								<h3 class="text-lg font-semibold text-white">
-									Наличност
+									Места
 								</h3>
 								<div
 									class="text-white/80 break-words space-y-1">
