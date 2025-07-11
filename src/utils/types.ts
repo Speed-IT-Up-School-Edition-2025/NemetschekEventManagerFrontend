@@ -25,7 +25,6 @@ export interface CreateEventDto {
 	fields: FormField[];
 }
 
-
 export interface FilledField {
 	id: number;
 	name: string;
@@ -44,7 +43,7 @@ export interface CreateEventResponse {
 }
 
 export interface User {
-	userId: string;
+	id: string;
 	email: string;
 	roles: string[];
 }
