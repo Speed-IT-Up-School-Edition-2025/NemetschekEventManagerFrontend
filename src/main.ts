@@ -20,19 +20,10 @@ console.log(
 );
 
 if (userStore.refreshToken) {
-	console.log("Refreshing access token...");
-	const refreshSuccess = await userStore.refreshAccessToken();
-	console.log(
-		"Refresh token result:",
-		refreshSuccess,
-		"Access token:",
-		!!userStore.accessToken
-	);
+	await userStore.refreshAccessToken();
 
 	if (userStore.accessToken) {
-		console.log("Fetching user profile...");
 		await userStore.fetchUser();
-		console.log("User profile after fetch:", userStore.profile);
 	}
 } else {
 	console.log("No refresh token found, skipping authentication");
