@@ -25,6 +25,14 @@
 					formatDate(event.signUpDeadline)
 				}}</span>
 			</p>
+			<p
+				v-if="event.peopleLimit && event.peopleLimit > 0"
+				class="flex pl-2 gap-3 items-start">
+				<span><UserIcon /></span>
+				<span class="text-white text-lg break-words min-w-0 flex-1">
+					{{ event.spotsLeft }} spots left
+				</span>
+			</p>
 			<p class="flex pl-2 gap-3 items-start flex-grow">
 				<span><InfoIcon /></span>
 				<span class="text-white text-lg break-words min-w-0 flex-1">{{
@@ -48,6 +56,7 @@ import type { Event } from "@/utils/types";
 import LocationIcon from "./icons/LocationIcon.vue";
 import ClockIcon from "./icons/ClockIcon.vue";
 import InfoIcon from "./icons/InfoIcon.vue";
+import UserIcon from "./icons/UserIcon.vue";
 import { useRouter } from "vue-router";
 
 const { event } = defineProps<{ event: Event }>();

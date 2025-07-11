@@ -10,6 +10,7 @@ import { useUserStore } from "@/stores/userStore";
 import CalendarIcon from "@/components/icons/CalendarIcon.vue";
 import LocationIcon from "@/components/icons/LocationIcon.vue";
 import ClockIcon from "@/components/icons/ClockIcon.vue";
+import UserIcon from "@/components/icons/UserIcon.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -108,6 +109,36 @@ onMounted(execute);
 								<p class="text-white/80 break-words">
 									{{ formatDateTime(event.signUpDeadline) }}
 								</p>
+							</div>
+						</div>
+
+						<!-- Availability -->
+						<div class="flex items-start gap-3">
+							<UserIcon />
+							<div class="min-w-0 flex-1">
+								<h3 class="text-lg font-semibold text-white">
+									Наличност
+								</h3>
+								<div
+									class="text-white/80 break-words space-y-1">
+									<p
+										v-if="
+											event.peopleLimit &&
+											event.peopleLimit > 0
+										">
+										Лимит участници: {{ event.peopleLimit }}
+									</p>
+									<p v-else>Без лимит на участници</p>
+									<p
+										v-if="
+											event.peopleLimit &&
+											event.peopleLimit > 0 &&
+											event.spotsLeft !== null &&
+											event.spotsLeft !== undefined
+										">
+										Свободни места: {{ event.spotsLeft }}
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>

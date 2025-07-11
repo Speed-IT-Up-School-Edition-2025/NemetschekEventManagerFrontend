@@ -13,6 +13,7 @@ const props = withDefaults(
 			location: "",
 			signUpDeadline: "",
 			description: "",
+			peopleLimit: 0,
 		}),
 	}
 );
@@ -73,6 +74,18 @@ const formData = ref<Omit<CreateEventDto, "fields">>({
 					id="location"
 					v-model="formData.location"
 					required
+					class="w-full bg-grey-400 text-white rounded-t-lg not-focus:rounded-b-lg border-b border-grey-400 placeholder-grey-200 focus:border-yellow focus:border-b-2 focus:ring-0 focus:outline-none transition-colors duration-300 ease-in-out overflow-hidden leading-tight px-3 py-2" />
+			</div>
+
+			<div>
+				<label class="text-white mb-1" for="peopleLimit">
+					Максимален брой участници (0 = без лимит)
+				</label>
+				<input
+					id="peopleLimit"
+					type="number"
+					min="0"
+					v-model="formData.peopleLimit"
 					class="w-full bg-grey-400 text-white rounded-t-lg not-focus:rounded-b-lg border-b border-grey-400 placeholder-grey-200 focus:border-yellow focus:border-b-2 focus:ring-0 focus:outline-none transition-colors duration-300 ease-in-out overflow-hidden leading-tight px-3 py-2" />
 			</div>
 
