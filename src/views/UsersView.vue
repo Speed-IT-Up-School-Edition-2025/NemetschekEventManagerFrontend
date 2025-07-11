@@ -1,57 +1,49 @@
 <script setup lang="ts">
 import UserIcon from "@/components/icons/UserIcon.vue";
 import { RouterLink } from "vue-router";
-import { apiClient } from "@/utils/api";
 import { ref, onMounted } from "vue";
 import ConfirmationComponent from "@/components/ConfirmationComponent.vue";
 import { useUIStore } from "@/stores/uiStore";
 import LoaderComponent from "@/components/LoaderComponent.vue";
-interface User {
-	id: string;
-	email: string;
-	isAdmin: boolean;
-}
+import { useAsync } from "@/composables/useAsync";
+import { getUsers, addAdmin, removeAdmin } from "@/services/usersService";
+import type { User } from "@/utils/types";
+
+// Utility function to check if a user is an admin
+const isUserAdmin = (user: User): boolean => {
+	return user.roles?.includes("Administrator") ?? false;
+};
 
 const uiStore = useUIStore();
-const users = ref<User[]>([]);
 const showConfirmDialog = ref(false);
-const userToUpdate = ref<{ id: string; isAdmin: boolean } | null>(null);
+const userToUpdate = ref<{ userId: string; isAdmin: boolean } | null>(null);
 const confirmMessage = ref("");
-const isLoading = ref(true);
-const usersNotFound = ref(false);
 
-const fetchUsers = async () => {
-	try {
-		isLoading.value = true;
-		const response = await apiClient.get<User[]>("/users");
-		users.value = response;
-	} catch (err) {
-		uiStore.triggerToast(
-			"Неуспешно извличане на потребители. Опитайте отново по-късно.",
-			"error"
-		);
-		console.error("Error fetching users:", err);
-	} finally {
-		isLoading.value = false;
-	}
-};
+const { execute, data: users, loading, error } = useAsync(getUsers);
 
 const updateUserAdminStatus = async (userId: string, isAdmin: boolean) => {
 	try {
-		await apiClient.put(`/users/${userId}/admin`, { isAdmin });
-		await fetchUsers();
+		if (isAdmin) {
+			await addAdmin(userId);
+		} else {
+			await removeAdmin(userId);
+		}
+
+		await execute(); // Refresh the users list
 	} catch (err) {
-		usersNotFound.value = true;
-		console.error("Error updating user admin status:", err);
 		throw err;
 	}
 };
 
 const promptConfirm = (userId: string, willBeAdmin: boolean) => {
-	userToUpdate.value = { id: userId, isAdmin: willBeAdmin };
+	console.log({ userId, willBeAdmin });
+
+	userToUpdate.value = { userId, isAdmin: willBeAdmin };
+
 	confirmMessage.value = willBeAdmin
-		? `Сигурен ли си, че искаш да направиш този потребител администратор?`
-		: `Сигурен ли си, че искаш да премахнеш администраторските права на този потребител?`;
+		? `Сигурни ли сте, че искате да направите този потребител администратор?`
+		: `Сигурни ли сте, че искате да премахнете администраторските права на този потребител?`;
+
 	showConfirmDialog.value = true;
 };
 
@@ -60,15 +52,23 @@ const handleConfirm = async (confirmed: boolean) => {
 
 	if (confirmed && userToUpdate.value) {
 		try {
-			await updateUserAdminStatus(userToUpdate.value.id, userToUpdate.value.isAdmin);
+			await updateUserAdminStatus(
+				userToUpdate.value.userId,
+				userToUpdate.value.isAdmin
+			);
+
 			uiStore.triggerToast(
 				userToUpdate.value.isAdmin
-					? "Потребителят е направен администратор успешно!"
-					: "Администраторските права са премахнати успешно!",
+					? "Потребителят беше направен администратор успешно!"
+					: "Администраторските права бяха премахнати успешно!",
 				"success"
 			);
 		} catch (err) {
-			uiStore.triggerToast("Неуспешна промяна на роля. Опитай отново.", "error");
+			uiStore.triggerToast(
+				"Неуспешна промяна на ролята. Опитай отново.",
+				"error"
+			);
+
 			console.error("Error updating user role:", err);
 		}
 	}
@@ -76,16 +76,23 @@ const handleConfirm = async (confirmed: boolean) => {
 	userToUpdate.value = null;
 };
 
-onMounted(() => {
-	fetchUsers();
-});
+onMounted(execute);
 </script>
 
 <template>
 	<div class="p-5">
-		<div v-if="isLoading"><LoaderComponent /></div>
+		<div v-if="loading"><LoaderComponent /></div>
+		<div v-else-if="error" class="p-10 text-center text-red">
+			Възникна грешка: {{ error }}
+		</div>
+		<div v-else-if="!users || users.length === 0">
+			<div class="p-10 text-center text-white">
+				Няма намерени потребители.
+			</div>
+		</div>
 		<template v-else>
-			<table class="min-w-4 divide-y divide-gray-200 ml-auto mr-auto w-1/2">
+			<table
+				class="min-w-4 divide-y divide-gray-200 ml-auto mr-auto w-1/2">
 				<thead class="bg-gray-800">
 					<tr>
 						<th
@@ -105,12 +112,7 @@ onMounted(() => {
 						</th>
 					</tr>
 				</thead>
-				<tbody class="bg-gray-700 divide-y divide-gray-600">
-					<tr v-if="users.length === 0">
-						<td colspan="3" class="text-center text-white py-4">
-							Няма намерени потребители.
-						</td>
-					</tr>
+				<tbody class="bg-gray-700 divide-y divide-gray-200 y-600">
 					<tr
 						v-for="user in users"
 						:key="user.id"
@@ -120,15 +122,23 @@ onMounted(() => {
 								:to="''"
 								class="flex items-center hover:text-yellow transition-colors cursor-default">
 								<UserIcon class="flex-shrink-0" />
-								<span class="ml-3 text-white">{{ user.email }} </span>
+								<span class="ml-3 text-white"
+									>{{ user.email }}
+								</span>
 							</RouterLink>
 						</td>
 						<td class="py-4 whitespace-nowrap">
 							<RouterLink
 								:to="''"
 								class="flex items-start hover:text-yellow transition-colors cursor-default">
-								<span v-if="user.isAdmin" class="text-white">Администратор</span>
-								<span v-else class="text-white">Потребител</span>
+								<span
+									v-if="isUserAdmin(user)"
+									class="text-white"
+									>Администратор</span
+								>
+								<span v-else class="text-white"
+									>Потребител</span
+								>
 							</RouterLink>
 						</td>
 						<td class="px-6 py-4 whitespace-nowrap">
@@ -137,13 +147,16 @@ onMounted(() => {
 								class="flex items-start justify-between hover:text-yellow transition-colors">
 								<div class="flex justify-end gap-2">
 									<button
-										v-if="!user.isAdmin"
-										@click="promptConfirm(user.id, true)"
+										v-if="!isUserAdmin(user)"
+										@click="
+											console.log({ user });
+											promptConfirm(user.id, true);
+										"
 										class="bg-cyan text-dark-grey px-3 py-1 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer">
 										Направи админ
 									</button>
 									<button
-										v-if="user.isAdmin"
+										v-if="isUserAdmin(user)"
 										@click="promptConfirm(user.id, false)"
 										class="bg-red text-white px-3 py-1 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer">
 										Премахни права

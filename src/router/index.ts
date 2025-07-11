@@ -83,29 +83,24 @@ router.beforeEach(async (to, _, next) => {
 	const userStore = useUserStore();
 	const { triggerToast } = useUIStore();
 
+	// Handle token refresh
 	if (userStore.refreshToken && !userStore.accessToken) {
-		userStore
-			.refreshAccessToken()
-			.then(success => {
-				if (!success) {
-					triggerToast(
-						"Неуспешно обновяване на токена. Моля, впишете се отново.",
-						"error"
-					);
-					return next("/login");
-				}
-
-				next();
-			})
-			.catch(() => {
+		try {
+			const success = await userStore.refreshAccessToken();
+			if (!success) {
 				triggerToast(
 					"Неуспешно обновяване на токена. Моля, впишете се отново.",
 					"error"
 				);
-				next("/login");
-			});
-
-		return;
+				return next("/login");
+			}
+		} catch {
+			triggerToast(
+				"Неуспешно обновяване на токена. Моля, впишете се отново.",
+				"error"
+			);
+			return next("/login");
+		}
 	}
 
 	await userStore.fetchUser();
