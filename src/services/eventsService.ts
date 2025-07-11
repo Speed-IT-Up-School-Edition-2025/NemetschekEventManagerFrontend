@@ -1,5 +1,10 @@
 import { apiClient } from "@/utils/api";
-import type { CreateEventDto, CreateEventResponse, Event } from "@/utils/types";
+import type {
+	CreateEventDto,
+	CreateEventResponse,
+	Event,
+	UpdateEventDto,
+} from "@/utils/types";
 
 export function createEvent(dto: CreateEventDto) {
 	return apiClient.post<CreateEventResponse>("/events", dto);
@@ -15,4 +20,9 @@ export function getJoinedEvents() {
 
 export function getEventById(id: string) {
 	return apiClient.get<Event>(`/events/${id}`);
+}
+
+// TODO: Fix types for update
+export function updateEvent(id: string, dto: UpdateEventDto) {
+	return apiClient.put<Event>(`/events/${id}`, dto);
 }

@@ -23,7 +23,8 @@ export const useUserStore = defineStore("user", {
 					"/refresh",
 					{
 						refreshToken: this.refreshToken,
-					}
+					},
+					false
 				);
 
 				this.setAccessToken(res.accessToken);

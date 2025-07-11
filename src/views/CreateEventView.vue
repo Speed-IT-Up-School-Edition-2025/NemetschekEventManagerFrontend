@@ -5,16 +5,21 @@ import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
 import { createEvent } from "@/services/eventsService";
 import { useCurrentEventStore } from "@/stores/currentEventStore";
 import { useUIStore } from "@/stores/uiStore";
-import { useTemplateRef } from "vue";
+import { useTemplateRef, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
-const { currentEvent } = useCurrentEventStore();
+const { currentEvent, clearCurrentEvent } = useCurrentEventStore();
 const { triggerToast } = useUIStore();
 
 const router = useRouter();
 
 const createEventInformationRef = useTemplateRef("createEventInformationRef");
 const createEventFormRef = useTemplateRef("createEventFormRef");
+
+// Clear when leaving the page
+onUnmounted(() => {
+	clearCurrentEvent();
+});
 
 function handleSubmit() {
 	const eventInformation = createEventInformationRef.value?.getState();
@@ -25,15 +30,16 @@ function handleSubmit() {
 		fields: formFields!,
 	})
 		.then(({ id }) => {
-			triggerToast("Събитието е създадено успешно!");
-
+			triggerToast("Събитието е създадено успешно!", "success");
+			clearCurrentEvent(); // Clear the event data after successful creation
 			router.push(`/events/${id}`);
 		})
 		.catch(error => {
 			console.error("Грешка при създаване на събитието:", error);
 
 			triggerToast(
-				"Възникна грешка при създаване на събитието. Моля, опитайте отново."
+				"Възникна грешка при създаване на събитието. Моля, опитайте отново.",
+				"error"
 			);
 		});
 }

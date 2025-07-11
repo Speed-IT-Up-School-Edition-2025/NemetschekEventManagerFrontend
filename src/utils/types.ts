@@ -14,6 +14,8 @@ export interface Event {
 	signUpDeadline: string;
 	location: string;
 	fields: FormField[];
+	spotsLeft: number;
+	peopleLimit?: number;
 }
 
 export interface CreateEventDto {
@@ -23,8 +25,8 @@ export interface CreateEventDto {
 	signUpDeadline?: string;
 	location: string;
 	fields: FormField[];
+	peopleLimit?: number;
 }
-
 
 export interface FilledField {
 	id: number;
@@ -35,7 +37,7 @@ export interface FilledField {
 export interface GetSubmissionDto {
 	submissions: FilledField[];
 	date: string;
-	// userEmail: string;
+	email: string;
 	userId: string;
 }
 
@@ -44,7 +46,17 @@ export interface CreateEventResponse {
 }
 
 export interface User {
-	userId: string;
+	id: string;
 	email: string;
 	roles: string[];
+}
+
+export interface UpdateEventDto {
+	name?: string;
+	description?: string;
+	date?: string;
+	signUpDeadline?: string;
+	location?: string;
+	fields?: FormField[];
+	peopleLimit?: number;
 }

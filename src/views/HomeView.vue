@@ -16,12 +16,12 @@
 					<RouterLink
 						to="/events"
 						class="bg-yellow text-grey px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-lg">
-						Разгледай Събитията
+						Разгледай събитията
 					</RouterLink>
 					<RouterLink
 						to="/events/joined"
 						class="border-2 border-yellow text-yellow px-8 py-3 rounded-lg font-semibold hover:bg-yellow hover:text-grey transition text-lg">
-						Присъединени Събития
+						Присъединени събития
 					</RouterLink>
 				</div>
 			</div>
@@ -42,7 +42,7 @@
 						</svg>
 					</div>
 					<h3 class="text-xl font-semibold text-yellow mb-2">
-						Лесно Откриване на Събития
+						Лесно откриване на събития
 					</h3>
 					<p class="text-white/80">
 						Разгледайте разнообразие от събития и намерете
@@ -62,7 +62,7 @@
 						</svg>
 					</div>
 					<h3 class="text-xl font-semibold text-yellow mb-2">
-						Лесна Регистрация
+						Лесна регистрация
 					</h3>
 					<p class="text-white/80">
 						Присъединете се към събития със само няколко клика и
@@ -84,7 +84,7 @@
 						</svg>
 					</div>
 					<h3 class="text-xl font-semibold text-yellow mb-2">
-						Организирано Табло
+						Организирано табло
 					</h3>
 					<p class="text-white/80">
 						Следете всички свои събития на едно място с нашето
@@ -99,7 +99,7 @@
 				class="bg-dark-grey rounded-lg p-8 mb-16">
 				<div class="text-center mb-8">
 					<h2 class="text-3xl font-bold text-yellow mb-4">
-						Администраторски Инструменти
+						Администраторски инструменти
 					</h2>
 					<p class="text-white/80 text-lg">
 						Управлявайте събития и потребители с мощни
@@ -110,12 +110,12 @@
 					<RouterLink
 						to="/events/create"
 						class="bg-yellow text-grey px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition text-center">
-						Създаване на Ново Събитие
+						Създаване на ново събитие
 					</RouterLink>
 					<RouterLink
 						to="/users"
 						class="border-2 border-yellow text-yellow px-6 py-3 rounded-lg font-semibold hover:bg-yellow hover:text-grey transition text-center">
-						Управление на Потребители
+						Управление на потребители
 					</RouterLink>
 				</div>
 			</div>
@@ -132,7 +132,7 @@
 				<RouterLink
 					to="/events"
 					class="bg-yellow text-grey px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-lg inline-block">
-					Разгледайте Всички Събития
+					Разгледайте всички събития
 				</RouterLink>
 			</div>
 		</div>

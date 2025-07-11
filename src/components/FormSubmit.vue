@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import type { FilledField, FormField } from "@/utils/types.ts";
+import { createSubmission } from "@/services/submissionService";
+import { useUIStore } from "@/stores/uiStore";
 
+const uiStore = useUIStore();
 const props = defineProps<{
 	actionName: string;
 	fields: FormField[];
+	eventId: string;
 }>();
 
 const formField = (fields: FormField[]): FilledField[] => {
@@ -17,15 +21,28 @@ const formField = (fields: FormField[]): FilledField[] => {
 		} as FilledField;
 	});
 };
+
+const submitForm = async () => {
+	try {
+		if (!props.eventId) {
+			throw new Error("Event ID is required for submission.");
+		}
+		await createSubmission(props.eventId, submission.value);
+		uiStore.triggerToast("Формулярът е изпратен успешно!", "success");
+	} catch (error: any) {
+		uiStore.triggerToast(
+			`Възникна грешка при изпращането на формуляра: ${error.message}`,
+			"error"
+		);
+	}
+};
+
 const submission = ref<FilledField[]>(formField(props.fields));
-defineEmits(["submit-form"]);
 </script>
 
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
-		<form
-			class="space-y-6"
-			@submit.prevent="$emit('submit-form', submission)">
+		<form class="space-y-6" @submit.prevent="submitForm()">
 			<h1 class="text-2xl font-semibold text-white text-center">
 				Преглед на формуляр
 			</h1>

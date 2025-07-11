@@ -27,10 +27,12 @@ onMounted(() => {
 	<div v-else>
 		<FilterComponent v-model:events="events" v-model:searched-events="searchedEvents" />
 		<div
-			class="p-10 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10 justify-items-center overflow-y-auto">
+			class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
 			<CardComponent
-				class="max-w-md"
-				v-for="event in searchedEvents.length === 0 ? events : searchedEvents"
+				class="w-full min-h-[400px]"
+				v-for="event in searchedEvents.length === 0
+					? events
+					: searchedEvents"
 				:event="event"
 				:key="event.id" />
 		</div>

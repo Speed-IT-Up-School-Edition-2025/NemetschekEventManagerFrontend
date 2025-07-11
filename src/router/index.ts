@@ -2,12 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/userStore";
 import { useUIStore } from "@/stores/uiStore";
+import { useCurrentEventStore } from "@/stores/currentEventStore";
 
 const HomeView = () => import("@/views/HomeView.vue");
 const EventsView = () => import("@/views/EventsView.vue");
 const EventDetailsView = () => import("@/views/EventDetailsView.vue");
 const JoinedEventsView = () => import("@/views/JoinedEventsView.vue");
 const CreateEvent = () => import("@/views/CreateEventView.vue");
+const EditEventView = () => import("@/views/EditEventView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
 const LogInView = () => import("@/views/LogInView.vue");
 const NotFoundView = () => import("@/views/NotFoundView.vue");
@@ -48,6 +50,12 @@ const router = createRouter({
 					meta: { requiresAdmin: true },
 				},
 				{
+					path: ":id/edit",
+					name: "edit-event",
+					component: EditEventView,
+					meta: { requiresAdmin: true },
+				},
+				{
 					path: ":id/submissions",
 					name: "submissions",
 					component: SubmissionsView,
@@ -79,9 +87,15 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, from, next) => {
 	const userStore = useUserStore();
 	const { triggerToast } = useUIStore();
+	const { clearCurrentEvent } = useCurrentEventStore();
+
+	// Clear current event when navigating away from create/edit event pages
+	if (from.name === "create-event" || from.name === "edit-event") {
+		clearCurrentEvent();
+	}
 
 	// Handle token refresh
 	if (userStore.refreshToken && !userStore.accessToken) {
