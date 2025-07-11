@@ -3,16 +3,29 @@ import CardComponent from "@/components/CardComponent.vue";
 import { getEvents } from "@/services/eventsService";
 import { onMounted, ref } from "vue";
 import FilterComponent from "@/components/FilterComponent.vue";
-import { useAsync } from "@/composables/useAsync";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 import type { Event } from "@/utils/types";
 
-const { execute, data: events, error, loading } = useAsync(getEvents);
-
+const events = ref<Event[]>([]);
 const searchedEvents = ref<Event[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+
+async function fetchEvents() {
+	loading.value = true;
+	error.value = null;
+	try {
+		const result = await getEvents();
+		events.value = result;
+	} catch (e: any) {
+		error.value = e?.message || "Грешка при зареждане на събитията.";
+	} finally {
+		loading.value = false;
+	}
+}
 
 onMounted(() => {
-	execute();
+	fetchEvents();
 });
 </script>
 
@@ -30,10 +43,9 @@ onMounted(() => {
 			class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
 			<CardComponent
 				class="w-full min-h-[400px]"
-				v-for="event in searchedEvents.length === 0
-					? events
-					: searchedEvents"
+				v-for="event in searchedEvents.length === 0 ? events : searchedEvents"
 				:event="event"
+				button-name="Запиши се"
 				:key="event.id" />
 		</div>
 	</div>

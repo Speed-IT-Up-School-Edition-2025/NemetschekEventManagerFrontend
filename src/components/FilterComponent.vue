@@ -228,7 +228,7 @@ async function filterBy() {
 			<div class="pt-10 pl-2">
 				<button
 					@click="deleteFilters()"
-					class="h-10 w-20 border rounded border-red-500 text-red transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer">
+					class="h-10 w-20 border rounded border-red-500 text-red transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-red cursor-pointer">
 					Изчисти
 				</button>
 			</div>
