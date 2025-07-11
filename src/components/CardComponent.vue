@@ -48,7 +48,7 @@
 					:to="`/events/${event.id}`"
 					class="h-10 px-4 py-2 border-2 text-white border-yellow-500 rounded-2xl border-solid transition delay-100 duration-75 ease-in-out hover:text-white hover:border-transparent hover:bg-yellow-500"
 					@click.stop>
-					Запиши се
+					{{ buttonName }}
 				</RouterLink>
 			</div>
 		</div>
@@ -63,11 +63,13 @@ import InfoIcon from "./icons/InfoIcon.vue";
 import UserIcon from "./icons/UserIcon.vue";
 import { useRouter } from "vue-router";
 
-const { event } = defineProps<{ event: Event }>();
+const { event, buttonName } = defineProps<{
+	event: Event;
+	buttonName: string;
+}>();
 const router = useRouter();
 const shortenedDescription = event.description
-	? event.description.slice(0, 50) +
-		(event.description.length > 50 ? "..." : "")
+	? event.description.slice(0, 50) + (event.description.length > 50 ? "..." : "")
 	: "";
 
 function formatDate(dateString: string) {
