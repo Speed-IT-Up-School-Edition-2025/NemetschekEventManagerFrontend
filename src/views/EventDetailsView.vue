@@ -7,6 +7,7 @@ import { useAsync } from "@/composables/useAsync";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 import { onMounted, watch } from "vue";
 import { useUserStore } from "@/stores/userStore";
+import { useCurrentEventStore } from "@/stores/currentEventStore";
 import CalendarIcon from "@/components/icons/CalendarIcon.vue";
 import LocationIcon from "@/components/icons/LocationIcon.vue";
 import ClockIcon from "@/components/icons/ClockIcon.vue";
@@ -14,6 +15,7 @@ import UserIcon from "@/components/icons/UserIcon.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
+const { setEventForDuplication } = useCurrentEventStore();
 
 // Helper function to format datetime
 const formatDateTime = (isoString: string) => {
@@ -49,6 +51,24 @@ watch(event, newEvent => {
 });
 
 onMounted(execute);
+
+// Function to duplicate the current event
+const duplicateEvent = () => {
+	if (event.value) {
+		// Set the current event for duplication (without ID to create a new one)
+		const eventToDuplicate = {
+			name: `${event.value.name} (копие)`,
+			description: event.value.description,
+			date: "",
+			signUpDeadline: "",
+			location: event.value.location,
+			fields: event.value.fields,
+			peopleLimit: event.value.peopleLimit,
+		};
+		setEventForDuplication(eventToDuplicate);
+		router.push("/events/create");
+	}
+};
 </script>
 
 <template>
@@ -117,7 +137,7 @@ onMounted(execute);
 							<UserIcon />
 							<div class="min-w-0 flex-1">
 								<h3 class="text-lg font-semibold text-white">
-									Наличност
+									Места
 								</h3>
 								<div
 									class="text-white/80 break-words space-y-1">
@@ -136,7 +156,12 @@ onMounted(execute);
 											event.spotsLeft !== null &&
 											event.spotsLeft !== undefined
 										">
-										Свободни места: {{ event.spotsLeft }}
+										Свободни места:
+										{{
+											event.spotsLeft === 0
+												? "Няма свободни места"
+												: event.spotsLeft
+										}}
 									</p>
 								</div>
 							</div>
@@ -165,7 +190,14 @@ onMounted(execute);
 			</div>
 			<div v-if="event" class="space-y-4">
 				<!-- Admin Actions Section -->
-				<div v-if="userStore.isAdmin" class="flex justify-end px-6">
+				<div
+					v-if="userStore.isAdmin"
+					class="flex justify-end gap-3 px-6">
+					<button
+						@click="duplicateEvent"
+						class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors font-medium">
+						Дублиране
+					</button>
 					<RouterLink
 						:to="{ name: 'edit-event', params: { id: event.id } }"
 						class="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium">

@@ -7,7 +7,7 @@ import { updateEvent, getEventById } from "@/services/eventsService";
 import { useCurrentEventStore } from "@/stores/currentEventStore";
 import { useUIStore } from "@/stores/uiStore";
 import { useAsync } from "@/composables/useAsync";
-import { useTemplateRef, onMounted } from "vue";
+import { useTemplateRef, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const { setCurrentEvent, clearCurrentEvent } = useCurrentEventStore();
@@ -47,6 +47,11 @@ onMounted(async () => {
 
 		router.push("/events");
 	}
+});
+
+// Clear current event when leaving the edit page
+onUnmounted(() => {
+	clearCurrentEvent();
 });
 
 function handleSubmit() {
