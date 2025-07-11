@@ -1,17 +1,18 @@
-export interface User {
-	id: string;
-	email: string;
-	isAdmin: boolean;
-}
-
-const users: User[] = [
-	{ id: "1", email: "john.doe@example.com", isAdmin: true },
-	{ id: "2", email: "jane.smith@example.com", isAdmin: false },
-	{ id: "3", email: "bob.johnson@example.com", isAdmin: false },
-	{ id: "4", email: "alice.williams@example.com", isAdmin: true },
-	{ id: "5", email: "david.brown@example.com", isAdmin: false },
-];
+import { apiClient } from "@/utils/api";
+import type { User } from "@/utils/types";
 
 export function getUsers() {
-	return users;
+	return apiClient.get<User[]>("/users");
+}
+
+export function getMe() {
+	return apiClient.get<User>("/users/me");
+}
+
+export function addAdmin(userId: string) {
+	return apiClient.post(`/users/admin/${userId}`);
+}
+
+export function removeAdmin(userId: string) {
+	return apiClient.delete(`/users/admin/${userId}`);
 }

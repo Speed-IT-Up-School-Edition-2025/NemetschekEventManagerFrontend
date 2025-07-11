@@ -8,6 +8,7 @@ export function useAsync<T>(fn: () => Promise<T>) {
 	const execute = async () => {
 		loading.value = true;
 		error.value = null;
+
 		try {
 			data.value = await fn();
 		} catch (e) {

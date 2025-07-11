@@ -11,6 +11,7 @@ const CreateEvent = () => import("@/views/CreateEventView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
 const LogInView = () => import("@/views/LogInView.vue");
 const NotFoundView = () => import("@/views/NotFoundView.vue");
+const SubmissionsView = () => import("@/views/SubmissionsView.vue");
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,7 +45,13 @@ const router = createRouter({
 					path: "create",
 					name: "create-event",
 					component: CreateEvent,
-					meta: { requiredAdmin: true },
+					meta: { requiresAdmin: true },
+				},
+				{
+					path: ":id/submissions",
+					name: "submissions",
+					component: SubmissionsView,
+					meta: { requiresAuth: true, requiresAdmin: true },
 				},
 			],
 		},
@@ -52,7 +59,7 @@ const router = createRouter({
 			path: "/users",
 			name: "users",
 			component: UsersView,
-			meta: { requiresAuth: true, requiredAdmin: true },
+			meta: { requiresAuth: true, requiresAdmin: true },
 		},
 		{
 			path: "/login",
@@ -72,38 +79,35 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
 	const userStore = useUserStore();
 	const { triggerToast } = useUIStore();
 
+	// Handle token refresh
 	if (userStore.refreshToken && !userStore.accessToken) {
-		userStore
-			.refreshAccessToken()
-			.then(success => {
-				if (!success) {
-					triggerToast(
-						"Неуспешно обновяване на токена. Моля, впишете се отново.",
-						"error"
-					);
-					return next("/login");
-				}
-
-				next();
-			})
-			.catch(() => {
+		try {
+			const success = await userStore.refreshAccessToken();
+			if (!success) {
 				triggerToast(
 					"Неуспешно обновяване на токена. Моля, впишете се отново.",
 					"error"
 				);
-				next("/login");
-			});
-
-		return;
+				return next("/login");
+			}
+		} catch {
+			triggerToast(
+				"Неуспешно обновяване на токена. Моля, впишете се отново.",
+				"error"
+			);
+			return next("/login");
+		}
 	}
+
+	await userStore.fetchUser();
 
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
-	const requiresAdmin = to.matched.some(record => record.meta.requiredAdmin);
+	const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
 
 	if (requiresAuth && !userStore.isAuthenticated) {
 		triggerToast(

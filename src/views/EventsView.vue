@@ -23,12 +23,12 @@ onMounted(() => {
 
 	<div v-if="loading"><LoaderComponent /></div>
 	<div v-else-if="error" class="p-10 text-center text-red">
-		Error: {{ error }}
+		Възникна грешка: {{ error }}
 	</div>
 	<div
 		v-else-if="!events || events.length === 0"
 		class="p-10 text-center text-white">
-		No events found
+		Няма намерени събития
 	</div>
 	<div v-else>
 		<FilterComponent

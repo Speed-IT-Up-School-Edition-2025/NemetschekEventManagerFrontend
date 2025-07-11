@@ -9,13 +9,17 @@ import router from "./router";
 const pinia = createPinia();
 const app = createApp(App);
 
-app.use(createPinia());
+app.use(pinia);
 app.use(router);
-const userStore = useUserStore(pinia);
-  if (userStore.refreshToken) {
-    await userStore.refreshAccessToken();
-    if (userStore.accessToken) {
-      await userStore.fetchUserProfile();
-    }
-  }
+
+const userStore = useUserStore();
+
+if (userStore.refreshToken) {
+	await userStore.refreshAccessToken();
+
+	if (userStore.accessToken) {
+		await userStore.fetchUser();
+	}
+}
+
 app.mount("#app");
