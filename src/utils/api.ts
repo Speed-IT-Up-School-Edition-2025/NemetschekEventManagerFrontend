@@ -61,8 +61,11 @@ const request = async <TResponse, TBody = unknown>(
 
 export const apiClient = {
 	get: <TResponse>(url: string) => request<TResponse>("GET", url),
-	post: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
-		request<TResponse, TBody>("POST", url, body),
+	post: <TResponse, TBody = unknown>(
+		url: string,
+		body?: TBody,
+		firstTry = true
+	) => request<TResponse, TBody>("POST", url, body, firstTry),
 	put: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
 		request<TResponse, TBody>("PUT", url, body),
 	delete: <TResponse, TBody = unknown>(url: string, body?: TBody) =>
