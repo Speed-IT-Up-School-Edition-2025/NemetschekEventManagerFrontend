@@ -30,7 +30,7 @@
 				class="flex pl-2 gap-3 items-start">
 				<span><UserIcon /></span>
 				<span class="text-white text-lg break-words min-w-0 flex-1">
-					{{ event.spotsLeft }} spots left
+					{{ event.spotsLeft }} свободни места
 				</span>
 			</p>
 			<p class="flex pl-2 gap-3 items-start flex-grow">
