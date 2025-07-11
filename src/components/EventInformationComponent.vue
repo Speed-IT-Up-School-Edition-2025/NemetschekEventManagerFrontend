@@ -4,22 +4,13 @@ import type { Event } from "@/utils/types";
 import CalendarIcon from "./icons/CalendarIcon.vue";
 import LocationIcon from "./icons/LocationIcon.vue";
 import ClockIcon from "./icons/ClockIcon.vue";
+import { formatDateTime } from "@/utils/date.ts";
 
 const { event } = defineProps<{
 	event: Event;
 }>();
 
 // Helper function to format datetime
-const formatDateTime = (isoString: string) => {
-	return new Date(isoString).toLocaleDateString(undefined, {
-		weekday: "long",
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-};
 </script>
 
 <template>
@@ -35,9 +26,7 @@ const formatDateTime = (isoString: string) => {
 			<div class="flex items-start gap-3">
 				<CalendarIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">
-						Дата и час на събитие
-					</h3>
+					<h3 class="text-lg font-semibold text-white">Дата и час на събитие</h3>
 					<p class="text-white/80">
 						{{ formatDateTime(event.date) }}
 					</p>
@@ -57,9 +46,7 @@ const formatDateTime = (isoString: string) => {
 			<div class="flex items-start gap-3">
 				<ClockIcon />
 				<div>
-					<h3 class="text-lg font-semibold text-white">
-						Краен срок на записване
-					</h3>
+					<h3 class="text-lg font-semibold text-white">Краен срок на записване</h3>
 					<p class="text-white/80">
 						{{ formatDateTime(event.signUpDeadline) }}
 					</p>
