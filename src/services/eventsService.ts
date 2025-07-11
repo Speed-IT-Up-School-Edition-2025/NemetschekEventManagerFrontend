@@ -22,7 +22,10 @@ export function getEventById(id: string) {
 	return apiClient.get<Event>(`/events/${id}`);
 }
 
-// TODO: Fix types for update
 export function updateEvent(id: string, dto: UpdateEventDto) {
 	return apiClient.put<Event>(`/events/${id}`, dto);
+}
+
+export function deleteEvent(id: string) {
+	return apiClient.delete(`/events/${id}`);
 }
