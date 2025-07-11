@@ -7,7 +7,7 @@ export interface FormField {
 }
 
 export interface Event {
-	id: string;
+	id: number;
 	name: string;
 	description: string;
 	date: string;
@@ -16,6 +16,7 @@ export interface Event {
 	fields: FormField[];
 	spotsLeft: number;
 	peopleLimit?: number;
+	userSignedUp: boolean;
 }
 
 export interface CreateEventDto {

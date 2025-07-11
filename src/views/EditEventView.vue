@@ -57,7 +57,6 @@ onUnmounted(() => {
 function handleSubmit() {
 	const eventInformation = editEventInformationRef.value?.getState();
 	const formFields = editEventFormRef.value?.getState();
-
 	updateEvent(route.params.id as string, {
 		...eventInformation!,
 		fields: formFields!,
@@ -82,7 +81,9 @@ function handleSubmit() {
 <template>
 	<TwoPanelLayout action-name="Редактиране на събитие">
 		<template #left>
-			<div v-if="isLoading"><LoaderComponent /></div>
+			<div v-if="isLoading">
+				<LoaderComponent />
+			</div>
 			<div v-else-if="loadError" class="p-10 text-center text-red-500">
 				Error: {{ loadError }}
 			</div>
@@ -92,7 +93,9 @@ function handleSubmit() {
 				v-bind="{ event: currentEvent ?? undefined }" />
 		</template>
 		<template #right>
-			<div v-if="isLoading"><LoaderComponent /></div>
+			<div v-if="isLoading">
+				<LoaderComponent />
+			</div>
 			<div v-else-if="loadError" class="p-10 text-center text-red-500">
 				Error: {{ loadError }}
 			</div>
