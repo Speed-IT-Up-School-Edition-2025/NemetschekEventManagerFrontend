@@ -79,7 +79,7 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
 	const userStore = useUserStore();
 	const { triggerToast } = useUIStore();
 
@@ -107,6 +107,8 @@ router.beforeEach((to, _, next) => {
 
 		return;
 	}
+
+	await userStore.fetchUser();
 
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const requiresGuest = to.matched.some(record => record.meta.requiresGuest);

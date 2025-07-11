@@ -1,14 +1,19 @@
+import { getMe } from "@/services/usersService";
 import { apiClient } from "@/utils/api";
+import type { User } from "@/utils/types";
 import { defineStore } from "pinia";
+
 export const useUserStore = defineStore("user", {
 	state: () => ({
 		accessToken: null as string | null,
-		profile: null as UserProfile | null,
+		profile: null as User | null,
 		refreshToken: localStorage.getItem("refreshToken"),
 	}),
 	getters: {
 		isAuthenticated: state => !!state.accessToken,
-		isAdmin: state => state.profile?.isAdmin ?? false,
+		isAdmin: state => {
+			return state.profile?.roles.includes("Administrator") ?? false;
+		},
 	},
 	actions: {
 		async refreshAccessToken() {
@@ -20,11 +25,15 @@ export const useUserStore = defineStore("user", {
 						refreshToken: this.refreshToken,
 					}
 				);
+
 				this.setAccessToken(res.accessToken);
+
 				return true;
 			} catch (err) {
 				console.error("Failed to refresh token", err);
+
 				this.logout();
+
 				return false;
 			}
 		},
@@ -32,32 +41,23 @@ export const useUserStore = defineStore("user", {
 			this.accessToken = token;
 		},
 		setRefreshToken(token: string) {
-  			this.refreshToken = token;
-  			localStorage.setItem("refreshToken", token);
+			this.refreshToken = token;
+
+			localStorage.setItem("refreshToken", token);
 		},
 		async logout() {
 			this.accessToken = null;
 			this.profile = null;
 			this.refreshToken = null;
 			localStorage.removeItem("refreshToken");
-
-			try {
-				await apiClient.post("/logout", {
-					refreshToken: this.refreshToken,
-				});
-			} catch (err) {
-				console.error("Server logout failed:", err);
-			}
 		},
-		async fetchUserProfile() {
-			this.profile = await apiClient.get<UserProfile>("/users/me");
+		async fetchUser() {
+			try {
+				this.profile = await getMe();
+			} catch (err) {
+				console.error("Failed to fetch user profile:", err);
+				this.profile = null;
+			}
 		},
 	},
 });
-
-interface UserProfile {
-	id: string;
-	username: string;
-	email: string;
-	isAdmin: boolean;
-}

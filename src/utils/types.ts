@@ -42,3 +42,9 @@ export interface GetSubmissionDto {
 export interface CreateEventResponse {
 	id: string;
 }
+
+export interface User {
+	userId: string;
+	email: string;
+	roles: string[];
+}

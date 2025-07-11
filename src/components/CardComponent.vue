@@ -2,7 +2,8 @@
 	<div
 		class="flex flex-col items-start py-4 pl-6 pr-10 gap-5 border-yellow rounded-lg border-2 border-solid bg-dark-grey transition delay-100 duration-300 ease-in-out hover:shadow-xl/30"
 		@click="redirect">
-		<h1 class="text-x1 place-self-center pt-3 text-yellow text-3xl font-semibold text-center">
+		<h1
+			class="text-x1 place-self-center pt-3 text-yellow text-3xl font-semibold text-center">
 			{{ event.name }}
 		</h1>
 		<div class="flex flex-col gap-3">
@@ -12,15 +13,21 @@
 			</p>
 			<p class="flex pl-2 gap-3 items-start">
 				<span><CalendarIcon /></span>
-				<span class="text-white text-lg">{{ event.date }}</span>
+				<span class="text-white text-lg">{{
+					formatDate(event.date)
+				}}</span>
 			</p>
 			<p class="flex pl-2 gap-3 items-start">
 				<span><ClockIcon /></span>
-				<span class="text-white text-lg">{{ event.signUpDeadline }}</span>
+				<span class="text-white text-lg">{{
+					formatDate(event.signUpDeadline)
+				}}</span>
 			</p>
 			<p class="flex pl-2 gap-3 items-start">
 				<span><InfoIcon /></span>
-				<span class="text-white text-lg">{{ shortenedDescription }}</span>
+				<span class="text-white text-lg">{{
+					shortenedDescription
+				}}</span>
 			</p>
 			<RouterLink
 				:to="`/events/${event.id}`"
@@ -41,8 +48,22 @@ import { useRouter } from "vue-router";
 const { event } = defineProps<{ event: Event }>();
 const router = useRouter();
 const shortenedDescription = event.description
-	? event.description.slice(0, 50) + (event.description.length > 50 ? "..." : "")
+	? event.description.slice(0, 50) +
+		(event.description.length > 50 ? "..." : "")
 	: "";
+
+function formatDate(dateString: string) {
+	if (!dateString) return "";
+	const date = new Date(dateString);
+	return date.toLocaleDateString(undefined, {
+		weekday: "short",
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+}
 
 function redirect() {
 	router.push(`/events/${event.id}`);

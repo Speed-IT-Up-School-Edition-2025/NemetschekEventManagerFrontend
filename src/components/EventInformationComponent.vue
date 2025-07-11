@@ -11,7 +11,7 @@ const { event } = defineProps<{
 
 // Helper function to format datetime
 const formatDateTime = (isoString: string) => {
-	return new Date(isoString).toLocaleDateString("bg-BG", {
+	return new Date(isoString).toLocaleDateString(undefined, {
 		weekday: "long",
 		year: "numeric",
 		month: "long",

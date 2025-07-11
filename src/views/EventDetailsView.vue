@@ -40,14 +40,14 @@ onMounted(execute);
 		<template #left>
 			<div v-if="loading"><LoaderComponent /></div>
 			<div v-else-if="error" class="p-10 text-center text-red">
-				Error: {{ error }}
+				Възникна грешка: {{ error }}
 			</div>
 			<EventInformationComponent v-if="event" :event="event" />
 		</template>
 		<template #right>
 			<div v-if="loading"><LoaderComponent /></div>
 			<div v-else-if="error" class="p-10 text-center text-red">
-				Error: {{ error }}
+				Възникна грешка: {{ error }}
 			</div>
 			<FormSubmit
 				v-if="event?.fields"

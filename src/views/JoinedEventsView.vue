@@ -1,22 +1,54 @@
 <script setup lang="ts">
 import CardComponent from "@/components/CardComponent.vue";
-import FilterComponent from "@/components/FilterComponent.vue";
 import { getJoinedEvents } from "@/services/eventsService";
+import { onMounted, ref } from "vue";
+import FilterComponent from "@/components/FilterComponent.vue";
+import LoaderComponent from "@/components/LoaderComponent.vue";
+import type { Event } from "@/utils/types";
+import { useAsync } from "@/composables/useAsync";
 
-const joinedEvents = getJoinedEvents();
+const { execute, data: events, error, loading } = useAsync(getJoinedEvents);
+
+const searchedEvents = ref<Event[]>([]);
+
+onMounted(() => {
+	execute();
+});
 </script>
 
 <template>
-	<div class="pt-6 flex flex-col gap-6">
-		<h2 class="text-3xl md:text-4xl px-6 font-bold text-yellow">Присъединени събития</h2>
-		<FilterComponent />
+	<h2 class="text-3xl md:text-4xl pl-10 pt-6 font-bold text-yellow">
+		Присъединени събития
+	</h2>
+
+	<div v-if="loading"><LoaderComponent /></div>
+	<div v-else-if="error" class="p-10 text-center text-red">
+		Възникна грешка: {{ error }}
+	</div>
+	<div
+		v-else-if="!events || events.length === 0"
+		class="p-10 text-center text-white">
+		Няма намерени присъединени събития
+	</div>
+	<div v-else>
+		<FilterComponent
+			v-model:events="events"
+			v-model:searched-events="searchedEvents" />
 		<div
-			class="p-6 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10 justify-items-center overflow-y-auto">
+			class="p-10 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10 justify-items-center overflow-y-auto">
 			<CardComponent
 				class="max-w-md"
-				v-for="joinedEvent in joinedEvents"
-				:event="joinedEvent"
-				:key="joinedEvent.id" />
+				v-for="event in searchedEvents.length === 0
+					? events
+					: searchedEvents"
+				:event="event"
+				:key="event.id" />
 		</div>
 	</div>
 </template>
+
+<style>
+input[type="checkbox"] {
+	accent-color: var(--color-yellow);
+}
+</style>

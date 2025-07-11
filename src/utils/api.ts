@@ -1,4 +1,4 @@
-export const baseUrl = "http://172.16.17.21:5000";
+export const baseUrl = "http://localhost:5000";
 
 import { useUserStore } from "@/stores/userStore";
 
@@ -38,7 +38,7 @@ const request = async <TResponse, TBody = unknown>(
 		const success = authStore.refreshAccessToken();
 
 		if (!success) {
-			throw new Error("Unauthorized: Unable to refresh token.");
+			throw new Error("Неуспешно опресняване на токена.");
 		} else {
 			return request<TResponse, TBody>(method, endpoint, body, false);
 		}
@@ -46,7 +46,8 @@ const request = async <TResponse, TBody = unknown>(
 
 	if (!res.ok) {
 		const errText = await res.json();
-		throw new Error(`Request failed: ${res.status} - ${errText}`);
+
+		throw new Error(`Неуспешна заявка: ${res.status} - ${errText}`);
 	}
 
 	const contentType = res.headers.get("Content-Type");
