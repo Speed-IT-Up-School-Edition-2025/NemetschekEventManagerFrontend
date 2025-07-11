@@ -6,12 +6,9 @@ import { useRoute, useRouter } from "vue-router";
 import FormSubmit from "@/components/FormSubmit.vue";
 import { useAsync } from "@/composables/useAsync";
 import LoaderComponent from "@/components/LoaderComponent.vue";
-import { onMounted, ref, watch } from "vue";
-import { createSubmission } from "@/services/submissionService.ts";
-import type { FilledField } from "@/utils/types.ts";
+import { onMounted, watch } from "vue";
 
 const router = useRouter();
-const submission = ref<FilledField[]>();
 
 const {
 	execute,
@@ -26,22 +23,6 @@ const {
 	}
 
 	return getEventById(route.params.id);
-});
-
-const { execute: executeCreate } = useAsync(() => {
-	const route = useRoute();
-
-	// console.log("here");
-	console.log(route.params.id);
-	if (!route.params.id || typeof route.params.id !== "string") {
-		throw new Error("Event ID is required");
-	}
-	console.log("here2");
-	if (!submission.value) {
-		throw new Error("Submission is required");
-	}
-
-	return createSubmission(route.params.id, submission.value);
 });
 
 watch(event, newEvent => {
@@ -73,14 +54,9 @@ onMounted(execute);
 			</div>
 			<FormSubmit
 				v-if="event?.fields"
+				:event-id="event?.id"
 				:fields="event.fields"
-				action-name="Запиши се"
-				@submit-form="
-					fields => {
-						submission = fields;
-						executeCreate();
-					}
-				" />
+				action-name="Запиши се"></FormSubmit>
 		</template>
 	</TwoPanelLayout>
 </template>
