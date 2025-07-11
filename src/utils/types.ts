@@ -34,7 +34,7 @@ export interface FilledField {
 export interface GetSubmissionDto {
 	submissions: FilledField[];
 	date: string;
-	// userEmail: string;
+	email: string;
 	userId: string;
 }
 

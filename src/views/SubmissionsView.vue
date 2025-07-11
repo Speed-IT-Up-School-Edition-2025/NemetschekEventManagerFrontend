@@ -73,17 +73,20 @@ watch(eventError, () => {
 				<button
 					@click="exportToCSV"
 					class="px-4 py-2 bg-cyan hover:bg-cyan-800 text-white rounded transition-colors">
-					Export to CSV
+					Запази като CSV
 				</button>
 				<button
 					@click="exportToXLSX"
 					class="px-4 py-2 bg-cyan hover:bg-cyan-800 text-white rounded transition-colors">
-					Export to XLSX
+					Запази като XLSX
 				</button>
 			</div>
 		</div>
+		<div v-if="submissionsData?.length == 0" class="p-10 text-center text-lg text-white">
+			Няма намерени попълвания.
+		</div>
 		<table
-			v-if="eventData && submissionsData"
+			v-else-if="eventData && submissionsData"
 			class="min-w-4 divide-y divide-gray-200 overflow-auto">
 			<thead class="bg-gray-800">
 				<tr>
@@ -125,9 +128,9 @@ watch(eventError, () => {
 					</td>
 					<td
 						class="px-6 py-4 whitespace-nowrap text-white"
-						:data-tooltip="submission.userId">
+						:data-tooltip="submission.email">
 						<div class="truncate max-w-[200px]">
-							{{ submission.userId }}
+							{{ submission.email }}
 						</div>
 					</td>
 					<td
