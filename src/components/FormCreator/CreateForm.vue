@@ -38,8 +38,11 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 </script>
 
 <template>
-	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto space-y-6">
-		<h1 class="text-2xl font-semibold text-white text-center">Конфигурация на формата</h1>
+	<div
+		class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto space-y-6">
+		<h1 class="text-2xl font-semibold text-white text-center">
+			Конфигурация на формата
+		</h1>
 		<div
 			v-for="(field, index) in fields"
 			:key="field.id"
@@ -64,7 +67,9 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 						class="sr-only peer" />
 					<div
 						class="w-11 h-6 bg-grey-400 rounded-full peer peer-focus:ring-3 peer-focus:ring-yellow peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-grey-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow"></div>
-					<span class="ml-3 text-sm font-medium text-white-900">Задължително</span>
+					<span class="ml-3 text-sm font-medium text-white-900"
+						>Задължително</span
+					>
 				</label>
 				<button
 					class="border border-red text-red hover:bg-red hover:text-white focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-1.5 text-center transition-colors cursor-pointer"
@@ -81,7 +86,9 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 					:placeholder="`Въведи ${field.name.toLowerCase()}`" />
 			</div>
 
-			<div v-else-if="field.type === 'checkbox' || field.type === 'radio'" class="space-y-2">
+			<div
+				v-else-if="field.type === 'checkbox' || field.type === 'radio'"
+				class="space-y-2">
 				<div
 					v-for="(_, index) in field.options"
 					:key="`field-${field.id}-${index}`"
@@ -91,21 +98,26 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 						:type="field.type"
 						:name="`field-${field.id}`"
 						class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm cursor-pointer" />
-					<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
+					<label
+						:for="`${field.id}-${index}`"
+						class="ml-3 text-base text-white">
 						<InputField
 							required
 							:id="`${field.id}-${index}`"
 							v-model="field.options[index]"></InputField>
 					</label>
 					<button
-						class="ml-3 w-8 h-8 flex-shrink-0 flex items-center justify-center text-red-400 rounded-full hover:bg-red-400/20 transition-colors cursor-pointer"
-						@click.prevent="field.options.splice(index, 1)">
-						<CancelIcon class="fill-red" />
+						class="ml-3 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-red-100/10 transition-colors cursor-pointer text-red"
+						@click.prevent="field.options.splice(index, 1)"
+						title="Премахни опция">
+						<CancelIcon />
 					</button>
 				</div>
 				<button
 					class="mt-2 text-yellow-400 hover:bg-yellow-400/20 text-sm font-medium rounded-md px-3 py-1.5 transition-colors cursor-pointer"
-					@click.prevent="field.options.push(`Oпция ${field.options.length + 1}`)">
+					@click.prevent="
+						field.options.push(`Oпция ${field.options.length + 1}`)
+					">
 					Добави опция
 				</button>
 			</div>

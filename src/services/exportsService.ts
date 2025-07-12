@@ -1,7 +1,11 @@
 import { useUserStore } from "@/stores/userStore.ts";
 import { baseUrl } from "@/utils/api.ts";
 
-export const downloadFile = async (endpoint: string, filename: string, type: string) => {
+export const downloadFile = async (
+	endpoint: string,
+	filename: string,
+	type: string
+) => {
 	try {
 		const response = await fetch(baseUrl + endpoint, {
 			method: "GET",
@@ -13,7 +17,9 @@ export const downloadFile = async (endpoint: string, filename: string, type: str
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			console.error(`Error downloading file: ${response.status} - ${errorText}`);
+			console.error(
+				`Error downloading file: ${response.status} - ${errorText}`
+			);
 			return;
 		}
 
@@ -28,7 +34,6 @@ export const downloadFile = async (endpoint: string, filename: string, type: str
 		link.click();
 		document.body.removeChild(link);
 		URL.revokeObjectURL(link.href);
-		console.log(`${filename} downloaded successfully.`);
 	} catch (error) {
 		console.error("Network or fetch error during file download:", error);
 		alert(

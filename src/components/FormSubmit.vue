@@ -2,7 +2,11 @@
 import { defineProps, ref, watch, onMounted, defineEmits } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import type { FilledField, FormField } from "@/utils/types.ts";
-import { createSubmission, updateSubmission, getSubmission } from "@/services/submissionService";
+import {
+	createSubmission,
+	updateSubmission,
+	getSubmission,
+} from "@/services/submissionService";
 import { useUIStore } from "@/stores/uiStore";
 
 const uiStore = useUIStore();
@@ -11,6 +15,7 @@ const props = defineProps<{
 	fields: FormField[];
 	eventId: number;
 	userSignedUp: boolean;
+	onCancel?: () => void;
 }>();
 const emit = defineEmits(["signed-up"]);
 
@@ -31,14 +36,15 @@ const submission = ref<FilledField[]>(formField(props.fields));
 const fetchSubmission = async () => {
 	if (props.userSignedUp && props.eventId) {
 		try {
-			const prevSubmission = await getSubmission(props.eventId.toString());
+			const prevSubmission = await getSubmission(
+				props.eventId.toString()
+			);
 			if (prevSubmission) {
 				submission.value = prevSubmission.submissions;
 			}
-			console.log("new submissions", submission.value);
-		} catch (error: any) {
+		} catch (error) {
 			uiStore.triggerToast(
-				`Грешка при зареждане на предишния формуляр: ${error.message}`,
+				`Грешка при зареждане на предишния формуляр: ${(error as Error).message}`,
 				"error"
 			);
 		}
@@ -60,10 +66,10 @@ const submitForm = async () => {
 			await updateSubmission(props.eventId, submission.value);
 		}
 
-		uiStore.triggerToast("Формулярът е изпратен успешно!", "success");
-	} catch (error: any) {
+		uiStore.triggerToast("Формулярът беше изпратен успешно!", "success");
+	} catch (error) {
 		uiStore.triggerToast(
-			`Възникна грешка при изпращането на формуляра: ${error.message}`,
+			`Възникна грешка при изпращането на формуляра: ${(error as Error).message}`,
 			"error"
 		);
 	}
@@ -73,8 +79,12 @@ const submitForm = async () => {
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
 		<form class="space-y-6" @submit.prevent="submitForm()">
-			<h1 class="text-2xl font-semibold text-white text-center">Преглед на формуляр</h1>
-			<div v-if="props.userSignedUp" class="text-green-400 text-center mb-4 text-xl">
+			<h1 class="text-2xl font-semibold text-white text-center">
+				Преглед на формуляр
+			</h1>
+			<div
+				v-if="props.userSignedUp"
+				class="text-green-400 text-center mb-4 text-xl">
 				Вече сте записани за това събитие.
 			</div>
 			<div
@@ -84,7 +94,9 @@ const submitForm = async () => {
 				<div class="flex items-center justify-between mb-2 gap-4">
 					<h1 class="flex text-lg font-medium text-white flex-1">
 						{{ field.name }}
-						<span v-if="field.required" class="text-red-500 ml-1">*</span>
+						<span v-if="field.required" class="text-red-500 ml-1"
+							>*</span
+						>
 					</h1>
 				</div>
 
@@ -95,7 +107,9 @@ const submitForm = async () => {
 						v-model="submission[fieldIndex].options[0]" />
 				</div>
 				<div
-					v-else-if="field.type === 'checkbox' || field.type === 'radio'"
+					v-else-if="
+						field.type === 'checkbox' || field.type === 'radio'
+					"
 					class="space-y-2">
 					<div
 						v-for="(option, index) in field.options"
@@ -108,7 +122,8 @@ const submitForm = async () => {
 							:name="`field-${field.id}`"
 							:value="field.options[index]"
 							:required="
-								field.required && submission[fieldIndex].options.length === 0
+								field.required &&
+								submission[fieldIndex].options.length === 0
 							"
 							v-model="submission[fieldIndex].options"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
@@ -121,26 +136,35 @@ const submitForm = async () => {
 							:value="option"
 							v-model="submission[fieldIndex].options[0]"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
-						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
+						<label
+							:for="`${field.id}-${index}`"
+							class="ml-3 text-base text-white">
 							{{ field.options[index] }}
 						</label>
 					</div>
 				</div>
 			</div>
 
-			<div class="pt-4 flex justify-center gap-4">
+			<div class="pt-4 flex flex-wrap justify-center gap-4">
 				<button
 					v-if="!props.userSignedUp"
 					type="submit"
-					class="py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out">
+					class="cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out whitespace-nowrap">
 					{{ userSignedUp ? "Изпрати отново" : actionName }}
 				</button>
 				<button
-					v-else
+					v-else-if="props.fields && props.fields.length > 0"
 					type="button"
 					@click="submitForm()"
-					class="py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out">
+					class="cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out whitespace-nowrap">
 					Промени отговора
+				</button>
+				<button
+					v-if="props.userSignedUp && props.onCancel"
+					type="button"
+					@click="props.onCancel"
+					class="cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full text-white bg-red hover:bg-red-800 transition duration-150 ease-in-out whitespace-nowrap">
+					Отпиши се
 				</button>
 			</div>
 		</form>

@@ -18,7 +18,6 @@ export const useUserStore = defineStore("user", {
 	actions: {
 		async refreshAccessToken() {
 			try {
-				// TODO check casing
 				const res = await apiClient.post<{ accessToken: string }>(
 					"/refresh",
 					{

@@ -31,7 +31,7 @@ const logout = async () => {
 		triggerToast("Успешно излязохте от профила си.", "success");
 	} catch (error) {
 		console.error("Logout failed:", error);
-		triggerToast("Грешка при излизане от профила.", "error");
+		triggerToast("Възникна грешка при излизане от профила ви.", "error");
 
 		closeMobileMenu();
 	}
@@ -41,7 +41,7 @@ const logout = async () => {
 <template>
 	<nav class="bg-dark-grey text-white px-6 shadow-md relative z-50">
 		<!-- Desktop Navigation -->
-		<div class="hidden md:flex items-stretch justify-between">
+		<div class="hidden lg:flex items-stretch justify-between">
 			<!-- Left side -->
 			<div class="flex items-stretch">
 				<RouterLink
@@ -51,62 +51,62 @@ const logout = async () => {
 				</RouterLink>
 				<RouterLink
 					to="/events"
-					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
+					class="hover:text-yellow transition-colors px-3 xl:px-4 flex items-center py-4 whitespace-nowrap"
 					exact-active-class="text-yellow border-b-2 border-yellow">
 					Събития
 				</RouterLink>
 				<RouterLink
 					to="/events/joined"
-					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
+					class="hover:text-yellow transition-colors px-3 xl:px-4 flex items-center py-4 whitespace-nowrap"
 					active-class="text-yellow border-b-2 border-yellow">
 					Присъединени събития
 				</RouterLink>
 				<RouterLink
 					v-if="userStore.isAuthenticated && userStore.isAdmin"
 					to="/users"
-					class="hover:text-yellow transition-colors px-4 flex items-center py-4"
+					class="hover:text-yellow transition-colors px-3 xl:px-4 flex items-center py-4 whitespace-nowrap"
 					active-class="text-yellow border-b-2 border-yellow">
 					Потребители
 				</RouterLink>
 			</div>
 
 			<!-- Right side -->
-			<div class="flex items-center gap-4 py-4">
+			<div class="flex items-center gap-2 xl:gap-4 py-4">
 				<RouterLink
 					v-if="userStore.isAuthenticated && userStore.isAdmin"
 					to="/events/create"
-					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium"
+					class="bg-yellow text-dark-grey px-3 xl:px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium whitespace-nowrap"
 					active-class="bg-yellow opacity-90 shadow-md">
 					Създай събитие
 				</RouterLink>
 				<button
 					v-if="userStore.isAuthenticated"
 					@click="logout"
-					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer">
+					class="bg-yellow text-dark-grey px-3 xl:px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer whitespace-nowrap">
 					Излизане
 				</button>
 				<RouterLink
 					v-else
 					to="/login"
-					class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium">
+					class="bg-yellow text-dark-grey px-3 xl:px-4 py-2 rounded-md hover:opacity-90 transition-colors font-medium whitespace-nowrap">
 					Вписване
 				</RouterLink>
 			</div>
 		</div>
 
 		<!-- Mobile Navigation -->
-		<div class="md:hidden">
+		<div class="lg:hidden">
 			<!-- Mobile Header -->
 			<div class="flex items-center justify-between py-4">
-				<HamburgerIcon
-					@click="toggleMobileMenu"
-					:is-mobile-menu-open="isMobileMenuOpen" />
-
 				<RouterLink
 					to="/"
 					class="flex items-center justify-center h-full transition-all hover:scale-105">
 					<NemetschekIcon />
 				</RouterLink>
+
+				<HamburgerIcon
+					@click="toggleMobileMenu"
+					:is-mobile-menu-open="isMobileMenuOpen" />
 			</div>
 
 			<!-- Mobile Menu -->

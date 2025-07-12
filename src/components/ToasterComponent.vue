@@ -17,7 +17,10 @@
 					animationDuration: `${duration}ms`,
 					animationPlayState: isPaused ? 'paused' : 'running',
 				}"
-				:class="['h-full rounded-full animate-progress', progressColor]"></div>
+				:class="[
+					'h-full rounded-full animate-progress',
+					progressColor,
+				]"></div>
 		</div>
 	</div>
 </template>
@@ -54,9 +57,8 @@ const toastBgClass = computed(() => {
 		case "warning":
 			return "text-yellow border-yellow";
 		case "info":
-		// TODO rework or remove
 		default:
-			return "text-cyan border-cyan";
+			throw new Error("Unknown toast type");
 	}
 });
 
@@ -85,7 +87,6 @@ const resumeTimer = () => {
 };
 
 const dismissToast = () => {
-	console.log("dismissing toast");
 	if (timeoutId) {
 		clearTimeout(timeoutId);
 	}

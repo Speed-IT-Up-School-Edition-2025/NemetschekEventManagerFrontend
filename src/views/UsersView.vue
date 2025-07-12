@@ -36,8 +36,6 @@ const updateUserAdminStatus = async (userId: string, isAdmin: boolean) => {
 };
 
 const promptConfirm = (userId: string, willBeAdmin: boolean) => {
-	console.log({ userId, willBeAdmin });
-
 	userToUpdate.value = { userId, isAdmin: willBeAdmin };
 
 	confirmMessage.value = willBeAdmin
@@ -65,7 +63,7 @@ const handleConfirm = async (confirmed: boolean) => {
 			);
 		} catch (err) {
 			uiStore.triggerToast(
-				"Неуспешна промяна на ролята. Опитай отново.",
+				"Неуспешна промяна на ролята. Моля, опитайте отново.",
 				"error"
 			);
 
@@ -148,17 +146,14 @@ onMounted(execute);
 								<div class="flex justify-end gap-2">
 									<button
 										v-if="!isUserAdmin(user)"
-										@click="
-											console.log({ user });
-											promptConfirm(user.id, true);
-										"
-										class="bg-cyan text-dark-grey px-3 py-1 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer">
+										@click="promptConfirm(user.id, true)"
+										class="bg-cyan text-dark-grey px-3 py-1 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer whitespace-nowrap">
 										Направи админ
 									</button>
 									<button
 										v-if="isUserAdmin(user)"
 										@click="promptConfirm(user.id, false)"
-										class="bg-red text-white px-3 py-1 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer">
+										class="bg-red text-white px-3 py-1 rounded-md hover:opacity-90 transition-colors font-medium cursor-pointer whitespace-nowrap">
 										Премахни права
 									</button>
 								</div>

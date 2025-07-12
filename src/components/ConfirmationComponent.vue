@@ -2,7 +2,7 @@
 defineProps({
 	title: {
 		type: String,
-		default: "Сигурен ли си?",
+		default: "Сигурни ли сте?",
 	},
 	message: {
 		type: String,
@@ -20,7 +20,8 @@ defineProps({
 const emit = defineEmits(["confirm", "cancel"]);
 </script>
 <template>
-	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+	<div
+		class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 		<div class="bg-gray-800 rounded-lg p-6 max-w-md w-full">
 			<h3 class="text-lg font-medium text-white mb-2">{{ title }}</h3>
 			<p class="text-gray-300 mb-6">{{ message }}</p>
