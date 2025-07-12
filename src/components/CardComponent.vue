@@ -46,7 +46,7 @@
 			<div class="mt-auto flex justify-end">
 				<RouterLink
 					:to="`/events/${event.id}`"
-					class="h-10 px-4 py-2 border-2 text-white border-yellow-500 rounded-2xl border-solid transition delay-100 duration-75 ease-in-out hover:text-white hover:border-transparent hover:bg-yellow-500"
+					class="h-10 px-4 py-2 border-2 text-white border-yellow-500 rounded-2xl border-solid transition delay-100 duration-75 ease-in-out hover:text-white hover:border-transparent hover:bg-yellow-500 whitespace-nowrap"
 					@click.stop>
 					{{ buttonName }}
 				</RouterLink>
@@ -69,7 +69,8 @@ const { event, buttonName } = defineProps<{
 }>();
 const router = useRouter();
 const shortenedDescription = event.description
-	? event.description.slice(0, 50) + (event.description.length > 50 ? "..." : "")
+	? event.description.slice(0, 50) +
+		(event.description.length > 50 ? "..." : "")
 	: "";
 
 function formatDate(dateString: string) {

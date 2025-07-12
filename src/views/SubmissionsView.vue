@@ -11,14 +11,18 @@ import { formatDateTime } from "@/utils/date.ts";
 import { useUIStore } from "@/stores/uiStore.ts";
 
 const uiStore = useUIStore();
-const getSubmissionField = (submission: FilledField[], fieldId: number): string => {
+const getSubmissionField = (
+	submission: FilledField[],
+	fieldId: number
+): string => {
 	return submission.find(s => s.id === fieldId)?.options.join(", ") || "-";
 };
 
 const route = useRoute();
 const eventId = ref(route.params.id as string);
 
-const fetchEvent = () => apiClient.get<CreateEventDto>(`/events/${eventId.value}`);
+const fetchEvent = () =>
+	apiClient.get<CreateEventDto>(`/events/${eventId.value}`);
 const fetchSubmissions = () => getSubmissions(eventId.value);
 
 const {
@@ -41,7 +45,11 @@ onMounted(() => {
 });
 
 const exportToCSV = () => {
-	downloadFile("/csv/" + eventId.value, "submissions.csv", "text/csv;charset=utf-8,");
+	downloadFile(
+		"/csv/" + eventId.value,
+		"submissions.csv",
+		"text/csv;charset=utf-8,"
+	);
 };
 
 const exportToXLSX = () => {
@@ -67,22 +75,29 @@ watch(eventError, () => {
 			<LoaderComponent />
 		</div>
 
-		<div v-else class="flex justify-between items-center mb-6">
-			<h1 class="text-2xl font-bold text-yellow">Event Submissions</h1>
-			<div class="space-x-4">
+		<div
+			v-else
+			class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+			<h1
+				class="text-xl md:text-2xl font-bold text-yellow whitespace-nowrap">
+				Попълнени формуляри
+			</h1>
+			<div class="flex flex-row gap-3 lg:gap-4">
 				<button
 					@click="exportToCSV"
-					class="px-4 py-2 bg-cyan hover:bg-cyan-800 text-white rounded transition-colors">
+					class="px-4 py-2 bg-cyan hover:bg-cyan-800 text-white rounded transition-colors whitespace-nowrap">
 					Запази като CSV
 				</button>
 				<button
 					@click="exportToXLSX"
-					class="px-4 py-2 bg-cyan hover:bg-cyan-800 text-white rounded transition-colors">
+					class="px-4 py-2 bg-cyan hover:bg-cyan-800 text-white rounded transition-colors whitespace-nowrap">
 					Запази като XLSX
 				</button>
 			</div>
 		</div>
-		<div v-if="submissionsData?.length == 0" class="p-10 text-center text-lg text-white">
+		<div
+			v-if="submissionsData?.length == 0"
+			class="p-10 text-center text-lg text-white">
 			Няма намерени попълвания.
 		</div>
 		<table
@@ -137,9 +152,16 @@ watch(eventError, () => {
 						v-for="field in eventData.fields"
 						:key="field.id"
 						class="px-6 py-4 whitespace-nowrap text-white"
-						:data-tooltip="getSubmissionField(submission.submissions, field.id)">
+						:data-tooltip="
+							getSubmissionField(submission.submissions, field.id)
+						">
 						<div class="truncate max-w-[200px]">
-							{{ getSubmissionField(submission.submissions, field.id) }}
+							{{
+								getSubmissionField(
+									submission.submissions,
+									field.id
+								)
+							}}
 						</div>
 					</td>
 				</tr>

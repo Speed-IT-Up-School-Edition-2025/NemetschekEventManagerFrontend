@@ -62,7 +62,7 @@ function handleSubmit() {
 		fields: formFields!,
 	})
 		.then(() => {
-			triggerToast("Събитието е обновено успешно!", "success");
+			triggerToast("Събитието беше обновено успешно!", "success");
 
 			router.push(`/events/${route.params.id}`);
 
@@ -85,7 +85,7 @@ function handleSubmit() {
 				<LoaderComponent />
 			</div>
 			<div v-else-if="loadError" class="p-10 text-center text-red-500">
-				Error: {{ loadError }}
+				Възникна грешка: {{ loadError }}
 			</div>
 			<EventInformationFormComponent
 				v-else

@@ -72,7 +72,6 @@ async function filterBy() {
 	const formattedEndDate = ref("");
 	const parameters: string[] = [];
 	if (date.value?.[0] != null && date.value?.[1] != null) {
-		console.log(date.value);
 		date.value?.[0].setHours(3);
 		date.value?.[0].setMinutes(0);
 		date.value?.[0].setMilliseconds(0);
@@ -83,10 +82,12 @@ async function filterBy() {
 		date.value?.[1].setMilliseconds(59);
 		formattedEndDate.value = date.value?.[1].toISOString();
 	}
-	if (formattedStartDate.value) parameters.push(`fromDate=${formattedStartDate.value}`);
-	if (formattedEndDate.value) parameters.push(`toDate=${formattedEndDate.value}`);
-	if (activeEvent.value != null) parameters.push(`activeOnly=${activeEvent.value}`);
-	console.log(sort.value);
+	if (formattedStartDate.value)
+		parameters.push(`fromDate=${formattedStartDate.value}`);
+	if (formattedEndDate.value)
+		parameters.push(`toDate=${formattedEndDate.value}`);
+	if (activeEvent.value != null)
+		parameters.push(`activeOnly=${activeEvent.value}`);
 	switch (sort.value) {
 		case "new":
 			parameters.push("sortDescending=false");
@@ -103,14 +104,14 @@ async function filterBy() {
 			break;
 	}
 	const query = parameters.join("&");
-	console.log(query);
 	events.value = await apiClient.get<Event[]>("/events?" + query);
 }
 </script>
 <template>
 	<div class="hidden md:flex justify-between items-start">
 		<span class="flex items-center">
-			<div class="relative inline-block text-left sm:gap-0 md:gap-2 pl-10 pt-10">
+			<div
+				class="relative inline-block text-left sm:gap-0 md:gap-2 pl-10 pt-10">
 				<button
 					type="button"
 					@click="filtersOpen = !filtersOpen"
@@ -119,7 +120,9 @@ async function filterBy() {
 					<ChevronDownIcon v-if="filtersOpen" />
 					<ChevronUp v-else />
 				</button>
-				<TransitionRoot as="template" :show="filtersOpen && sortOpened === false">
+				<TransitionRoot
+					as="template"
+					:show="filtersOpen && sortOpened === false">
 					<TransitionChild
 						as="template"
 						enter="transition-opacity ease-in-out duration-300 transform"
@@ -132,7 +135,9 @@ async function filterBy() {
 							class="absolute mt-1 flex flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
 							<div
 								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center">Период: </span>
+								<span class="text-white text-lg self-center"
+									>Период:
+								</span>
 								<DatePicker
 									class="w-md"
 									v-model="date"
@@ -146,7 +151,8 @@ async function filterBy() {
 									lang="bg"
 									dark />
 							</div>
-							<div class="flex flex-row justify-between items-center pl-6 pr-3">
+							<div
+								class="flex flex-row justify-between items-center pl-6 pr-3">
 								<span class="flex gap-4">
 									<input
 										type="checkbox"
@@ -154,7 +160,9 @@ async function filterBy() {
 										id="active"
 										v-model="activeEvent"
 										class="w-5 h-5" />
-									<label for="active" class="text-lg self-center"
+									<label
+										for="active"
+										class="text-lg self-center"
 										>Активно събитие</label
 									>
 								</span>
@@ -175,7 +183,7 @@ async function filterBy() {
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="px-5 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 cursor-pointer">
+					class="flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot as="template" :show="sortOpened" ref="sMenu">
@@ -228,7 +236,7 @@ async function filterBy() {
 			<div class="pt-10 pl-2">
 				<button
 					@click="deleteFilters()"
-					class="h-10 w-20 border rounded border-red-500 text-red transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-red cursor-pointer">
+					class="flex items-center justify-center w-20 h-10 border rounded border-red-500 text-red transition-all duration-300 hover:border-transparent hover:text-white hover:bg-red hover:scale-105 cursor-pointer">
 					Изчисти
 				</button>
 			</div>
@@ -238,19 +246,24 @@ async function filterBy() {
 				v-model="search"
 				placeholder="Потърси..."
 				class="flex-1 max-w-100 h-10 px-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
-			<SearchIcon class="w-10 h-10" />
+			<button class="flex items-center justify-center w-12 h-12">
+				<SearchIcon
+					class="w-8 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer" />
+			</button>
 		</div>
 	</div>
 	<div class="md:hidden flex justify-between items-start">
-		<span class="flex flex-row items-center gap-3">
+		<span class="flex flex-row items-center gap-2">
 			<div class="relative inline-block text-left pl-3 pt-10">
 				<button
 					type="button"
 					@click="filtersOpen = !filtersOpen"
-					class="flex text-yellow transition delay-100 duration-300 hover:ease-in-out cursor-pointer">
-					<FilterIcon />
+					class="flex items-center justify-center w-12 h-12 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer">
+					<FilterIcon class="w-8 h-8" />
 				</button>
-				<TransitionRoot as="template" :show="filtersOpen && sortOpened === false">
+				<TransitionRoot
+					as="template"
+					:show="filtersOpen && sortOpened === false">
 					<TransitionChild
 						as="template"
 						enter="transition-opacity ease-in-out duration-200"
@@ -263,7 +276,9 @@ async function filterBy() {
 							class="absolute mt-1 flex flex-1 flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
 							<div
 								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center">Период: </span>
+								<span class="text-white text-lg self-center"
+									>Период:
+								</span>
 								<DatePicker
 									class="w-md"
 									v-model="date"
@@ -277,7 +292,8 @@ async function filterBy() {
 									lang="bg"
 									dark />
 							</div>
-							<div class="flex flex-row justify-between items-center pl-6 pr-3">
+							<div
+								class="flex flex-row justify-between items-center pl-6 pr-3">
 								<span class="flex gap-4">
 									<input
 										type="checkbox"
@@ -285,7 +301,9 @@ async function filterBy() {
 										id="active"
 										v-model="activeEvent"
 										class="w-5 h-5" />
-									<label for="active" class="text-lg self-center"
+									<label
+										for="active"
+										class="text-lg self-center"
 										>Активно събитие</label
 									>
 								</span>
@@ -306,8 +324,8 @@ async function filterBy() {
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 cursor-pointer">
-					<SortIcon />
+					class="flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot
 					as="template"
@@ -362,8 +380,8 @@ async function filterBy() {
 			<div class="pt-10">
 				<button
 					@click="deleteFilters"
-					class="flex pr-2 items-center text-black transition delay-100 duration-300 hover:ease-in-out cursor-pointer">
-					<DeleteIcon />
+					class="flex items-center justify-center w-12 h-12 text-red hover:text-red-400 transition-all duration-300 hover:scale-110 cursor-pointer">
+					<DeleteIcon class="w-8 h-8" />
 				</button>
 			</div>
 		</span>
@@ -372,7 +390,10 @@ async function filterBy() {
 				v-model="search"
 				placeholder="Потърси..."
 				class="max-w-100 flex-1 h-10 px-3 border rounded focus:outline-none focus:border-white text-yellow md:w-auto md:h-10 cursor-pointer" />
-			<SearchIcon class="w-10 h-10" />
+			<button class="flex items-center justify-center w-12 h-12">
+				<SearchIcon
+					class="w-8 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer" />
+			</button>
 		</div>
 	</div>
 </template>

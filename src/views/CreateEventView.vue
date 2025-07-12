@@ -30,7 +30,7 @@ function handleSubmit() {
 		fields: formFields!,
 	})
 		.then(({ id }) => {
-			triggerToast("Събитието е създадено успешно!", "success");
+			triggerToast("Събитието беше създадено успешно!", "success");
 			clearCurrentEvent(); // Clear the event data after successful creation
 			router.push(`/events/${id}`);
 		})

@@ -101,11 +101,13 @@ router.beforeEach(async (to, from, next) => {
 	if (userStore.refreshToken && !userStore.accessToken) {
 		try {
 			const success = await userStore.refreshAccessToken();
+
 			if (!success) {
 				triggerToast(
 					"Неуспешно обновяване на токена. Моля, впишете се отново.",
 					"error"
 				);
+
 				return next("/login");
 			}
 		} catch {
@@ -113,6 +115,7 @@ router.beforeEach(async (to, from, next) => {
 				"Неуспешно обновяване на токена. Моля, впишете се отново.",
 				"error"
 			);
+
 			return next("/login");
 		}
 	}
@@ -131,14 +134,17 @@ router.beforeEach(async (to, from, next) => {
 
 		return next("/login");
 	} else if (requiresGuest && userStore.isAuthenticated) {
-		triggerToast("Вие вече сте вписани!", "warning");
+		triggerToast(
+			"Вече сте вписани и не можете да достъпите тази страница!",
+			"warning"
+		);
 
 		return next("/");
 	}
 
 	if (requiresAdmin && !userStore.isAdmin) {
 		triggerToast(
-			"Нуждаете се от администраторски права, за да достъпите до тази страница!",
+			"Нуждаете се от администраторски права, за да достъпите тази страница!",
 			"warning"
 		);
 

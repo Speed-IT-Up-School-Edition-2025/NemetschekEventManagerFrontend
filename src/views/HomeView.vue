@@ -15,12 +15,12 @@
 				<div class="flex flex-col sm:flex-row gap-4 justify-center">
 					<RouterLink
 						to="/events"
-						class="bg-yellow text-grey px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-lg">
+						class="bg-yellow text-grey px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-lg whitespace-nowrap">
 						Разгледай събитията
 					</RouterLink>
 					<RouterLink
 						to="/events/joined"
-						class="border-2 border-yellow text-yellow px-8 py-3 rounded-lg font-semibold hover:bg-yellow hover:text-grey transition text-lg">
+						class="border-2 border-yellow text-yellow px-8 py-3 rounded-lg font-semibold hover:bg-yellow hover:text-grey transition text-lg whitespace-nowrap">
 						Присъединени събития
 					</RouterLink>
 				</div>
@@ -109,12 +109,12 @@
 				<div class="flex flex-col sm:flex-row gap-4 justify-center">
 					<RouterLink
 						to="/events/create"
-						class="bg-yellow text-grey px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition text-center">
+						class="bg-yellow text-grey px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition text-center whitespace-nowrap">
 						Създаване на ново събитие
 					</RouterLink>
 					<RouterLink
 						to="/users"
-						class="border-2 border-yellow text-yellow px-6 py-3 rounded-lg font-semibold hover:bg-yellow hover:text-grey transition text-center">
+						class="border-2 border-yellow text-yellow px-6 py-3 rounded-lg font-semibold hover:bg-yellow hover:text-grey transition text-center whitespace-nowrap">
 						Управление на потребители
 					</RouterLink>
 				</div>
@@ -131,7 +131,7 @@
 				</p>
 				<RouterLink
 					to="/events"
-					class="bg-yellow text-grey px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-lg inline-block">
+					class="bg-yellow text-grey px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-lg inline-block whitespace-nowrap">
 					Разгледайте всички събития
 				</RouterLink>
 			</div>

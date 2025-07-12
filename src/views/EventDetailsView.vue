@@ -13,6 +13,10 @@ import CalendarIcon from "@/components/icons/CalendarIcon.vue";
 import LocationIcon from "@/components/icons/LocationIcon.vue";
 import ClockIcon from "@/components/icons/ClockIcon.vue";
 import UserIcon from "@/components/icons/UserIcon.vue";
+import DeleteIcon from "@/components/icons/DeleteIcon.vue";
+import DuplicateIcon from "@/components/icons/DuplicateIcon.vue";
+import EditIcon from "@/components/icons/EditIcon.vue";
+import ViewSubmissionsIcon from "@/components/icons/ViewSubmissionsIcon.vue";
 import ConfirmationComponent from "@/components/ConfirmationComponent.vue";
 import { cancelSubmission } from "@/services/submissionService.ts";
 
@@ -88,7 +92,7 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 
 	if (confirmed && event.value) {
 		try {
-			await deleteEvent(event.value.id);
+			await deleteEvent(event.value.id.toString());
 
 			triggerToast("Събитието беше изтрито успешно!", "success");
 			router.push("/events");
@@ -107,9 +111,12 @@ const cancelSubmissionButton = () => {
 		try {
 			cancelSubmission(event.value.id.toString());
 			event.value.userSignedUp = false;
-			triggerToast("Отписването е успешно!", "success");
-		} catch (error: any) {
-			triggerToast(`Грешка при отписване: ${error.message}`, "error");
+			triggerToast("Отписването беше успешно!", "success");
+		} catch (error) {
+			triggerToast(
+				`Възникна грешка при отписванете ви: ${(error as Error).message}`,
+				"error"
+			);
 		}
 	}
 };
@@ -133,6 +140,38 @@ const cancelSubmissionButton = () => {
 					</h1>
 				</div>
 
+				<!-- Mobile Action Icons (only visible on mobile) -->
+				<div
+					v-if="userStore.isAdmin"
+					class="flex justify-center gap-4 py-2 lg:hidden">
+					<!-- Event Administration Icons -->
+					<button
+						@click="showDeleteConfirmation"
+						class="w-10 h-10 rounded-full bg-red flex items-center justify-center flex-shrink-0 cursor-pointer hover:scale-110 transition-transform text-white"
+						title="Изтрий събитие">
+						<DeleteIcon />
+					</button>
+					<button
+						@click="duplicateEvent"
+						class="w-10 h-10 rounded-full bg-yellow flex items-center justify-center flex-shrink-0 cursor-pointer hover:scale-110 transition-transform text-dark-grey"
+						title="Дублиране">
+						<DuplicateIcon />
+					</button>
+					<RouterLink
+						:to="{ name: 'edit-event', params: { id: event.id } }"
+						class="w-10 h-10 rounded-full bg-orange flex items-center justify-center flex-shrink-0 cursor-pointer hover:scale-110 transition-transform text-white"
+						title="Редактиране">
+						<EditIcon />
+					</RouterLink>
+					<RouterLink
+						v-if="userStore.isAdmin"
+						:to="{ name: 'submissions', params: { id: event.id } }"
+						class="w-10 h-10 rounded-full bg-cyan flex items-center justify-center flex-shrink-0 cursor-pointer hover:scale-110 transition-transform text-white"
+						title="Попълвания">
+						<ViewSubmissionsIcon />
+					</RouterLink>
+				</div>
+
 				<!-- Event Information (without title) -->
 				<div class="sticky top-6 space-y-6">
 					<!-- Event Details Grid -->
@@ -154,7 +193,9 @@ const cancelSubmissionButton = () => {
 						<div class="flex items-start gap-3">
 							<LocationIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">Място</h3>
+								<h3 class="text-lg font-semibold text-white">
+									Място
+								</h3>
 								<p class="text-white/80 break-words">
 									{{ event.location }}
 								</p>
@@ -178,9 +219,16 @@ const cancelSubmissionButton = () => {
 						<div class="flex items-start gap-3">
 							<UserIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">Места</h3>
-								<div class="text-white/80 break-words space-y-1">
-									<p v-if="event.peopleLimit && event.peopleLimit > 0">
+								<h3 class="text-lg font-semibold text-white">
+									Места
+								</h3>
+								<div
+									class="text-white/80 break-words space-y-1">
+									<p
+										v-if="
+											event.peopleLimit &&
+											event.peopleLimit > 0
+										">
 										Лимит участници: {{ event.peopleLimit }}
 									</p>
 									<p v-else>Без лимит на участници</p>
@@ -205,8 +253,11 @@ const cancelSubmissionButton = () => {
 
 					<!-- Event Description -->
 					<div class="border-t border-white/20 pt-6">
-						<h3 class="text-xl font-semibold text-yellow mb-3">За събитието</h3>
-						<p class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
+						<h3 class="text-xl font-semibold text-yellow mb-3">
+							За събитието
+						</h3>
+						<p
+							class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
 							{{ event.description }}
 						</p>
 					</div>
@@ -221,33 +272,29 @@ const cancelSubmissionButton = () => {
 				Възникна грешка: {{ error }}
 			</div>
 			<div v-if="event" class="space-y-4">
-				<!-- Admin Actions Section -->
-				<div v-if="userStore.isAdmin" class="flex justify-end gap-3 px-6">
+				<!-- Admin Actions Section (only visible on desktop) -->
+				<div
+					v-if="userStore.isAdmin"
+					class="hidden lg:flex justify-end gap-2 xl:gap-3 px-4 xl:px-6">
 					<button
 						@click="showDeleteConfirmation"
-						class="bg-red text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium">
+						class="bg-red text-white px-3 xl:px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
 						Изтрий
 					</button>
 					<button
-						v-if="event.userSignedUp"
-						@click="cancelSubmissionButton()"
-						class="bg-red text-white px-4 py-2 rounded-md hover:bg-red-800 transition-colors font-medium">
-						Отпиши се
-					</button>
-					<button
 						@click="duplicateEvent"
-						class="bg-yellow text-dark-grey px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors font-medium">
+						class="bg-yellow text-dark-grey px-3 xl:px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
 						Дублиране
 					</button>
 					<RouterLink
 						:to="{ name: 'edit-event', params: { id: event.id } }"
-						class="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium">
+						class="bg-orange text-white px-3 xl:px-4 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
 						Редактиране
 					</RouterLink>
 					<RouterLink
 						:to="{ name: 'submissions', params: { id: event.id } }"
-						class="bg-cyan text-white px-4 py-2 rounded-md hover:bg-cyan-800 transition-colors font-medium">
-						Виж попълванията
+						class="bg-cyan text-white px-3 xl:px-4 py-2 rounded-md hover:bg-cyan-800 transition-colors font-medium cursor-pointer whitespace-nowrap">
+						Попълвания
 					</RouterLink>
 				</div>
 
@@ -257,6 +304,7 @@ const cancelSubmissionButton = () => {
 					:event-id="event?.id"
 					:fields="event.fields"
 					:user-signed-up="event.userSignedUp"
+					:on-cancel="cancelSubmissionButton"
 					action-name="Запиши се"
 					@signed-up="event.userSignedUp = true" />
 			</div>

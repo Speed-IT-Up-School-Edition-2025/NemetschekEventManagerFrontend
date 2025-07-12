@@ -10,7 +10,11 @@ const form = reactive({
 	password: "",
 	confirmPassword: "",
 });
-const errors = reactive<{ email?: string; password?: string; confirmPassword?: string }>({});
+const errors = reactive<{
+	email?: string;
+	password?: string;
+	confirmPassword?: string;
+}>({});
 const router = useRouter();
 const userStore = useUserStore();
 
@@ -28,7 +32,7 @@ function toggleMode() {
 function validateEmail(email: string): string | null {
 	if (!email) return "Имейлът е задължителен.";
 	const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	if (!re.test(email)) return "Моля, въведи валиден имейл адрес.";
+	if (!re.test(email)) return "Моля, въведете валиден имейл адрес.";
 	return null;
 }
 
@@ -46,7 +50,8 @@ function handleSubmit() {
 	} else if (form.password && !/[0-9]/.test(form.password)) {
 		errors.password = "Паролата трябва да съдържа поне една цифра.";
 	} else if (form.password && !/[!@#$%^&*(),.?":{}|<>]/.test(form.password)) {
-		errors.password = "Паролата трябва да съдържа поне един специален символ.";
+		errors.password =
+			"Паролата трябва да съдържа поне един специален символ.";
 	}
 	if (!isLogin.value) {
 		errors.confirmPassword = form.confirmPassword
@@ -106,14 +111,18 @@ function handleSubmit() {
 				</div>
 
 				<div v-if="!isLogin">
-					<label class="text-white mb-1" for="confirmPassword">Потвърди парола</label>
+					<label class="text-white mb-1" for="confirmPassword"
+						>Потвърди парола</label
+					>
 					<input
 						id="confirmPassword"
 						type="password"
 						v-model="form.confirmPassword"
 						required
 						class="w-full px-3 py-2 border rounded focus:outline-none focus:border-white text-yellow" />
-					<div v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">
+					<div
+						v-if="errors.confirmPassword"
+						class="text-red-500 text-sm mt-1">
 						{{ errors.confirmPassword }}
 					</div>
 				</div>
@@ -122,16 +131,18 @@ function handleSubmit() {
 			<button
 				type="submit"
 				class="mt-6 w-full bg-yellow text-dark-grey py-2 rounded hover:bg-yellow-dark cursor-pointer">
-				{{ isLogin ? "Впиши се" : "Регистрирай се" }}
+				{{ isLogin ? "Впишете се" : "Регистрирайте се" }}
 			</button>
 
 			<div class="mt-4 text-center text-sm">
-				<span class="text-white">{{ isLogin ? "Нямаш акаунт?" : "Имаш акаунт?" }}</span>
+				<span class="text-white">{{
+					isLogin ? "Нямате акаунт?" : "Имате акаунт?"
+				}}</span>
 				<button
 					type="button"
 					@click="toggleMode"
 					class="text-yellow hover:underline ml-2 cursor-pointer">
-					{{ isLogin ? "Регистрирай се" : "Впиши се" }}
+					{{ isLogin ? "Регистрирайте се" : "Впишете се" }}
 				</button>
 			</div>
 		</form>
