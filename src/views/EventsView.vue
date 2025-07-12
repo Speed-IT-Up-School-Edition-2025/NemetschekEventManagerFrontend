@@ -34,7 +34,9 @@ onMounted(() => {
 	<h2 class="text-3xl md:text-4xl pl-10 pt-6 font-bold text-yellow">
 		Събития
 	</h2>
-
+	<FilterComponent
+		v-model:events="events"
+		v-model:searched-events="searchedEvents" />
 	<div v-if="loading"><LoaderComponent /></div>
 	<div v-else-if="error" class="p-10 text-center text-red">
 		Възникна грешка: {{ error }}
@@ -44,21 +46,17 @@ onMounted(() => {
 		class="p-10 text-center text-white">
 		Няма намерени събития
 	</div>
-	<div v-else>
-		<FilterComponent
-			v-model:events="events"
-			v-model:searched-events="searchedEvents" />
-		<div
-			class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
-			<CardComponent
-				class="w-full min-h-[400px]"
-				v-for="event in searchedEvents.length === 0
-					? events
-					: searchedEvents"
-				:event="event"
-				button-name="Запиши се"
-				:key="event.id" />
-		</div>
+	<div
+		v-else
+		class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
+		<CardComponent
+			class="w-full min-h-[400px]"
+			v-for="event in searchedEvents.length === 0
+				? events
+				: searchedEvents"
+			:event="event"
+			button-name="Запиши се"
+			:key="event.id" />
 	</div>
 </template>
 
