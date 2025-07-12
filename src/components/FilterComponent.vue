@@ -62,6 +62,11 @@ function closeFilterMenu(event: PointerEvent) {
 		return;
 	}
 
+	// Apply filters when closing the menu
+	if (filtersOpen.value) {
+		filterBy();
+	}
+
 	filtersOpen.value = false;
 }
 
@@ -144,30 +149,42 @@ async function filterBy() {
 }
 </script>
 <template>
-	<div class="hidden md:flex justify-between items-center pt-10 px-10">
+	<div class="hidden md:flex justify-between items-center pt-10 px-10 gap-4">
 		<!-- Search section on the left -->
-		<div class="flex items-center">
+		<div class="flex items-center flex-shrink-0">
 			<div class="relative">
 				<input
 					v-model="search"
 					placeholder="Потърси..."
-					class="w-80 h-12 pl-12 pr-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+					class="w-60 lg:w-80 h-12 pl-12 pr-10 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
 				<div
 					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
 					<SearchIcon
 						class="w-6 h-6 text-yellow pointer-events-none" />
 				</div>
+				<button
+					v-if="search"
+					@click="search = ''"
+					class="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-yellow hover:text-white transition-colors cursor-pointer">
+					<CancelIcon class="w-4 h-4" />
+				</button>
 			</div>
 		</div>
 
 		<!-- Filter controls on the right -->
-		<div class="flex items-center gap-5">
+		<div class="flex items-center gap-2 lg:gap-5 flex-shrink-0">
 			<div class="relative inline-block text-left" ref="filterMenu">
 				<button
 					type="button"
-					@click="filtersOpen = !filtersOpen"
-					class="filter-button flex px-4 py-2 justify-between items-center min-w-0 border rounded border-yellow-500 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer whitespace-nowrap h-12">
-					<span>Филтрирай</span>
+					@click="
+						if (filtersOpen) {
+							filterBy();
+						}
+						filtersOpen = !filtersOpen;
+					"
+					class="filter-button flex px-3 lg:px-4 py-2 justify-between items-center min-w-0 border rounded border-yellow-500 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer whitespace-nowrap h-12">
+					<span class="hidden lg:inline">Филтрирай</span>
+					<span class="lg:hidden">Филтър</span>
 					<ChevronDownIcon
 						v-if="filtersOpen"
 						class="ml-2 flex-shrink-0" />
@@ -185,14 +202,15 @@ async function filterBy() {
 						leave-from="opacity-100"
 						leave-to="opacity-0">
 						<div
-							class="filter-dropdown-content absolute mt-1 flex flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							class="filter-dropdown-content absolute mt-1 left-0 flex flex-col w-72 lg:w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 gap-4 p-4">
 							<div
-								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center"
-									>Период:
+								class="flex flex-col lg:flex-row gap-3 lg:gap-5 text-yellow">
+								<span
+									class="text-white text-base lg:text-lg self-start lg:self-center">
+									Период:
 								</span>
 								<DatePicker
-									class="w-md"
+									class="w-full lg:w-md"
 									v-model="date"
 									placeholder="Период"
 									range
@@ -207,26 +225,26 @@ async function filterBy() {
 									@closed="datePickerOpen = false" />
 							</div>
 							<div
-								class="flex flex-row justify-between items-center pl-6 pr-3">
-								<span class="flex gap-4">
+								class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+								<span class="flex gap-2 items-center">
 									<input
 										type="checkbox"
 										name="active"
 										id="active"
 										v-model="activeEvent"
-										class="w-5 h-5" />
+										class="w-4 h-4 lg:w-5 lg:h-5" />
 									<label
 										for="active"
-										class="text-lg self-center"
-										>Активно събитие</label
-									>
+										class="text-base lg:text-lg text-white">
+										Активно събитие
+									</label>
 								</span>
 								<button
 									@click="
 										filtersOpen = false;
 										filterBy();
 									"
-									class="border rounded-2xl px-3 py-1.5 min-w-0 bg-yellow text-black hover:shadow-xl transition ease-in-out duration-200 delay-100 shadow-yellow/30 cursor-pointer whitespace-nowrap">
+									class="border rounded-2xl px-3 py-1.5 min-w-0 bg-yellow text-black hover:opacity-90 transition-colors cursor-pointer whitespace-nowrap text-sm lg:text-base">
 									Запази
 								</button>
 							</div>
@@ -251,7 +269,7 @@ async function filterBy() {
 						leave-from="opacity-100"
 						leave-to="opacity-0">
 						<div
-							class="sort-dropdown-content absolute mt-1 flex flex-col w-48 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
+							class="sort-dropdown-content absolute mt-1 left-0 flex flex-col w-48 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
 							<button
 								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
@@ -295,8 +313,9 @@ async function filterBy() {
 			<div>
 				<button
 					@click="deleteFilters()"
-					class="flex items-center justify-center px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap h-12">
-					<span>Изчисти филтрите</span>
+					class="flex items-center justify-center px-3 lg:px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap h-12">
+					<span class="hidden lg:inline">Изчисти филтрите</span>
+					<span class="lg:hidden">Изчисти</span>
 				</button>
 			</div>
 		</div>
@@ -308,12 +327,18 @@ async function filterBy() {
 				<input
 					v-model="search"
 					placeholder="Потърси..."
-					class="w-48 h-12 pl-12 pr-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+					class="w-48 h-12 pl-12 pr-10 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
 				<div
 					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
 					<SearchIcon
 						class="w-5 h-5 text-yellow pointer-events-none" />
 				</div>
+				<button
+					v-if="search"
+					@click="search = ''"
+					class="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-yellow hover:text-white transition-colors cursor-pointer">
+					<CancelIcon class="w-4 h-4" />
+				</button>
 			</div>
 		</div>
 
@@ -322,7 +347,12 @@ async function filterBy() {
 			<div class="relative inline-block text-left" ref="mobileFilterMenu">
 				<button
 					type="button"
-					@click="filtersOpen = !filtersOpen"
+					@click="
+						if (filtersOpen) {
+							filterBy();
+						}
+						filtersOpen = !filtersOpen;
+					"
 					class="filter-button flex items-center justify-center w-12 h-12 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer">
 					<FilterIcon class="w-8 h-8" />
 				</button>
@@ -338,14 +368,13 @@ async function filterBy() {
 						leave-from="opacity-100"
 						leave-to="opacity-0">
 						<div
-							class="filter-dropdown-content absolute mt-1 flex flex-1 flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
-							<div
-								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center"
-									>Период:
+							class="filter-dropdown-content absolute mt-1 left-1/2 transform -translate-x-1/2 flex flex-col gap-4 p-4 w-64 max-w-[calc(100vw-2rem)] rounded origin-top border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							<div class="flex flex-col gap-2 text-yellow">
+								<span class="text-white text-sm text-center">
+									Период:
 								</span>
 								<DatePicker
-									class="w-md"
+									class="w-full text-xs"
 									v-model="date"
 									placeholder="Период"
 									range
@@ -359,18 +388,17 @@ async function filterBy() {
 									@open="datePickerOpen = true"
 									@closed="datePickerOpen = false" />
 							</div>
-							<div
-								class="flex flex-row justify-between items-center pl-6 pr-3">
-								<span class="flex gap-4">
+							<div class="flex justify-between items-center">
+								<span class="flex gap-2 items-center">
 									<input
 										type="checkbox"
 										name="active"
-										id="active"
+										id="active-mobile"
 										v-model="activeEvent"
-										class="w-5 h-5" />
+										class="w-3 h-3" />
 									<label
-										for="active"
-										class="text-lg self-center"
+										for="active-mobile"
+										class="text-sm text-white"
 										>Активно събитие</label
 									>
 								</span>
@@ -379,7 +407,7 @@ async function filterBy() {
 										filtersOpen = false;
 										filterBy();
 									"
-									class="border rounded-2xl px-2 py-1 min-w-0 bg-yellow text-black hover:shadow-xl transition ease-in-out duration-200 delay-100 shadow-yellow/30 cursor-pointer whitespace-nowrap">
+									class="border rounded-xl px-3 py-1.5 min-w-0 bg-yellow text-black hover:opacity-90 transition-colors cursor-pointer whitespace-nowrap text-xs">
 									Запази
 								</button>
 							</div>
@@ -407,7 +435,7 @@ async function filterBy() {
 						leave-from="opacity-100"
 						leave-to="opacity-0">
 						<div
-							class="sort-dropdown-content absolute mt-1 flex flex-col w-48 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
+							class="sort-dropdown-content absolute mt-1 right-0 mr-2 flex flex-col w-48 max-w-[calc(100vw-1rem)] rounded origin-top-right border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
 							<button
 								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="

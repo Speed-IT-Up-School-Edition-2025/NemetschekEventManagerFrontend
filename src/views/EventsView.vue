@@ -5,28 +5,21 @@ import { onMounted, ref } from "vue";
 import FilterComponent from "@/components/FilterComponent.vue";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 import type { Event } from "@/utils/types";
+import { useAsync } from "@/composables/useAsync";
 
+const { execute, data, error, loading } = useAsync(getEvents);
 const events = ref<Event[]>([]);
-const searchedEvents = ref<Event[]>([]);
-const loading = ref(true);
-const error = ref<string | null>(null);
-
-async function fetchEvents() {
-	loading.value = true;
-	error.value = null;
-	try {
-		const result = await getEvents();
-		events.value = result;
-	} catch (e: unknown) {
-		error.value =
-			(e as Error)?.message ?? "Грешка при зареждане на събитията.";
-	} finally {
-		loading.value = false;
-	}
-}
 
 onMounted(() => {
-	fetchEvents();
+	execute().then(() => {
+		events.value = data.value ?? [];
+	});
+});
+
+const searchedEvents = ref<Event[]>([]);
+
+onMounted(() => {
+	execute();
 });
 </script>
 
@@ -34,9 +27,11 @@ onMounted(() => {
 	<h2 class="text-3xl md:text-4xl pl-10 pt-6 font-bold text-yellow">
 		Събития
 	</h2>
+
 	<FilterComponent
 		v-model:events="events"
 		v-model:searched-events="searchedEvents" />
+
 	<div v-if="loading"><LoaderComponent /></div>
 	<div v-else-if="error" class="p-10 text-center text-red">
 		Възникна грешка: {{ error }}
