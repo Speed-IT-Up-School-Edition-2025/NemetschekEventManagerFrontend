@@ -29,9 +29,18 @@ const searchedEvents = defineModel<Event[]>("searched-events", {
 	required: true,
 });
 
-function click() {
+function closeSortMenu(event: PointerEvent) {
+	// Check if click is inside the sort menu itself or on the sort button
+	const target = event.target as HTMLElement;
+	if (
+		target &&
+		(target.closest(".sort-dropdown-content") ||
+			target.closest(".sort-button"))
+	) {
+		return;
+	}
+
 	sortOpened.value = false;
-	filterBy();
 }
 
 function closeFilterMenu(event: PointerEvent) {
@@ -56,7 +65,7 @@ function closeFilterMenu(event: PointerEvent) {
 	filtersOpen.value = false;
 }
 
-onClickOutside(sortMenu, click);
+onClickOutside(sortMenu, closeSortMenu);
 onClickOutside(filterMenu, closeFilterMenu);
 onClickOutside(mobileFilterMenu, closeFilterMenu);
 
@@ -169,12 +178,12 @@ async function filterBy() {
 					:show="filtersOpen && sortOpened === false">
 					<TransitionChild
 						as="template"
-						enter="transition-opacity ease-in-out duration-300 transform"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-300 transform"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter="transition-opacity ease-in-out duration-300"
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-300"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
 							class="filter-dropdown-content absolute mt-1 flex flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
 							<div
@@ -229,48 +238,52 @@ async function filterBy() {
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					class="sort-button flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot as="template" :show="sortOpened" ref="sortMenu">
 					<TransitionChild
 						as="template"
-						enter="transition-opacity ease-in-out duration-200 transform"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-200 transform"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter="transition-opacity ease-in-out duration-300"
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-300"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
-							class="absolute flex justify-evenly mt-3 flex-col h-30 w-40 rounded-2xl origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							class="sort-dropdown-content absolute mt-1 flex flex-col w-48 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'new';
+									sortOpened = false;
 									filterBy();
 								">
 								Най-нови
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'old';
+									sortOpened = false;
 									filterBy();
 								">
 								Най-стари
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'az';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: А до Я
 							</button>
 							<button
-								class="text-white hover:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'za';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: Я до А
@@ -319,11 +332,11 @@ async function filterBy() {
 					<TransitionChild
 						as="template"
 						enter="transition-opacity ease-in-out duration-200"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-200"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-200"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
 							class="filter-dropdown-content absolute mt-1 flex flex-1 flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
 							<div
@@ -378,7 +391,7 @@ async function filterBy() {
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					class="sort-button flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot
@@ -387,42 +400,46 @@ async function filterBy() {
 					ref="sortMenu">
 					<TransitionChild
 						as="template"
-						enter="transition-opacity ease-in-out duration-200 transform"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-200 transform"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter="transition-opacity ease-in-out duration-200"
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-200"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
-							class="absolute flex justify-evenly mt-3 flex-col h-30 w-40 rounded-2xl origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							class="sort-dropdown-content absolute mt-1 flex flex-col w-48 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'new' ? 'new' : null;
+									sort = 'new';
+									sortOpened = false;
 									filterBy();
 								">
-								Най-скорошни
+								Най-нови
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'old' ? 'old' : null;
+									sort = 'old';
+									sortOpened = false;
 									filterBy();
 								">
-								Най-последни
+								Най-стари
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'az' ? 'az' : null;
+									sort = 'az';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: А до Я
 							</button>
 							<button
-								class="text-white hover:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'za' ? 'za' : null;
+									sort = 'za';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: Я до А
