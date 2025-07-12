@@ -276,11 +276,11 @@ const cancelSubmissionButton = () => {
 				<div
 					v-if="userStore.isAdmin"
 					class="hidden lg:flex justify-end gap-2 xl:gap-3 px-4 xl:px-6">
-					<button
-						@click="showDeleteConfirmation"
-						class="bg-red text-white px-3 xl:px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
-						Изтрий
-					</button>
+					<RouterLink
+						:to="{ name: 'submissions', params: { id: event.id } }"
+						class="bg-cyan text-white px-3 xl:px-4 py-2 rounded-md hover:bg-cyan-800 transition-colors font-medium cursor-pointer whitespace-nowrap">
+						Попълвания
+					</RouterLink>
 					<button
 						@click="duplicateEvent"
 						class="bg-yellow text-dark-grey px-3 xl:px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
@@ -291,11 +291,11 @@ const cancelSubmissionButton = () => {
 						class="bg-orange text-white px-3 xl:px-4 py-2 rounded-md hover:bg-orange-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
 						Редактиране
 					</RouterLink>
-					<RouterLink
-						:to="{ name: 'submissions', params: { id: event.id } }"
-						class="bg-cyan text-white px-3 xl:px-4 py-2 rounded-md hover:bg-cyan-800 transition-colors font-medium cursor-pointer whitespace-nowrap">
-						Попълвания
-					</RouterLink>
+					<button
+						@click="showDeleteConfirmation"
+						class="bg-red text-white px-3 xl:px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium cursor-pointer whitespace-nowrap">
+						Изтрий
+					</button>
 				</div>
 
 				<!-- Submission Form -->
