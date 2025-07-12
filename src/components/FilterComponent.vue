@@ -135,15 +135,29 @@ async function filterBy() {
 }
 </script>
 <template>
-	<div class="hidden md:flex justify-between items-start">
-		<span class="flex items-center">
-			<div
-				class="relative inline-block text-left sm:gap-0 md:gap-2 pl-10 pt-10"
-				ref="filterMenu">
+	<div class="hidden md:flex justify-between items-center pt-10 px-10">
+		<!-- Search section on the left -->
+		<div class="flex items-center">
+			<div class="relative">
+				<input
+					v-model="search"
+					placeholder="Потърси..."
+					class="w-80 h-12 pl-12 pr-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+				<div
+					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
+					<SearchIcon
+						class="w-6 h-6 text-yellow pointer-events-none" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Filter controls on the right -->
+		<div class="flex items-center gap-5">
+			<div class="relative inline-block text-left" ref="filterMenu">
 				<button
 					type="button"
 					@click="filtersOpen = !filtersOpen"
-					class="filter-button flex px-4 py-2 justify-between items-center min-w-0 border rounded border-yellow-500 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer whitespace-nowrap">
+					class="filter-button flex px-4 py-2 justify-between items-center min-w-0 border rounded border-yellow-500 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer whitespace-nowrap h-12">
 					<span>Филтрирай</span>
 					<ChevronDownIcon
 						v-if="filtersOpen"
@@ -211,7 +225,7 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="relative inline-block text-left pl-5 pt-10">
+			<div class="relative inline-block text-left">
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
@@ -265,30 +279,34 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="pt-10 pl-2">
+			<div>
 				<button
 					@click="deleteFilters()"
-					class="flex items-center justify-center px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap">
+					class="flex items-center justify-center px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap h-12">
 					<span>Изчисти филтрите</span>
 				</button>
 			</div>
-		</span>
-		<div class="flex items-center gap-4 pr-10 pt-10">
-			<input
-				v-model="search"
-				placeholder="Потърси..."
-				class="flex-1 max-w-100 h-10 px-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
-			<button class="flex items-center justify-center w-12 h-12">
-				<SearchIcon
-					class="w-8 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer" />
-			</button>
 		</div>
 	</div>
-	<div class="md:hidden flex justify-between items-start">
-		<span class="flex flex-row items-center gap-2">
-			<div
-				class="relative inline-block text-left pl-3 pt-10"
-				ref="mobileFilterMenu">
+	<div class="md:hidden flex justify-between items-center pt-10 px-3">
+		<!-- Mobile search section on the left -->
+		<div class="flex items-center">
+			<div class="relative">
+				<input
+					v-model="search"
+					placeholder="Потърси..."
+					class="w-48 h-12 pl-12 pr-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+				<div
+					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
+					<SearchIcon
+						class="w-5 h-5 text-yellow pointer-events-none" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Mobile filter controls on the right -->
+		<div class="flex flex-row items-center gap-2">
+			<div class="relative inline-block text-left" ref="mobileFilterMenu">
 				<button
 					type="button"
 					@click="filtersOpen = !filtersOpen"
@@ -356,7 +374,7 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="relative inline-block text-left pt-10">
+			<div class="relative inline-block text-left">
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
@@ -413,23 +431,13 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="pt-10">
+			<div>
 				<button
 					@click="deleteFilters"
 					class="flex items-center justify-center w-12 h-12 text-yellow hover:text-yellow-400 transition-all duration-300 hover:scale-110 cursor-pointer">
 					<CancelIcon class="w-8 h-8" />
 				</button>
 			</div>
-		</span>
-		<div class="flex items-center gap-4 pr-5 pt-10">
-			<input
-				v-model="search"
-				placeholder="Потърси..."
-				class="max-w-100 flex-1 h-10 px-3 border rounded focus:outline-none focus:border-white text-yellow md:w-auto md:h-10 cursor-pointer" />
-			<button class="flex items-center justify-center w-12 h-12">
-				<SearchIcon
-					class="w-8 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer" />
-			</button>
 		</div>
 	</div>
 </template>
