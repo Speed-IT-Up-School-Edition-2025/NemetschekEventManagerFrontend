@@ -11,7 +11,7 @@ import SortIcon from "./icons/SortIcon.vue";
 import { apiClient } from "@/utils/api";
 import type { Event } from "@/utils/types";
 import { onClickOutside } from "@vueuse/core";
-import DeleteIcon from "./icons/DeleteIcon.vue";
+import CancelIcon from "./icons/CancelIcon.vue";
 
 const search = ref("");
 const filtersOpen = ref(false);
@@ -19,19 +19,60 @@ const date = ref<[Date, Date] | null>(null);
 const activeEvent = ref<boolean | null>(null);
 const sortOpened = ref(false);
 const sort = ref<"new" | "old" | "az" | "za" | null>(null);
-const sMenu = ref(null);
+const sortMenu = ref(null);
+const filterMenu = ref(null);
+const mobileFilterMenu = ref(null);
+const datePickerOpen = ref(false);
 
 const events = defineModel<Event[]>("events", { required: true });
 const searchedEvents = defineModel<Event[]>("searched-events", {
 	required: true,
 });
 
-function click() {
+function closeSortMenu(event: PointerEvent) {
+	// Check if click is inside the sort menu itself or on the sort button
+	const target = event.target as HTMLElement;
+	if (
+		target &&
+		(target.closest(".sort-dropdown-content") ||
+			target.closest(".sort-button"))
+	) {
+		return;
+	}
+
 	sortOpened.value = false;
-	filterBy();
 }
 
-onClickOutside(sMenu, click);
+function closeFilterMenu(event: PointerEvent) {
+	// Don't close if DatePicker is open
+	if (datePickerOpen.value) {
+		return;
+	}
+
+	// Check if click is inside the filter menu itself or on the filter button
+	const target = event.target as HTMLElement;
+	if (
+		target &&
+		(target.closest(".filter-dropdown-content") ||
+			target.closest(".filter-button") ||
+			target.closest(".dp__menu") ||
+			target.closest(".dp__calendar") ||
+			target.closest(".dp__overlay"))
+	) {
+		return;
+	}
+
+	// Apply filters when closing the menu
+	if (filtersOpen.value) {
+		filterBy();
+	}
+
+	filtersOpen.value = false;
+}
+
+onClickOutside(sortMenu, closeSortMenu);
+onClickOutside(filterMenu, closeFilterMenu);
+onClickOutside(mobileFilterMenu, closeFilterMenu);
 
 const textInputOptions = {
 	format: "dd.MM.yyyy",
@@ -108,38 +149,68 @@ async function filterBy() {
 }
 </script>
 <template>
-	<div class="hidden md:flex justify-between items-start">
-		<span class="flex items-center">
-			<div
-				class="relative inline-block text-left sm:gap-0 md:gap-2 pl-10 pt-10">
+	<div class="hidden md:flex justify-between items-center pt-10 px-10 gap-4">
+		<!-- Search section on the left -->
+		<div class="flex items-center flex-shrink-0">
+			<div class="relative">
+				<input
+					v-model="search"
+					placeholder="Потърси..."
+					class="w-60 lg:w-80 h-12 pl-12 pr-10 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+				<div
+					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
+					<SearchIcon
+						class="w-6 h-6 text-yellow pointer-events-none" />
+				</div>
+				<button
+					v-if="search"
+					@click="search = ''"
+					class="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-yellow hover:text-white transition-colors cursor-pointer">
+					<CancelIcon class="w-4 h-4" />
+				</button>
+			</div>
+		</div>
+
+		<!-- Filter controls on the right -->
+		<div class="flex items-center gap-2 lg:gap-5 flex-shrink-0">
+			<div class="relative inline-block text-left" ref="filterMenu">
 				<button
 					type="button"
-					@click="filtersOpen = !filtersOpen"
-					class="flex px-5 justify-between items-center h-10 w-40 border rounded border-yellow-500 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer">
-					<span>Филтрирай</span>
-					<ChevronDownIcon v-if="filtersOpen" />
-					<ChevronUp v-else />
+					@click="
+						if (filtersOpen) {
+							filterBy();
+						}
+						filtersOpen = !filtersOpen;
+					"
+					class="filter-button flex px-3 lg:px-4 py-2 justify-between items-center min-w-0 border rounded border-yellow-500 text-yellow transition delay-100 duration-300 hover:ease-in-out hover:border-transparent hover:text-white/100 hover:bg-yellow cursor-pointer whitespace-nowrap h-12">
+					<span class="hidden lg:inline">Филтрирай</span>
+					<span class="lg:hidden">Филтър</span>
+					<ChevronDownIcon
+						v-if="filtersOpen"
+						class="ml-2 flex-shrink-0" />
+					<ChevronUp v-else class="ml-2 flex-shrink-0" />
 				</button>
 				<TransitionRoot
 					as="template"
 					:show="filtersOpen && sortOpened === false">
 					<TransitionChild
 						as="template"
-						enter="transition-opacity ease-in-out duration-300 transform"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-300 transform"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter="transition-opacity ease-in-out duration-300"
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-300"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
-							class="absolute mt-1 flex flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							class="filter-dropdown-content absolute mt-1 left-0 flex flex-col w-72 lg:w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 gap-4 p-4">
 							<div
-								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center"
-									>Период:
+								class="flex flex-col lg:flex-row gap-3 lg:gap-5 text-yellow">
+								<span
+									class="text-white text-base lg:text-lg self-start lg:self-center">
+									Период:
 								</span>
 								<DatePicker
-									class="w-md"
+									class="w-full lg:w-md"
 									v-model="date"
 									placeholder="Период"
 									range
@@ -149,29 +220,31 @@ async function filterBy() {
 									position="center"
 									circle
 									lang="bg"
-									dark />
+									dark
+									@open="datePickerOpen = true"
+									@closed="datePickerOpen = false" />
 							</div>
 							<div
-								class="flex flex-row justify-between items-center pl-6 pr-3">
-								<span class="flex gap-4">
+								class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+								<span class="flex gap-2 items-center">
 									<input
 										type="checkbox"
 										name="active"
 										id="active"
 										v-model="activeEvent"
-										class="w-5 h-5" />
+										class="w-4 h-4 lg:w-5 lg:h-5" />
 									<label
 										for="active"
-										class="text-lg self-center"
-										>Активно събитие</label
-									>
+										class="text-base lg:text-lg text-white">
+										Активно събитие
+									</label>
 								</span>
 								<button
 									@click="
 										filtersOpen = false;
 										filterBy();
 									"
-									class="border rounded-2xl p-1 bg-yellow text-black hover:shadow-xl transition ease-in-out duration-200 delay-100 shadow-yellow/30 cursor-pointer">
+									class="border rounded-2xl px-3 py-1.5 min-w-0 bg-yellow text-black hover:opacity-90 transition-colors cursor-pointer whitespace-nowrap text-sm lg:text-base">
 									Запази
 								</button>
 							</div>
@@ -179,52 +252,56 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="relative inline-block text-left pl-5 pt-10">
+			<div class="relative inline-block text-left">
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					class="sort-button flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
-				<TransitionRoot as="template" :show="sortOpened" ref="sMenu">
+				<TransitionRoot as="template" :show="sortOpened" ref="sortMenu">
 					<TransitionChild
 						as="template"
-						enter="transition-opacity ease-in-out duration-200 transform"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-200 transform"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter="transition-opacity ease-in-out duration-300"
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-300"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
-							class="absolute flex justify-evenly mt-3 flex-col h-30 w-40 rounded-2xl origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							class="sort-dropdown-content absolute mt-1 left-0 flex flex-col w-48 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'new';
+									sortOpened = false;
 									filterBy();
 								">
 								Най-нови
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'old';
+									sortOpened = false;
 									filterBy();
 								">
 								Най-стари
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'az';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: А до Я
 							</button>
 							<button
-								class="text-white hover:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
 									sort = 'za';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: Я до А
@@ -233,32 +310,50 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="pt-10 pl-2">
+			<div>
 				<button
 					@click="deleteFilters()"
-					class="flex items-center justify-center w-20 h-10 border rounded border-red-500 text-red transition-all duration-300 hover:border-transparent hover:text-white hover:bg-red hover:scale-105 cursor-pointer">
-					Изчисти
+					class="flex items-center justify-center px-3 lg:px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap h-12">
+					<span class="hidden lg:inline">Изчисти филтрите</span>
+					<span class="lg:hidden">Изчисти</span>
 				</button>
 			</div>
-		</span>
-		<div class="flex items-center gap-4 pr-10 pt-10">
-			<input
-				v-model="search"
-				placeholder="Потърси..."
-				class="flex-1 max-w-100 h-10 px-3 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
-			<button class="flex items-center justify-center w-12 h-12">
-				<SearchIcon
-					class="w-8 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer" />
-			</button>
 		</div>
 	</div>
-	<div class="md:hidden flex justify-between items-start">
-		<span class="flex flex-row items-center gap-2">
-			<div class="relative inline-block text-left pl-3 pt-10">
+	<div class="md:hidden flex justify-between items-center pt-10 px-3">
+		<!-- Mobile search section on the left -->
+		<div class="flex items-center">
+			<div class="relative">
+				<input
+					v-model="search"
+					placeholder="Потърси..."
+					class="w-48 h-12 pl-12 pr-10 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+				<div
+					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
+					<SearchIcon
+						class="w-5 h-5 text-yellow pointer-events-none" />
+				</div>
+				<button
+					v-if="search"
+					@click="search = ''"
+					class="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-yellow hover:text-white transition-colors cursor-pointer">
+					<CancelIcon class="w-4 h-4" />
+				</button>
+			</div>
+		</div>
+
+		<!-- Mobile filter controls on the right -->
+		<div class="flex flex-row items-center gap-2">
+			<div class="relative inline-block text-left" ref="mobileFilterMenu">
 				<button
 					type="button"
-					@click="filtersOpen = !filtersOpen"
-					class="flex items-center justify-center w-12 h-12 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer">
+					@click="
+						if (filtersOpen) {
+							filterBy();
+						}
+						filtersOpen = !filtersOpen;
+					"
+					class="filter-button flex items-center justify-center w-12 h-12 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer">
 					<FilterIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot
@@ -267,20 +362,19 @@ async function filterBy() {
 					<TransitionChild
 						as="template"
 						enter="transition-opacity ease-in-out duration-200"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-200"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-200"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
-							class="absolute mt-1 flex flex-1 flex-col h-30 w-90 rounded origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
-							<div
-								class="flex flex-row gap-5 pt-5 pl-6 pr-4 text-yellow space-y-5 rounded-md">
-								<span class="text-white text-lg self-center"
-									>Период:
+							class="filter-dropdown-content absolute mt-1 left-1/2 transform -translate-x-1/2 flex flex-col gap-4 p-4 w-64 max-w-[calc(100vw-2rem)] rounded origin-top border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							<div class="flex flex-col gap-2 text-yellow">
+								<span class="text-white text-sm text-center">
+									Период:
 								</span>
 								<DatePicker
-									class="w-md"
+									class="w-full text-xs"
 									v-model="date"
 									placeholder="Период"
 									range
@@ -290,20 +384,21 @@ async function filterBy() {
 									position="center"
 									circle
 									lang="bg"
-									dark />
+									dark
+									@open="datePickerOpen = true"
+									@closed="datePickerOpen = false" />
 							</div>
-							<div
-								class="flex flex-row justify-between items-center pl-6 pr-3">
-								<span class="flex gap-4">
+							<div class="flex justify-between items-center">
+								<span class="flex gap-2 items-center">
 									<input
 										type="checkbox"
 										name="active"
-										id="active"
+										id="active-mobile"
 										v-model="activeEvent"
-										class="w-5 h-5" />
+										class="w-3 h-3" />
 									<label
-										for="active"
-										class="text-lg self-center"
+										for="active-mobile"
+										class="text-sm text-white"
 										>Активно събитие</label
 									>
 								</span>
@@ -312,7 +407,7 @@ async function filterBy() {
 										filtersOpen = false;
 										filterBy();
 									"
-									class="border rounded-2xl p-1 bg-yellow text-black hover:shadow-xl transition ease-in-out duration-200 delay-100 shadow-yellow/30 cursor-pointer">
+									class="border rounded-xl px-3 py-1.5 min-w-0 bg-yellow text-black hover:opacity-90 transition-colors cursor-pointer whitespace-nowrap text-xs">
 									Запази
 								</button>
 							</div>
@@ -320,55 +415,59 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="relative inline-block text-left pt-10">
+			<div class="relative inline-block text-left">
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					class="sort-button flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot
 					as="template"
 					:show="sortOpened && filtersOpen === false"
-					ref="sMenu">
+					ref="sortMenu">
 					<TransitionChild
 						as="template"
-						enter="transition-opacity ease-in-out duration-200 transform"
-						enter-from="opacity-0 -translate-y-5"
-						enter-to="opacity-100 translate-y-0"
-						leave="transition-opacity ease-in duration-200 transform"
-						leave-from="opacity-100 translate-y-0"
-						leave-to="opacity-0 -translate-y-3">
+						enter="transition-opacity ease-in-out duration-200"
+						enter-from="opacity-0"
+						enter-to="opacity-100"
+						leave="transition-opacity ease-in-out duration-200"
+						leave-from="opacity-100"
+						leave-to="opacity-0">
 						<div
-							class="absolute flex justify-evenly mt-3 flex-col h-30 w-40 rounded-2xl origin-top-left border-2 border-yellow bg-dark-grey shadow-lg z-50">
+							class="sort-dropdown-content absolute mt-1 right-0 mr-2 flex flex-col w-48 max-w-[calc(100vw-1rem)] rounded origin-top-right border-2 border-yellow bg-dark-grey shadow-lg z-50 py-2">
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'new' ? 'new' : null;
+									sort = 'new';
+									sortOpened = false;
 									filterBy();
 								">
-								Най-скорошни
+								Най-нови
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'old' ? 'old' : null;
+									sort = 'old';
+									sortOpened = false;
 									filterBy();
 								">
-								Най-последни
+								Най-стари
 							</button>
 							<button
-								class="text-white hover:text-yellow active:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 active:text-yellow cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'az' ? 'az' : null;
+									sort = 'az';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: А до Я
 							</button>
 							<button
-								class="text-white hover:text-yellow cursor-pointer"
+								class="text-white hover:text-yellow hover:bg-yellow/10 cursor-pointer px-4 py-2 text-left transition-colors duration-200"
 								@click="
-									sort = sort === 'za' ? 'za' : null;
+									sort = 'za';
+									sortOpened = false;
 									filterBy();
 								">
 								Азбучен ред: Я до А
@@ -377,23 +476,13 @@ async function filterBy() {
 					</TransitionChild>
 				</TransitionRoot>
 			</div>
-			<div class="pt-10">
+			<div>
 				<button
 					@click="deleteFilters"
-					class="flex items-center justify-center w-12 h-12 text-red hover:text-red-400 transition-all duration-300 hover:scale-110 cursor-pointer">
-					<DeleteIcon class="w-8 h-8" />
+					class="flex items-center justify-center w-12 h-12 text-yellow hover:text-yellow-400 transition-all duration-300 hover:scale-110 cursor-pointer">
+					<CancelIcon class="w-8 h-8" />
 				</button>
 			</div>
-		</span>
-		<div class="flex items-center gap-4 pr-5 pt-10">
-			<input
-				v-model="search"
-				placeholder="Потърси..."
-				class="max-w-100 flex-1 h-10 px-3 border rounded focus:outline-none focus:border-white text-yellow md:w-auto md:h-10 cursor-pointer" />
-			<button class="flex items-center justify-center w-12 h-12">
-				<SearchIcon
-					class="w-8 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer" />
-			</button>
 		</div>
 	</div>
 </template>

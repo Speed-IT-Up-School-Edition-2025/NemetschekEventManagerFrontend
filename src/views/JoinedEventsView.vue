@@ -7,7 +7,14 @@ import LoaderComponent from "@/components/LoaderComponent.vue";
 import type { Event } from "@/utils/types";
 import { useAsync } from "@/composables/useAsync";
 
-const { execute, data: events, error, loading } = useAsync(getJoinedEvents);
+const { execute, data, error, loading } = useAsync(getJoinedEvents);
+const events = ref<Event[]>([]);
+
+onMounted(() => {
+	execute().then(() => {
+		events.value = data.value ?? [];
+	});
+});
 
 const searchedEvents = ref<Event[]>([]);
 
@@ -21,6 +28,10 @@ onMounted(() => {
 		Присъединени събития
 	</h2>
 
+	<FilterComponent
+		v-model:events="events"
+		v-model:searched-events="searchedEvents" />
+
 	<div v-if="loading"><LoaderComponent /></div>
 	<div v-else-if="error" class="p-10 text-center text-red">
 		Възникна грешка: {{ error }}
@@ -31,9 +42,6 @@ onMounted(() => {
 		Няма намерени присъединени събития
 	</div>
 	<div v-else>
-		<FilterComponent
-			v-model:events="events"
-			v-model:searched-events="searchedEvents" />
 		<div
 			class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
 			<CardComponent

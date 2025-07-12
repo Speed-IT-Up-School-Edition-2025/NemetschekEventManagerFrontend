@@ -18,12 +18,13 @@ export const useCurrentEventStore = defineStore("currentEvent", {
 		) {
 			// Create a partial event object suitable for duplication
 			this.currentEvent = {
-				id: "", // Empty ID for new event
+				id: 1, // Empty ID for new event
 				spotsLeft: 0, // Will be calculated by backend
 				...event,
 				date: event.date || "",
 				signUpDeadline: event.signUpDeadline || "",
-			} as Event;
+				userSignedUp: false,
+			};
 		},
 		clearCurrentEvent() {
 			this.currentEvent = null;
