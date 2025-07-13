@@ -320,7 +320,7 @@ async function filterBy() {
 			</div>
 		</div>
 	</div>
-	<div class="md:hidden flex justify-between items-center pt-10 px-5">
+	<div class="md:hidden flex justify-between items-center pt-10 sm:px-10 px-5">
 		<!-- Mobile search section on the left -->
 		<div class="flex items-center">
 			<div class="relative">
