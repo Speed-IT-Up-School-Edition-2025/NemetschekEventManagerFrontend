@@ -88,7 +88,6 @@ const handleClearFilters = async () => {
 				? events
 				: searchedEvents"
 			:event="event"
-			button-name="Запиши се"
 			:key="event.id" />
 	</div>
 </template>

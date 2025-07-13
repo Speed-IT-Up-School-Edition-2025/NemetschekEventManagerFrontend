@@ -44,12 +44,24 @@
 				}}</span>
 			</p>
 			<div class="mt-auto flex justify-end">
-				<RouterLink
-					:to="`/events/${event.id}`"
-					class="h-10 px-4 py-2 border-2 text-white border-yellow-500 rounded-2xl border-solid transition delay-100 duration-75 ease-in-out hover:text-white hover:border-transparent hover:bg-yellow-500 whitespace-nowrap"
-					@click.stop>
-					{{ buttonName }}
-				</RouterLink>
+				<button
+					v-if="!event.userSignedUp"
+					@click.stop="redirect"
+					:disabled="event.spotsLeft === 0"
+					:class="[
+						'h-10 px-4 py-2 border-2 rounded-2xl border-solid transition-all duration-300 ease-in-out whitespace-nowrap flex items-center justify-center',
+						event.spotsLeft === 0
+							? 'border-grey-400 text-grey-400 cursor-not-allowed'
+							: 'text-white border-yellow-500 hover:text-white hover:border-transparent hover:bg-yellow-500 hover:scale-105 hover:shadow-lg',
+					]">
+					{{ event.spotsLeft === 0 ? "Няма места" : "Запиши се" }}
+				</button>
+				<button
+					v-else
+					@click.stop="redirect"
+					class="h-10 px-4 py-2 border-2 text-white border-red-500 rounded-2xl border-solid transition-all duration-300 ease-in-out hover:text-white hover:border-transparent hover:bg-red-500 hover:scale-105 hover:shadow-lg whitespace-nowrap flex items-center justify-center">
+					Отпиши се
+				</button>
 			</div>
 		</div>
 	</div>
@@ -64,10 +76,10 @@ import UserIcon from "./icons/UserIcon.vue";
 import { useRouter } from "vue-router";
 import { formatDateTime } from "@/utils/date";
 
-const { event, buttonName } = defineProps<{
+const { event } = defineProps<{
 	event: Event;
-	buttonName: string;
 }>();
+
 const router = useRouter();
 const shortenedDescription = event.description
 	? event.description.slice(0, 50) +
