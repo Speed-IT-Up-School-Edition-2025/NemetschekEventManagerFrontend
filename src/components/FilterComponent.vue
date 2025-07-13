@@ -256,7 +256,7 @@ async function filterBy() {
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="sort-button flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					class="sort-button flex items-center justify-center md:w-12 md:h-12 w-8 h-8 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot as="template" :show="sortOpened" ref="sortMenu">
@@ -313,21 +313,21 @@ async function filterBy() {
 			<div>
 				<button
 					@click="deleteFilters()"
-					class="flex items-center justify-center px-3 lg:px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap h-12">
+					class="flex items-center justify-center px-3 lg:px-4 py-2 min-w-0 border rounded border-yellow-500 text-yellow transition-all duration-300 hover:border-transparent hover:text-black hover:bg-yellow hover:scale-105 cursor-pointer whitespace-nowrap md:h-12 h-8">
 					<span class="hidden lg:inline">Изчисти филтрите</span>
 					<span class="lg:hidden">Изчисти</span>
 				</button>
 			</div>
 		</div>
 	</div>
-	<div class="md:hidden flex justify-between items-center pt-10 px-3">
+	<div class="md:hidden flex justify-between items-center pt-10 px-5">
 		<!-- Mobile search section on the left -->
 		<div class="flex items-center">
 			<div class="relative">
 				<input
 					v-model="search"
 					placeholder="Потърси..."
-					class="w-48 h-12 pl-12 pr-10 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
+					class="w-48 md:h-12 h-8 pl-12 pr-10 border rounded focus:outline-none focus:border-white text-yellow cursor-pointer" />
 				<div
 					class="absolute left-0 top-0 h-full w-10 flex items-center justify-center border-r border-yellow rounded-l">
 					<SearchIcon
@@ -353,7 +353,7 @@ async function filterBy() {
 						}
 						filtersOpen = !filtersOpen;
 					"
-					class="filter-button flex items-center justify-center w-12 h-12 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer">
+					class="filter-button flex items-center justify-center md:h-12 h-8 text-yellow hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer">
 					<FilterIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot
@@ -419,7 +419,7 @@ async function filterBy() {
 				<button
 					type="button"
 					@click="sortOpened = !sortOpened"
-					class="sort-button flex items-center justify-center w-12 h-12 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
+					class="sort-button flex items-center justify-center md:w-12 w-8 md:h-12 h-8 text-yellow transition-all duration-300 hover:text-white hover:scale-110 cursor-pointer">
 					<SortIcon class="w-8 h-8" />
 				</button>
 				<TransitionRoot
@@ -479,7 +479,7 @@ async function filterBy() {
 			<div>
 				<button
 					@click="deleteFilters"
-					class="flex items-center justify-center w-12 h-12 text-yellow hover:text-yellow-400 transition-all duration-300 hover:scale-110 cursor-pointer">
+					class="flex items-center justify-center w-12 md:h-12 h-8 text-yellow hover:text-yellow-400 transition-all duration-300 hover:scale-110 cursor-pointer">
 					<CancelIcon class="w-8 h-8" />
 				</button>
 			</div>

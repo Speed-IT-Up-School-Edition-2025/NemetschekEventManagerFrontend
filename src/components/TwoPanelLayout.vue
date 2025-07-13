@@ -13,7 +13,7 @@ const { actionName } = defineProps<{
 
 			<div class="grid grid-cols-1 lg:grid-cols-2 min-h-full">
 				<!-- Left Panel -->
-				<div class="px-8 py-2 lg:border-r lg:border-white/20">
+				<div class="md:px-8 px-4 py-2 lg:border-r lg:border-white/20">
 					<slot name="left">
 						<div class="text-center text-white/60 py-8">
 							<h3 class="text-xl font-semibold mb-2">Left Panel</h3>
@@ -23,7 +23,7 @@ const { actionName } = defineProps<{
 				</div>
 
 				<!-- Right Panel -->
-				<div class="px-8 py-2 lg:border-l lg:border-white/20">
+				<div class="md:px-8 px-4 py-2 lg:border-l lg:border-white/20">
 					<slot name="right">
 						<div class="text-center text-white/60 py-8">
 							<h3 class="text-xl font-semibold mb-2">Right Panel</h3>
