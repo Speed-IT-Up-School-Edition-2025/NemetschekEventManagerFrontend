@@ -75,10 +75,7 @@ const handleClearFilters = async () => {
 
 	<div v-if="loading || isLoading"><LoaderComponent /></div>
 	<div v-else-if="error || errorMessage" class="p-10 text-center text-red">
-		Възникна грешка: {{ error || errorMessage }}
-	</div>
-	<div v-else-if="error" class="p-10 text-center text-red">
-		Възникна грешка: {{ error }}
+		Възникна грешка: {{ error ?? errorMessage }}
 	</div>
 	<div
 		v-else-if="!events || events.length === 0"
