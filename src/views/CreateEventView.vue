@@ -2,68 +2,134 @@
 import EventInformationFormComponent from "@/components/EventInformationFormComponent.vue";
 import CreateForm from "@/components/FormCreator/CreateForm.vue";
 import TwoPanelLayout from "@/components/TwoPanelLayout.vue";
+import LoaderComponent from "@/components/LoaderComponent.vue";
 import { createEvent } from "@/services/eventsService";
 import { useCurrentEventStore } from "@/stores/currentEventStore";
 import { useUIStore } from "@/stores/uiStore";
-import { useTemplateRef, onUnmounted } from "vue";
+import { useAsync } from "@/composables/useAsync";
+import { useTemplateRef, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { extractErrorMessage } from "@/utils/errorHandling";
+import type { CreateEventDto } from "@/utils/types";
 
 const { currentEvent, clearCurrentEvent } = useCurrentEventStore();
 const { triggerToast } = useUIStore();
 
 const router = useRouter();
 
-const createEventInformationRef = useTemplateRef("createEventInformationRef");
+const createEventInformationRef = useTemplateRef<{
+	getState: () => CreateEventDto;
+	isValid: () => boolean;
+}>("createEventInformationRef");
 const createEventFormRef = useTemplateRef("createEventFormRef");
+
+// Computed property to check if form is valid
+const isFormValid = computed(() => {
+	// Check if the event information form is valid
+	const eventInfoValid = createEventInformationRef.value?.isValid?.() ?? true;
+	return eventInfoValid;
+});
+
+// UseAsync for creating event
+const {
+	execute: executeCreateEvent,
+	loading: isCreating,
+	error: createError,
+} = useAsync(async () => {
+	const eventInformation = createEventInformationRef.value?.getState();
+	const formFields = createEventFormRef.value?.getState();
+
+	if (!eventInformation || !formFields) {
+		throw new Error("Моля, попълнете всички задължителни полета");
+	}
+
+	const result = await createEvent({
+		...eventInformation,
+		fields: formFields,
+	});
+
+	triggerToast("Събитието беше създадено успешно!", "success");
+	clearCurrentEvent(); // Clear the event data after successful creation
+	router.push(`/events/${result.id}`);
+	return result;
+});
 
 // Clear when leaving the page
 onUnmounted(() => {
 	clearCurrentEvent();
 });
 
-function handleSubmit() {
-	const eventInformation = createEventInformationRef.value?.getState();
-	const formFields = createEventFormRef.value?.getState();
-
-	createEvent({
-		...eventInformation!,
-		fields: formFields!,
-	})
-		.then(({ id }) => {
-			triggerToast("Събитието беше създадено успешно!", "success");
-			clearCurrentEvent(); // Clear the event data after successful creation
-			router.push(`/events/${id}`);
-		})
-		.catch(error => {
-			console.error("Грешка при създаване на събитието:", error);
-
-			triggerToast(
-				"Възникна грешка при създаване на събитието. Моля, опитайте отново.",
-				"error"
-			);
-		});
+async function handleSubmit() {
+	try {
+		await executeCreateEvent();
+	} catch (validationError) {
+		// Handle client-side validation errors
+		triggerToast(
+			extractErrorMessage(
+				validationError,
+				"Моля, коригирайте грешките във формата"
+			),
+			"error"
+		);
+	}
 }
 </script>
 
 <template>
-	<form @submit.prevent="handleSubmit">
-		<TwoPanelLayout action-name="Създаване на ново събитие">
-			<template #left>
-				<EventInformationFormComponent
-					ref="createEventInformationRef"
-					v-bind="{ event: currentEvent ?? undefined }" />
-			</template>
-			<template #right>
-				<CreateForm
-					ref="createEventFormRef"
-					v-bind="{ fields: currentEvent?.fields ?? [] }" />
+	<div>
+		<!-- Loading State -->
+		<div
+			v-if="isCreating"
+			class="flex items-center justify-center min-h-screen">
+			<LoaderComponent />
+		</div>
 
-				<button
-					type="submit"
-					class="w-full bg-yellow text-dark-grey py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer mt-6">
-					Запази информацията
-				</button>
-			</template>
-		</TwoPanelLayout>
-	</form>
+		<!-- Error State -->
+		<div v-else-if="createError" class="p-10 text-center text-red-500">
+			<h2 class="text-xl font-semibold mb-4">Възникна грешка</h2>
+			<p class="mb-4">
+				{{
+					extractErrorMessage(
+						createError,
+						"Неочаквана грешка при създаване на събитието"
+					)
+				}}
+			</p>
+			<button
+				@click="executeCreateEvent"
+				class="bg-yellow text-dark-grey px-6 py-2 rounded-lg hover:opacity-90 transition">
+				Опитай отново
+			</button>
+		</div>
+
+		<!-- Main Form -->
+		<form v-else @submit.prevent="handleSubmit">
+			<TwoPanelLayout action-name="Създаване на ново събитие">
+				<template #left>
+					<EventInformationFormComponent
+						ref="createEventInformationRef"
+						v-bind="{ event: currentEvent ?? undefined }" />
+				</template>
+				<template #right>
+					<CreateForm
+						ref="createEventFormRef"
+						v-bind="{ fields: currentEvent?.fields ?? [] }" />
+
+					<button
+						type="submit"
+						:disabled="!isFormValid || isCreating"
+						:class="[
+							'w-full py-3 rounded-lg font-semibold transition-all cursor-pointer mt-6',
+							isFormValid && !isCreating
+								? 'bg-yellow text-dark-grey hover:opacity-90'
+								: 'bg-grey-400 text-grey-200 cursor-not-allowed',
+						]">
+						{{
+							isCreating ? "Създава се..." : "Запази информацията"
+						}}
+					</button>
+				</template>
+			</TwoPanelLayout>
+		</form>
+	</div>
 </template>

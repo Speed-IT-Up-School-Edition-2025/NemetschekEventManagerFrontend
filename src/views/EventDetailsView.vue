@@ -19,6 +19,8 @@ import EditIcon from "@/components/icons/EditIcon.vue";
 import ViewSubmissionsIcon from "@/components/icons/ViewSubmissionsIcon.vue";
 import ConfirmationComponent from "@/components/ConfirmationComponent.vue";
 import { cancelSubmission } from "@/services/submissionService.ts";
+import { formatDateTime } from "@/utils/date";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -27,18 +29,6 @@ const { triggerToast } = useUIStore();
 
 // Confirmation dialog state
 const showDeleteConfirm = ref(false);
-
-// Helper function to format datetime
-const formatDateTime = (isoString: string) => {
-	return new Date(isoString).toLocaleDateString(undefined, {
-		weekday: "long",
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-};
 
 const {
 	execute,
@@ -95,9 +85,11 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 			await deleteEvent(event.value.id.toString());
 
 			triggerToast("Събитието беше изтрито успешно!", "success");
+
 			router.push("/events");
 		} catch (error) {
 			console.error("Грешка при изтриване на събитието:", error);
+
 			triggerToast(
 				"Възникна грешка при изтриване на събитието. Моля, опитайте отново.",
 				"error"
@@ -106,19 +98,66 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 	}
 };
 
-const cancelSubmissionButton = () => {
-	if (event.value != null) {
-		try {
-			cancelSubmission(event.value.id.toString());
-			event.value.userSignedUp = false;
-			triggerToast("Отписването беше успешно!", "success");
-			event.value.spotsLeft += 1;
-		} catch (error) {
-			triggerToast(
-				`Възникна грешка при отписванете ви: ${(error as Error).message}`,
-				"error"
-			);
-		}
+// UseAsync for canceling submission
+const {
+	execute: executeCancelSubmission,
+	loading: cancellingSubmission,
+	error: cancelError,
+} = useAsync(async () => {
+	if (!event.value) {
+		throw new Error("Event not found");
+	}
+
+	await cancelSubmission(event.value.id.toString());
+	event.value.userSignedUp = false;
+	triggerToast("Отписването беше успешно!", "success");
+});
+
+// UseAsync for simple registration
+const {
+	execute: executeSimpleRegistration,
+	loading: registeringSubmission,
+	error: registerError,
+} = useAsync(async () => {
+	if (!event.value) {
+		throw new Error("Event not found");
+	}
+
+	const { createSubmission } = await import("@/services/submissionService");
+	await createSubmission(event.value.id, []);
+	event.value.userSignedUp = true;
+	if (event.value.spotsLeft > 0) {
+		event.value.spotsLeft--;
+	}
+	triggerToast("Записването беше успешно!", "success");
+});
+
+const cancelSubmissionButton = async () => {
+	try {
+		await executeCancelSubmission();
+	} catch (error) {
+		triggerToast(
+			extractErrorMessage(
+				error,
+				"Възникна грешка при отписването ви. Моля, опитайте отново."
+			),
+			"error"
+		);
+	}
+};
+
+// Simple registration for events without form fields
+const handleSimpleRegistration = async () => {
+	try {
+		await executeSimpleRegistration();
+	} catch (error) {
+		triggerToast(
+			extractErrorMessage(
+				error,
+				"Възникна грешка при записването ви. Моля, опитайте отново."
+			),
+			"error"
+		);
 	}
 };
 </script>
@@ -142,7 +181,9 @@ const cancelSubmissionButton = () => {
 				</div>
 
 				<!-- Mobile Action Icons (only visible on mobile) -->
-				<div v-if="userStore.isAdmin" class="flex justify-center gap-4 py-2 lg:hidden">
+				<div
+					v-if="userStore.isAdmin"
+					class="flex justify-center gap-4 py-2 lg:hidden">
 					<!-- Event Administration Icons -->
 					<button
 						@click="showDeleteConfirmation"
@@ -192,7 +233,9 @@ const cancelSubmissionButton = () => {
 						<div class="flex items-start gap-3">
 							<LocationIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">Място</h3>
+								<h3 class="text-lg font-semibold text-white">
+									Място
+								</h3>
 								<p class="text-white/80 break-words">
 									{{ event.location }}
 								</p>
@@ -216,9 +259,16 @@ const cancelSubmissionButton = () => {
 						<div class="flex items-start gap-3">
 							<UserIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">Места</h3>
-								<div class="text-white/80 break-words space-y-1">
-									<p v-if="event.peopleLimit && event.peopleLimit > 0">
+								<h3 class="text-lg font-semibold text-white">
+									Места
+								</h3>
+								<div
+									class="text-white/80 break-words space-y-1">
+									<p
+										v-if="
+											event.peopleLimit &&
+											event.peopleLimit > 0
+										">
 										Лимит участници: {{ event.peopleLimit }}
 									</p>
 									<p v-else>Без лимит на участници</p>
@@ -243,8 +293,11 @@ const cancelSubmissionButton = () => {
 
 					<!-- Event Description -->
 					<div class="border-t border-white/20 pt-6">
-						<h3 class="text-xl font-semibold text-yellow mb-3">За събитието</h3>
-						<p class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
+						<h3 class="text-xl font-semibold text-yellow mb-3">
+							За събитието
+						</h3>
+						<p
+							class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
 							{{ event.description }}
 						</p>
 					</div>
@@ -259,6 +312,15 @@ const cancelSubmissionButton = () => {
 				Възникна грешка: {{ error }}
 			</div>
 			<div v-if="event" class="space-y-4">
+				<!-- Cancellation Error Display -->
+				<div
+					v-if="cancelError"
+					class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
+					{{
+						extractErrorMessage(cancelError, "Грешка при отписване")
+					}}
+				</div>
+
 				<!-- Admin Actions Section (only visible on desktop) -->
 				<div
 					v-if="userStore.isAdmin"
@@ -285,22 +347,85 @@ const cancelSubmissionButton = () => {
 					</button>
 				</div>
 
-				<!-- Submission Form -->
+				<!-- Submission Form or Simple Registration -->
 				<FormSubmit
-					v-if="event?.fields"
+					v-if="event?.fields && event.fields.length > 0"
 					:event-id="event?.id"
 					:fields="event.fields"
 					:user-signed-up="event.userSignedUp"
 					:on-cancel="cancelSubmissionButton"
+					:cancel-loading="cancellingSubmission"
 					action-name="Запиши се"
-					@signed-up="
-						() => {
-							if (event) {
-								event.userSignedUp = true;
-								event.spotsLeft -= 1;
-							}
-						}
-					" />
+					@signed-up="event.userSignedUp = true" />
+
+				<!-- Simple Registration for events without form fields -->
+				<div
+					v-else-if="event"
+					class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
+					<!-- Cancellation Error Display -->
+					<div
+						v-if="cancelError"
+						class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
+						{{
+							extractErrorMessage(
+								cancelError,
+								"Грешка при отписване"
+							)
+						}}
+					</div>
+
+					<!-- Registration Error Display -->
+					<div
+						v-if="registerError"
+						class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
+						{{
+							extractErrorMessage(
+								registerError,
+								"Грешка при записване"
+							)
+						}}
+					</div>
+
+					<div
+						v-if="event.userSignedUp"
+						class="text-green-400 text-center mb-4 text-xl">
+						Вече сте записани за това събитие.
+					</div>
+
+					<div class="pt-4 flex flex-wrap justify-center gap-4">
+						<button
+							v-if="!event.userSignedUp"
+							@click="() => handleSimpleRegistration()"
+							:disabled="
+								event.spotsLeft === 0 || registeringSubmission
+							"
+							:class="[
+								'cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full transition duration-150 ease-in-out whitespace-nowrap',
+								event.spotsLeft === 0 || registeringSubmission
+									? 'bg-grey-400 text-grey-600 cursor-not-allowed opacity-50'
+									: 'text-gray-900 bg-yellow hover:bg-yellow-900 disabled:opacity-50 disabled:cursor-not-allowed',
+							]">
+							{{
+								registeringSubmission
+									? "Записва се..."
+									: event.spotsLeft === 0
+										? "Няма свободни места"
+										: "Запиши се"
+							}}
+						</button>
+						<button
+							v-if="event.userSignedUp"
+							:disabled="cancellingSubmission"
+							@click="cancelSubmissionButton"
+							class="cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full text-white bg-red hover:bg-red-800 transition duration-150 ease-in-out whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+							{{
+								cancellingSubmission
+									? "Отписва се..."
+									: "Отпиши се"
+							}}
+						</button>
+					</div>
+				</div>
 			</div>
 		</template>
 	</TwoPanelLayout>
@@ -313,5 +438,5 @@ const cancelSubmissionButton = () => {
 		@confirm="handleDeleteConfirmation(true)"
 		@cancel="handleDeleteConfirmation(false)"
 		confirmText="Изтрий"
-		cancelText="Отказ" />
+		cancelText="Откажи" />
 </template>

@@ -8,10 +8,10 @@ import ChevronDownIcon from "@/components/icons/ChevronDownIcon.vue";
 import ChevronUp from "@/components/icons/ChevronUp.vue";
 import FilterIcon from "./icons/FilterIcon.vue";
 import SortIcon from "./icons/SortIcon.vue";
-import { apiClient } from "@/utils/api";
 import type { Event } from "@/utils/types";
 import { onClickOutside } from "@vueuse/core";
 import CancelIcon from "./icons/CancelIcon.vue";
+import type { EventsFilterParams } from "@/services/eventsService";
 
 const search = ref("");
 const filtersOpen = ref(false);
@@ -28,6 +28,12 @@ const events = defineModel<Event[]>("events", { required: true });
 const searchedEvents = defineModel<Event[]>("searched-events", {
 	required: true,
 });
+
+// Events for parent components to handle
+const emit = defineEmits<{
+	filter: [params: EventsFilterParams];
+	clearFilters: [];
+}>();
 
 function closeSortMenu(event: PointerEvent) {
 	// Check if click is inside the sort menu itself or on the sort button
@@ -104,48 +110,45 @@ async function deleteFilters() {
 	date.value = null;
 	activeEvent.value = null;
 	sort.value = null;
-	events.value = await apiClient.get<Event[]>("/events");
 	searchedEvents.value = [];
+	emit("clearFilters");
 }
 
 async function filterBy() {
-	const formattedStartDate = ref("");
-	const formattedEndDate = ref("");
-	const parameters: string[] = [];
-	if (date.value?.[0] != null && date.value?.[1] != null) {
-		date.value?.[0].setHours(3);
-		date.value?.[0].setMinutes(0);
-		date.value?.[0].setMilliseconds(0);
-		formattedStartDate.value = date.value?.[0].toISOString();
+	const params: EventsFilterParams = {};
 
-		date.value?.[1].setHours(23);
-		date.value?.[1].setMinutes(59);
-		date.value?.[1].setMilliseconds(59);
-		formattedEndDate.value = date.value?.[1].toISOString();
+	if (date.value?.[0] != null && date.value?.[1] != null) {
+		const startDate = new Date(date.value[0]);
+		startDate.setHours(3, 0, 0, 0);
+		params.fromDate = startDate.toISOString();
+
+		const endDate = new Date(date.value[1]);
+		endDate.setHours(23, 59, 59, 999);
+		params.toDate = endDate.toISOString();
 	}
-	if (formattedStartDate.value)
-		parameters.push(`fromDate=${formattedStartDate.value}`);
-	if (formattedEndDate.value)
-		parameters.push(`toDate=${formattedEndDate.value}`);
-	if (activeEvent.value != null)
-		parameters.push(`activeOnly=${activeEvent.value}`);
+
+	if (activeEvent.value != null) {
+		params.activeOnly = activeEvent.value;
+	}
+
 	switch (sort.value) {
 		case "new":
-			parameters.push("sortDescending=false");
+			params.sortDescending = false;
 			break;
 		case "old":
-			parameters.push("sortDescending=true");
+			params.sortDescending = true;
 			break;
 		case "az":
-			parameters.push("alphabetical=true");
+			params.alphabetical = true;
+			params.sortDescending = false;
 			break;
 		case "za":
-			parameters.push("alphabetical=true");
-			parameters.push("sortDescending=true");
+			params.alphabetical = true;
+			params.sortDescending = true;
 			break;
 	}
-	const query = parameters.join("&");
-	events.value = await apiClient.get<Event[]>("/events?" + query);
+
+	emit("filter", params);
 }
 </script>
 <template>

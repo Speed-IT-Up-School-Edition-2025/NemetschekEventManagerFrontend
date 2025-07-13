@@ -170,5 +170,5 @@ onMounted(execute);
 		@confirm="handleConfirm(true)"
 		@cancel="handleConfirm(false)"
 		confirmText="Потвърди"
-		cancelText="Отказ" />
+		cancelText="Откажи" />
 </template>

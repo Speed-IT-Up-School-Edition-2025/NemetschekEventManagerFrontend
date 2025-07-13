@@ -3,6 +3,7 @@ import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { authApi } from "@/services/authService";
 import { useUserStore } from "@/stores/userStore";
+import { useUIStore } from "@/stores/uiStore";
 import { useAsync } from "@/composables/useAsync";
 const isLogin = ref(true);
 const form = reactive({
@@ -17,8 +18,9 @@ const errors = reactive<{
 }>({});
 const router = useRouter();
 const userStore = useUserStore();
+const { triggerToast } = useUIStore();
 
-const { execute, data } = useAsync(() =>
+const { execute, data, loading, error } = useAsync(() =>
 	isLogin.value
 		? authApi.login(form.email, form.password)
 		: authApi.register(form.email, form.password)
@@ -65,11 +67,28 @@ function handleSubmit() {
 	if (hasError) {
 		return;
 	}
+
 	execute().then(() => {
-		if (data.value?.accessToken && data.value?.refreshToken) {
-			userStore.setAccessToken(data.value.accessToken);
-			userStore.setRefreshToken(data.value.refreshToken);
-			router.push("/events");
+		if (isLogin.value) {
+			// Handle login success
+			if (data.value?.accessToken && data.value?.refreshToken) {
+				userStore.setAccessToken(data.value.accessToken);
+				userStore.setRefreshToken(data.value.refreshToken);
+				triggerToast("Успешно влизане!", "success");
+				router.push("/events");
+			}
+		} else {
+			// Handle registration success
+			triggerToast(
+				"Регистрацията беше успешна! Моля, влезте в профила си.",
+				"success"
+			);
+			// Clear the form
+			form.email = "";
+			form.password = "";
+			form.confirmPassword = "";
+			// Switch to login mode
+			isLogin.value = true;
 		}
 	});
 }
@@ -83,6 +102,18 @@ function handleSubmit() {
 			<h2 class="text-yellow text-2xl font-semibold text-center mb-6">
 				{{ isLogin ? "Вписване" : "Регистрация" }}
 			</h2>
+
+			<!-- API Error Display -->
+			<div
+				v-if="error"
+				class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
+				{{
+					typeof error === "string"
+						? error
+						: "Възникна грешка при автентикацията"
+				}}
+			</div>
+
 			<div class="flex flex-col gap-4">
 				<div>
 					<label class="text-white mb-1" for="email">Имейл</label>
@@ -130,8 +161,15 @@ function handleSubmit() {
 
 			<button
 				type="submit"
-				class="mt-6 w-full bg-yellow text-dark-grey py-2 rounded hover:bg-yellow-dark cursor-pointer">
-				{{ isLogin ? "Впишете се" : "Регистрирайте се" }}
+				:disabled="loading"
+				class="mt-6 w-full bg-yellow text-dark-grey py-2 rounded hover:bg-yellow-dark cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+				{{
+					loading
+						? "Обработва се..."
+						: isLogin
+							? "Впишете се"
+							: "Регистрирайте се"
+				}}
 			</button>
 
 			<div class="mt-4 text-center text-sm">

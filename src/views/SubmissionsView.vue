@@ -9,6 +9,7 @@ import { useAsync } from "@/composables/useAsync";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 import { formatDateTime } from "@/utils/date.ts";
 import { useUIStore } from "@/stores/uiStore.ts";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 const uiStore = useUIStore();
 const getSubmissionField = (
@@ -58,13 +59,16 @@ const exportToXLSX = () => {
 
 watch(submissionsError, () => {
 	if (submissionsError.value != null) {
-		uiStore.triggerToast(submissionsError.value.message, "error");
+		uiStore.triggerToast(
+			extractErrorMessage(submissionsError.value),
+			"error"
+		);
 	}
 });
 
 watch(eventError, () => {
 	if (eventError.value != null) {
-		uiStore.triggerToast(eventError.value.message, "error");
+		uiStore.triggerToast(extractErrorMessage(eventError.value), "error");
 	}
 });
 </script>
