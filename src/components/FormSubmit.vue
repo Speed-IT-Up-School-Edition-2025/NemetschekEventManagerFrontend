@@ -3,11 +3,7 @@ import { ref, watch, onMounted } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 import type { FilledField, FormField } from "@/utils/types.ts";
-import {
-	createSubmission,
-	updateSubmission,
-	getSubmission,
-} from "@/services/submissionService";
+import { createSubmission, updateSubmission, getSubmission } from "@/services/submissionService";
 import { useUIStore } from "@/stores/uiStore";
 import { useAsync } from "@/composables/useAsync";
 import { extractErrorMessage } from "@/utils/errorHandling";
@@ -77,21 +73,14 @@ watch(() => props.userSignedUp, fetchSubmission);
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
 		<!-- Loading State -->
-		<div
-			v-if="fetchingSubmission"
-			class="flex justify-center items-center py-8">
+		<div v-if="fetchingSubmission" class="flex justify-center items-center py-8">
 			<LoaderComponent />
 		</div>
 
 		<!-- Fetch Error State -->
 		<div v-else-if="fetchError" class="text-center py-8">
 			<p class="text-white mb-4">
-				{{
-					extractErrorMessage(
-						fetchError,
-						"Грешка при зареждане на формуляра"
-					)
-				}}
+				{{ extractErrorMessage(fetchError, "Грешка при зареждане на формуляра") }}
 			</p>
 			<button
 				@click="fetchSubmission"
@@ -102,25 +91,16 @@ watch(() => props.userSignedUp, fetchSubmission);
 
 		<!-- Main Form -->
 		<form v-else class="space-y-6" @submit.prevent="submitForm()">
-			<h1 class="text-2xl font-semibold text-white text-center">
-				Преглед на формуляр
-			</h1>
+			<h1 class="text-2xl font-semibold text-white text-center">Преглед на формуляр</h1>
 
 			<!-- Submit Error State -->
 			<div
 				v-if="submitError"
 				class="bg-red/20 border border-red text-white px-4 py-3 rounded">
-				{{
-					extractErrorMessage(
-						submitError,
-						"Грешка при изпращане на формуляра"
-					)
-				}}
+				{{ extractErrorMessage(submitError, "Грешка при изпращане на формуляра") }}
 			</div>
 
-			<div
-				v-if="props.userSignedUp"
-				class="text-green-400 text-center mb-4 text-xl">
+			<div v-if="props.userSignedUp" class="text-green-400 text-center mb-4 text-xl">
 				Вече сте записани за това събитие.
 			</div>
 			<div
@@ -130,9 +110,7 @@ watch(() => props.userSignedUp, fetchSubmission);
 				<div class="flex items-center justify-between mb-2 gap-4">
 					<h1 class="flex text-lg font-medium text-white flex-1">
 						{{ field.name }}
-						<span v-if="field.required" class="text-red-500 ml-1"
-							>*</span
-						>
+						<span v-if="field.required" class="text-red-500 ml-1">*</span>
 					</h1>
 				</div>
 
@@ -143,9 +121,7 @@ watch(() => props.userSignedUp, fetchSubmission);
 						v-model="submission[fieldIndex].options[0]" />
 				</div>
 				<div
-					v-else-if="
-						field.type === 'checkbox' || field.type === 'radio'
-					"
+					v-else-if="field.type === 'checkbox' || field.type === 'radio'"
 					class="space-y-2">
 					<div
 						v-for="(option, index) in field.options"
@@ -158,8 +134,7 @@ watch(() => props.userSignedUp, fetchSubmission);
 							:name="`field-${field.id}`"
 							:value="field.options[index]"
 							:required="
-								field.required &&
-								submission[fieldIndex].options.length === 0
+								field.required && submission[fieldIndex].options.length === 0
 							"
 							v-model="submission[fieldIndex].options"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
@@ -172,9 +147,7 @@ watch(() => props.userSignedUp, fetchSubmission);
 							:value="option"
 							v-model="submission[fieldIndex].options[0]"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
-						<label
-							:for="`${field.id}-${index}`"
-							class="ml-3 text-base text-white">
+						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
 							{{ field.options[index] }}
 						</label>
 					</div>
@@ -201,9 +174,8 @@ watch(() => props.userSignedUp, fetchSubmission);
 				</button>
 				<button
 					v-else-if="props.fields && props.fields.length > 0"
-					type="button"
+					type="submit"
 					:disabled="submittingForm"
-					@click="submitForm()"
 					class="cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full text-gray-900 bg-yellow hover:bg-yellow-900 transition duration-150 ease-in-out whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
 					{{ submittingForm ? "Изпраща се..." : "Промени отговора" }}
 				</button>
