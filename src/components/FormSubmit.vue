@@ -2,11 +2,7 @@
 import { defineProps, ref, watch, onMounted, defineEmits } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import type { FilledField, FormField } from "@/utils/types.ts";
-import {
-	createSubmission,
-	updateSubmission,
-	getSubmission,
-} from "@/services/submissionService";
+import { createSubmission, updateSubmission, getSubmission } from "@/services/submissionService";
 import { useUIStore } from "@/stores/uiStore";
 
 const uiStore = useUIStore();
@@ -36,9 +32,7 @@ const submission = ref<FilledField[]>(formField(props.fields));
 const fetchSubmission = async () => {
 	if (props.userSignedUp && props.eventId) {
 		try {
-			const prevSubmission = await getSubmission(
-				props.eventId.toString()
-			);
+			const prevSubmission = await getSubmission(props.eventId.toString());
 			if (prevSubmission) {
 				submission.value = prevSubmission.submissions;
 			}
@@ -92,24 +86,18 @@ const submitForm = async () => {
 <template>
 	<div class="p-6 bg-dark-grey shadow-lg rounded-lg max-w-4xl mx-auto my-8">
 		<form class="space-y-6" @submit.prevent="submitForm()">
-			<h1 class="text-2xl font-semibold text-white text-center">
-				Преглед на формуляр
-			</h1>
-			<div
-				v-if="props.userSignedUp"
-				class="text-green-400 text-center mb-4 text-xl">
+			<h1 class="text-2xl font-semibold text-white text-center">Преглед на формуляр</h1>
+			<div v-if="props.userSignedUp" class="text-green-400 text-center mb-4 text-xl">
 				Вече сте записани за това събитие.
 			</div>
 			<div
 				v-for="(field, fieldIndex) in fields"
 				:key="fieldIndex"
 				class="bg-grey-800 p-4 rounded-lg shadow-md border-l-4 border-yellow transition-transform duration-200 ease-in-out hover:scale-[1.03] hover:shadow-xl/30 hover:z-10">
-				<div class="flex items-center justify-between mb-2 gap-4">
-					<h1 class="flex text-lg font-medium text-white flex-1">
-						{{ field.name }}
-						<span v-if="field.required" class="text-red-500 ml-1"
-							>*</span
-						>
+				<div class="justify-between mb-2">
+					<h1 class="flex text-lg font-medium text-white flex-1 min-w-0 flex-row gap-2">
+						<span class="flex-1 min-w-0 break-words text">{{ field.name }}</span>
+						<span v-if="field.required" class="text-red-500 ml-1">*</span>
 					</h1>
 				</div>
 
@@ -120,9 +108,7 @@ const submitForm = async () => {
 						v-model="submission[fieldIndex].options[0]" />
 				</div>
 				<div
-					v-else-if="
-						field.type === 'checkbox' || field.type === 'radio'
-					"
+					v-else-if="field.type === 'checkbox' || field.type === 'radio'"
 					class="space-y-2">
 					<div
 						v-for="(option, index) in field.options"
@@ -135,8 +121,7 @@ const submitForm = async () => {
 							:name="`field-${field.id}`"
 							:value="field.options[index]"
 							:required="
-								field.required &&
-								submission[fieldIndex].options.length === 0
+								field.required && submission[fieldIndex].options.length === 0
 							"
 							v-model="submission[fieldIndex].options"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
@@ -149,13 +134,21 @@ const submitForm = async () => {
 							:value="option"
 							v-model="submission[fieldIndex].options[0]"
 							class="h-5 w-5 text-white border-outline focus:ring-yellow rounded-sm" />
-						<label
-							:for="`${field.id}-${index}`"
-							class="ml-3 text-base text-white">
+						<label :for="`${field.id}-${index}`" class="ml-3 text-base text-white">
 							{{ field.options[index] }}
 						</label>
 					</div>
 				</div>
+				<button
+					v-if="
+						field.type === 'radio' &&
+						!field.required &&
+						submission[fieldIndex].options.length !== 0
+					"
+					class="mt-3 text-black bg-yellow hover:bg-yellow-900 text-sm font-medium rounded-md px-3 py-1.5 transition-colors cursor-pointer"
+					@click.prevent="submission[fieldIndex].options = []">
+					Премахни избраната опция
+				</button>
 			</div>
 
 			<div class="pt-4 flex flex-wrap justify-center gap-4">

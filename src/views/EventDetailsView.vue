@@ -112,6 +112,7 @@ const cancelSubmissionButton = () => {
 			cancelSubmission(event.value.id.toString());
 			event.value.userSignedUp = false;
 			triggerToast("Отписването беше успешно!", "success");
+			event.value.spotsLeft += 1;
 		} catch (error) {
 			triggerToast(
 				`Възникна грешка при отписванете ви: ${(error as Error).message}`,
@@ -141,9 +142,7 @@ const cancelSubmissionButton = () => {
 				</div>
 
 				<!-- Mobile Action Icons (only visible on mobile) -->
-				<div
-					v-if="userStore.isAdmin"
-					class="flex justify-center gap-4 py-2 lg:hidden">
+				<div v-if="userStore.isAdmin" class="flex justify-center gap-4 py-2 lg:hidden">
 					<!-- Event Administration Icons -->
 					<button
 						@click="showDeleteConfirmation"
@@ -193,9 +192,7 @@ const cancelSubmissionButton = () => {
 						<div class="flex items-start gap-3">
 							<LocationIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">
-									Място
-								</h3>
+								<h3 class="text-lg font-semibold text-white">Място</h3>
 								<p class="text-white/80 break-words">
 									{{ event.location }}
 								</p>
@@ -219,16 +216,9 @@ const cancelSubmissionButton = () => {
 						<div class="flex items-start gap-3">
 							<UserIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">
-									Места
-								</h3>
-								<div
-									class="text-white/80 break-words space-y-1">
-									<p
-										v-if="
-											event.peopleLimit &&
-											event.peopleLimit > 0
-										">
+								<h3 class="text-lg font-semibold text-white">Места</h3>
+								<div class="text-white/80 break-words space-y-1">
+									<p v-if="event.peopleLimit && event.peopleLimit > 0">
 										Лимит участници: {{ event.peopleLimit }}
 									</p>
 									<p v-else>Без лимит на участници</p>
@@ -253,11 +243,8 @@ const cancelSubmissionButton = () => {
 
 					<!-- Event Description -->
 					<div class="border-t border-white/20 pt-6">
-						<h3 class="text-xl font-semibold text-yellow mb-3">
-							За събитието
-						</h3>
-						<p
-							class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
+						<h3 class="text-xl font-semibold text-yellow mb-3">За събитието</h3>
+						<p class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
 							{{ event.description }}
 						</p>
 					</div>
@@ -306,7 +293,14 @@ const cancelSubmissionButton = () => {
 					:user-signed-up="event.userSignedUp"
 					:on-cancel="cancelSubmissionButton"
 					action-name="Запиши се"
-					@signed-up="event.userSignedUp = true" />
+					@signed-up="
+						() => {
+							if (event) {
+								event.userSignedUp = true;
+								event.spotsLeft -= 1;
+							}
+						}
+					" />
 			</div>
 		</template>
 	</TwoPanelLayout>
