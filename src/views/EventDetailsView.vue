@@ -316,5 +316,5 @@ const cancelSubmissionButton = async () => {
 		@confirm="handleDeleteConfirmation(true)"
 		@cancel="handleDeleteConfirmation(false)"
 		confirmText="Изтрий"
-		cancelText="Отказ" />
+		cancelText="Откажи" />
 </template>
