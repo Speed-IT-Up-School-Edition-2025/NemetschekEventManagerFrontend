@@ -45,9 +45,37 @@ const request = async <TResponse, TBody = unknown>(
 	}
 
 	if (!res.ok) {
-		const errText = await res.text();
+		const contentType = res.headers.get("Content-Type");
 
-		throw new Error(`Неуспешна заявка: ${res.status} - ${errText}`);
+		if (contentType?.includes("application/json")) {
+			try {
+				const errorData = await res.json();
+
+				// Create error with parsed JSON data so components can access specific error messages
+				const error = new Error(
+					`Неуспешна заявка: ${res.status}`
+				) as Error & { response?: { status: number; data: unknown } };
+
+				error.response = { status: res.status, data: errorData };
+
+				throw error;
+			} catch (parseError) {
+				// Only catch JSON parsing errors, not our custom error
+				if (parseError instanceof Error && "response" in parseError) {
+					// This is our custom error, re-throw it
+					throw parseError;
+				}
+
+				// This is a JSON parsing error - can't read text since body is consumed
+				throw new Error(
+					`Неуспешна заявка: ${res.status} - Invalid JSON response`
+				);
+			}
+		} else {
+			const errText = await res.text();
+
+			throw new Error(`Неуспешна заявка: ${res.status} - ${errText}`);
+		}
 	}
 
 	const contentType = res.headers.get("Content-Type");
