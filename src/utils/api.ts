@@ -51,12 +51,37 @@ const request = async <TResponse, TBody = unknown>(
 			try {
 				const errorData = await res.json();
 
-				// Create error with parsed JSON data so components can access specific error messages
-				const error = new Error(
-					`Неуспешна заявка: ${res.status}`
-				) as Error & { response?: { status: number; data: unknown } };
+				// Try to extract error message in order of preference:
+				// 1. { error: "message" } format (standard API error format)
+				// 2. { message: "message" } format
+				// 3. String response
+				// 4. Generic status message
+				let errorMessage = `Неуспешна заявка: ${res.status}`;
+
+				if (errorData && typeof errorData === "object") {
+					if (
+						"error" in errorData &&
+						typeof errorData.error === "string"
+					) {
+						errorMessage = errorData.error;
+					} else if (
+						"message" in errorData &&
+						typeof errorData.message === "string"
+					) {
+						errorMessage = errorData.message;
+					}
+				} else if (typeof errorData === "string") {
+					errorMessage = errorData;
+				}
+
+				// Create enhanced error object with both message and response data
+				const error = new Error(errorMessage) as Error & {
+					response?: { status: number; data: unknown };
+					statusCode?: number;
+				};
 
 				error.response = { status: res.status, data: errorData };
+				error.statusCode = res.status;
 
 				throw error;
 			} catch (parseError) {
@@ -68,7 +93,7 @@ const request = async <TResponse, TBody = unknown>(
 
 				// This is a JSON parsing error - can't read text since body is consumed
 				throw new Error(
-					`Неуспешна заявка: ${res.status} - Invalid JSON response`
+					`Неуспешна заявка: ${res.status} - Невалиден JSON`
 				);
 			}
 		} else {

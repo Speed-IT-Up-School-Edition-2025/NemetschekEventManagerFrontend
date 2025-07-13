@@ -62,6 +62,7 @@ import ClockIcon from "./icons/ClockIcon.vue";
 import InfoIcon from "./icons/InfoIcon.vue";
 import UserIcon from "./icons/UserIcon.vue";
 import { useRouter } from "vue-router";
+import { formatDateTime } from "@/utils/date";
 
 const { event, buttonName } = defineProps<{
 	event: Event;
@@ -75,15 +76,10 @@ const shortenedDescription = event.description
 
 function formatDate(dateString: string) {
 	if (!dateString) return "";
-	const date = new Date(dateString);
-	return date.toLocaleDateString(undefined, {
-		weekday: "short",
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
+	// Use the shared formatDateTime function which handles UTC to local conversion
+	const formatted = formatDateTime(dateString);
+	// Make it shorter for card display
+	return formatted.replace(/, \d{4}/, "").replace(/at /, "");
 }
 
 function redirect() {

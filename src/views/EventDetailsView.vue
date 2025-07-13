@@ -19,6 +19,8 @@ import EditIcon from "@/components/icons/EditIcon.vue";
 import ViewSubmissionsIcon from "@/components/icons/ViewSubmissionsIcon.vue";
 import ConfirmationComponent from "@/components/ConfirmationComponent.vue";
 import { cancelSubmission } from "@/services/submissionService.ts";
+import { formatDateTime } from "@/utils/date";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -27,18 +29,6 @@ const { triggerToast } = useUIStore();
 
 // Confirmation dialog state
 const showDeleteConfirm = ref(false);
-
-// Helper function to format datetime
-const formatDateTime = (isoString: string) => {
-	return new Date(isoString).toLocaleDateString(undefined, {
-		weekday: "long",
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-};
 
 const {
 	execute,
@@ -95,9 +85,11 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 			await deleteEvent(event.value.id.toString());
 
 			triggerToast("Събитието беше изтрито успешно!", "success");
+
 			router.push("/events");
 		} catch (error) {
 			console.error("Грешка при изтриване на събитието:", error);
+
 			triggerToast(
 				"Възникна грешка при изтриване на събитието. Моля, опитайте отново.",
 				"error"
@@ -106,15 +98,20 @@ const handleDeleteConfirmation = async (confirmed: boolean) => {
 	}
 };
 
-const cancelSubmissionButton = () => {
+const cancelSubmissionButton = async () => {
 	if (event.value != null) {
 		try {
-			cancelSubmission(event.value.id.toString());
+			await cancelSubmission(event.value.id.toString());
+
 			event.value.userSignedUp = false;
+
 			triggerToast("Отписването беше успешно!", "success");
 		} catch (error) {
 			triggerToast(
-				`Възникна грешка при отписванете ви: ${(error as Error).message}`,
+				extractErrorMessage(
+					error,
+					"Възникна грешка при отписването ви. Моля, опитайте отново."
+				),
 				"error"
 			);
 		}

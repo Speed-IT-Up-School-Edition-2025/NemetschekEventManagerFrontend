@@ -5,6 +5,7 @@ import { ref } from "vue";
 import HamburgerIcon from "@/components/icons/HamburgerIcon.vue";
 import NemetschekIcon from "./icons/NemetschekIcon.vue";
 import { useUIStore } from "@/stores/uiStore";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 const router = useRouter();
 
@@ -31,7 +32,13 @@ const logout = async () => {
 		triggerToast("Успешно излязохте от профила си.", "success");
 	} catch (error) {
 		console.error("Logout failed:", error);
-		triggerToast("Възникна грешка при излизане от профила ви.", "error");
+		triggerToast(
+			extractErrorMessage(
+				error,
+				"Възникна грешка при излизане от профила ви."
+			),
+			"error"
+		);
 
 		closeMobileMenu();
 	}

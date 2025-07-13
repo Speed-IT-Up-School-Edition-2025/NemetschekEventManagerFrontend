@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, watch, onMounted, defineEmits } from "vue";
+import { ref, watch, onMounted } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
 import type { FilledField, FormField } from "@/utils/types.ts";
 import {
@@ -8,6 +8,7 @@ import {
 	getSubmission,
 } from "@/services/submissionService";
 import { useUIStore } from "@/stores/uiStore";
+import { extractErrorMessage } from "@/utils/errorHandling";
 
 const uiStore = useUIStore();
 const props = defineProps<{
@@ -44,7 +45,7 @@ const fetchSubmission = async () => {
 			}
 		} catch (error) {
 			uiStore.triggerToast(
-				`Грешка при зареждане на предишния формуляр: ${(error as Error).message}`,
+				`Възникна грешка при зареждане на предишния формуляр: ${extractErrorMessage(error)}`,
 				"error"
 			);
 		}
@@ -69,19 +70,10 @@ const submitForm = async () => {
 
 		uiStore.triggerToast("Формулярът беше изпратен успешно!", "success");
 	} catch (error: unknown) {
-		let errorMessage = "Възникна грешка при изпращането на формуляра";
-
-		// Check for error property in response data first
-		if (error && typeof error === "object" && "response" in error) {
-			const errorResponse = error as {
-				response?: { data?: { error?: string } };
-			};
-			if (errorResponse.response?.data?.error) {
-				errorMessage = errorResponse.response.data.error;
-			}
-		} else if (error instanceof Error && error.message) {
-			errorMessage = `${errorMessage}: ${error.message}`;
-		}
+		const errorMessage = extractErrorMessage(
+			error,
+			"Възникна грешка при изпращането на формуляра."
+		);
 
 		uiStore.triggerToast(errorMessage, "error");
 		console.error("Submission error:", error);
