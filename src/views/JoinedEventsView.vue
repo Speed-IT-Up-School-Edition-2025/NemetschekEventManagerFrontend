@@ -91,7 +91,6 @@ const handleClearFilters = async () => {
 					? events
 					: searchedEvents"
 				:event="event"
-				button-name="Отпиши се"
 				:key="event.id" />
 		</div>
 	</div>

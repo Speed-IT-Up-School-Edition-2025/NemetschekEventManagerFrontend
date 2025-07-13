@@ -62,12 +62,12 @@
 					:title="
 						event.spotsLeft === 0
 							? 'Няма свободни места за това събитие'
-							: 'Кликнете за записване в събитието'
+							: 'Кликнете за повече подробности и записване в събитието'
 					"
 					:class="[
 						'h-10 px-4 py-2 border-2 rounded-2xl border-solid transition-all duration-300 ease-in-out whitespace-nowrap flex items-center justify-center',
 						event.spotsLeft === 0
-							? 'border-grey-400 text-grey-400 cursor-not-allowed'
+							? 'border-grey-400 text-grey-400 cursor-not-allowed opacity-50'
 							: 'text-white border-yellow-500 hover:text-white hover:border-transparent hover:bg-yellow-500 hover:scale-105 hover:shadow-lg',
 					]">
 					{{ event.spotsLeft === 0 ? "Няма места" : "Запиши се" }}
@@ -75,8 +75,8 @@
 				<button
 					v-else
 					@click.stop="redirect"
-					title="Кликнете за отписване от събитието"
-					class="h-10 px-4 py-2 border-2 text-white border-red-500 rounded-2xl border-solid transition-all duration-300 ease-in-out hover:text-white hover:border-transparent hover:bg-red-500 hover:scale-105 hover:shadow-lg whitespace-nowrap flex items-center justify-center">
+					title="Кликнете за повече подробности и управление на записването"
+					class="h-10 px-4 py-2 border-2 text-white border-red-500 rounded-2xl border-solid transition-all duration-300 ease-in-out whitespace-nowrap flex items-center justify-center hover:text-white hover:border-transparent hover:bg-red-500 hover:scale-105 hover:shadow-lg">
 					Отпиши се
 				</button>
 			</div>

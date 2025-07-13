@@ -75,40 +75,40 @@ onUnmounted(() => {
 	clearCurrentEvent();
 });
 
+// UseAsync for updating event
+const {
+	execute: executeUpdateEvent,
+	loading: isUpdating,
+	error: updateError,
+} = useAsync(async () => {
+	const eventInformation = editEventInformationRef.value?.getState();
+	const formFields = editEventFormRef.value?.getState();
+
+	if (!eventInformation || !formFields) {
+		throw new Error("Моля, попълнете всички задължителни полета");
+	}
+
+	await updateEvent(route.params.id as string, {
+		...eventInformation,
+		fields: formFields,
+	});
+
+	triggerToast("Събитието беше обновено успешно!", "success");
+	router.push(`/events/${route.params.id}`);
+	clearCurrentEvent();
+});
+
 function handleSubmit() {
 	// Show confirmation dialog before proceeding
 	showConfirmDialog.value = true;
 }
 
-function confirmSubmit() {
+async function confirmSubmit() {
 	showConfirmDialog.value = false;
 
 	try {
-		const eventInformation = editEventInformationRef.value?.getState();
-		const formFields = editEventFormRef.value?.getState();
-		updateEvent(route.params.id as string, {
-			...eventInformation!,
-			fields: formFields!,
-		})
-			.then(() => {
-				triggerToast("Събитието беше обновено успешно!", "success");
-
-				router.push(`/events/${route.params.id}`);
-
-				clearCurrentEvent();
-			})
-			.catch(error => {
-				console.error("Грешка при обновяване на събитието:", error);
-				triggerToast(
-					extractErrorMessage(
-						error,
-						"Възникна грешка при обновяване на събитието. Моля, опитайте отново."
-					),
-					"error"
-				);
-			});
+		await executeUpdateEvent();
 	} catch (validationError) {
-		// Handle client-side validation errors
 		triggerToast(
 			extractErrorMessage(
 				validationError,
@@ -146,20 +146,32 @@ function cancelSubmit() {
 				Възникна грешка: {{ loadError }}
 			</div>
 			<form v-else @submit.prevent="handleSubmit">
+				<!-- Update Error Display -->
+				<div
+					v-if="updateError"
+					class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
+					{{
+						extractErrorMessage(
+							updateError,
+							"Грешка при обновяване на събитието"
+						)
+					}}
+				</div>
+
 				<CreateForm
 					ref="editEventFormRef"
 					v-bind="{ fields: currentEvent?.fields ?? [] }" />
 
 				<button
 					type="submit"
-					:disabled="!isFormValid"
+					:disabled="!isFormValid || isUpdating"
 					:class="[
 						'w-full py-3 rounded-lg font-semibold transition-all cursor-pointer mt-6',
-						isFormValid
+						isFormValid && !isUpdating
 							? 'bg-yellow text-dark-grey hover:opacity-90'
 							: 'bg-grey-400 text-grey-200 cursor-not-allowed',
 					]">
-					Запази промените
+					{{ isUpdating ? "Запазва се..." : "Запази промените" }}
 				</button>
 			</form>
 		</template>
