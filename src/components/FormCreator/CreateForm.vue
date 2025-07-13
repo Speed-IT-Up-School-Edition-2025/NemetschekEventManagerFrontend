@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, toRaw } from "vue";
 import InputField from "@/components/FormCreator/InputField.vue";
-import CancelIcon from "@/components/icons/CancelIcon.vue";
 import FieldAdder from "@/components/FormCreator/FieldAdder.vue";
 import type { FormField } from "@/utils/types.ts";
 
@@ -47,16 +46,37 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 			v-for="(field, index) in fields"
 			:key="field.id"
 			class="bg-grey-800 p-4 rounded-lg shadow-md border-l-4 border-yellow transition-transform duration-200 ease-in-out hover:scale-[1.03] hover:shadow-xl/30 hover:z-10">
-			<div class="flex items-center justify-between mb-2 gap-4">
-				<label
-					:for="`field-${field.id}`"
-					class="flex text-lg font-medium text-white flex-1">
-					<InputField
-						required
-						class="flex-1"
-						:id="`field-${field.id}`"
-						v-model="field.name"></InputField>
-				</label>
+			<!-- Field Name Input with Remove Button -->
+			<div class="flex items-center gap-3 mb-3">
+				<div class="flex-1">
+					<label
+						:for="`field-${field.id}`"
+						class="block text-lg font-medium text-white">
+						<InputField
+							required
+							class="w-full"
+							:id="`field-${field.id}`"
+							v-model="field.name"></InputField>
+					</label>
+				</div>
+				<button
+					class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-500/20 transition-colors cursor-pointer text-red"
+					@click="fields.splice(index, 1)"
+					title="Премахни поле">
+					<svg
+						class="w-5 h-5"
+						fill="currentColor"
+						viewBox="0 0 20 20">
+						<path
+							fill-rule="evenodd"
+							d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+							clip-rule="evenodd" />
+					</svg>
+				</button>
+			</div>
+
+			<!-- Required Toggle -->
+			<div class="mb-4">
 				<label
 					:for="`${field.id}-required`"
 					class="relative inline-flex items-center cursor-pointer">
@@ -71,11 +91,6 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 						>Задължително</span
 					>
 				</label>
-				<button
-					class="border border-red text-red hover:bg-red hover:text-white focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-1.5 text-center transition-colors cursor-pointer"
-					@click="fields.splice(index, 1)">
-					Премахни поле
-				</button>
 			</div>
 
 			<div v-if="field.type === 'text'">
@@ -107,10 +122,19 @@ const addField = (fieldType: "text" | "checkbox" | "radio") => {
 							v-model="field.options[index]"></InputField>
 					</label>
 					<button
-						class="ml-3 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-red-100/10 transition-colors cursor-pointer text-red"
+						class="ml-3 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-red-500/20 transition-colors cursor-pointer text-red"
 						@click.prevent="field.options.splice(index, 1)"
 						title="Премахни опция">
-						<CancelIcon />
+						<!-- Use minus symbol for option removal -->
+						<svg
+							class="w-4 h-4"
+							fill="currentColor"
+							viewBox="0 0 20 20">
+							<path
+								fill-rule="evenodd"
+								d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+								clip-rule="evenodd" />
+						</svg>
 					</button>
 				</div>
 				<button

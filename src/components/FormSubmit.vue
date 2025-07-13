@@ -61,17 +61,30 @@ const submitForm = async () => {
 		}
 		if (!props.userSignedUp) {
 			await createSubmission(props.eventId, submission.value);
+
 			emit("signed-up");
 		} else {
 			await updateSubmission(props.eventId, submission.value);
 		}
 
 		uiStore.triggerToast("Формулярът беше изпратен успешно!", "success");
-	} catch (error) {
-		uiStore.triggerToast(
-			`Възникна грешка при изпращането на формуляра: ${(error as Error).message}`,
-			"error"
-		);
+	} catch (error: unknown) {
+		let errorMessage = "Възникна грешка при изпращането на формуляра";
+
+		// Check for error property in response data first
+		if (error && typeof error === "object" && "response" in error) {
+			const errorResponse = error as {
+				response?: { data?: { error?: string } };
+			};
+			if (errorResponse.response?.data?.error) {
+				errorMessage = errorResponse.response.data.error;
+			}
+		} else if (error instanceof Error && error.message) {
+			errorMessage = `${errorMessage}: ${error.message}`;
+		}
+
+		uiStore.triggerToast(errorMessage, "error");
+		console.error("Submission error:", error);
 	}
 };
 </script>
