@@ -65,10 +65,7 @@ async function handleSubmit() {
 	} catch (validationError) {
 		// Handle client-side validation errors
 		triggerToast(
-			extractErrorMessage(
-				validationError,
-				"Моля, коригирайте грешките във формата"
-			),
+			extractErrorMessage(validationError, "Моля, коригирайте грешките във формата"),
 			"error"
 		);
 	}
@@ -78,9 +75,7 @@ async function handleSubmit() {
 <template>
 	<div>
 		<!-- Loading State -->
-		<div
-			v-if="isCreating"
-			class="flex items-center justify-center min-h-screen">
+		<div v-if="isCreating" class="flex items-center justify-center min-h-screen">
 			<LoaderComponent />
 		</div>
 
@@ -89,10 +84,7 @@ async function handleSubmit() {
 			<h2 class="text-xl font-semibold mb-4">Възникна грешка</h2>
 			<p class="mb-4">
 				{{
-					extractErrorMessage(
-						createError,
-						"Неочаквана грешка при създаване на събитието"
-					)
+					extractErrorMessage(createError, "Неочаквана грешка при създаване на събитието")
 				}}
 			</p>
 			<button
@@ -117,16 +109,8 @@ async function handleSubmit() {
 
 					<button
 						type="submit"
-						:disabled="!isFormValid || isCreating"
-						:class="[
-							'w-full py-3 rounded-lg font-semibold transition-all cursor-pointer mt-6',
-							isFormValid && !isCreating
-								? 'bg-yellow text-dark-grey hover:opacity-90'
-								: 'bg-grey-400 text-grey-200 cursor-not-allowed',
-						]">
-						{{
-							isCreating ? "Създава се..." : "Запази информацията"
-						}}
+						class="w-full py-3 rounded-lg font-semibold transition-all cursor-pointer mt-6 bg-yellow text-dark-grey hover:opacity-90">
+						{{ isCreating ? "Създава се..." : "Запази информацията" }}
 					</button>
 				</template>
 			</TwoPanelLayout>

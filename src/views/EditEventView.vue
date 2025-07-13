@@ -59,10 +59,7 @@ onMounted(async () => {
 		console.error("Грешка при зареждане на събитието:", error);
 
 		triggerToast(
-			extractErrorMessage(
-				error,
-				"Възникна грешка при зареждане на събитието."
-			),
+			extractErrorMessage(error, "Възникна грешка при зареждане на събитието."),
 			"error"
 		);
 
@@ -110,10 +107,7 @@ async function confirmSubmit() {
 		await executeUpdateEvent();
 	} catch (validationError) {
 		triggerToast(
-			extractErrorMessage(
-				validationError,
-				"Моля, коригирайте грешките във формата"
-			),
+			extractErrorMessage(validationError, "Моля, коригирайте грешките във формата"),
 			"error"
 		);
 	}
@@ -125,58 +119,50 @@ function cancelSubmit() {
 </script>
 
 <template>
-	<TwoPanelLayout action-name="Редактиране на събитие">
-		<template #left>
-			<div v-if="isLoading">
-				<LoaderComponent />
-			</div>
-			<div v-else-if="loadError" class="p-10 text-center text-red-500">
-				Възникна грешка: {{ loadError }}
-			</div>
-			<EventInformationFormComponent
-				v-else
-				ref="editEventInformationRef"
-				v-bind="{ event: currentEvent ?? undefined }" />
-		</template>
-		<template #right>
-			<div v-if="isLoading">
-				<LoaderComponent />
-			</div>
-			<div v-else-if="loadError" class="p-10 text-center text-red-500">
-				Възникна грешка: {{ loadError }}
-			</div>
-			<form v-else @submit.prevent="handleSubmit">
-				<!-- Update Error Display -->
-				<div
-					v-if="updateError"
-					class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
-					{{
-						extractErrorMessage(
-							updateError,
-							"Грешка при обновяване на събитието"
-						)
-					}}
+	<form @submit.prevent="handleSubmit">
+		<TwoPanelLayout action-name="Редактиране на събитие">
+			<template #left>
+				<div v-if="isUpdating">
+					<LoaderComponent />
 				</div>
+				<div v-if="isLoading">
+					<LoaderComponent />
+				</div>
+				<div v-else-if="loadError" class="p-10 text-center text-red-500">
+					Възникна грешка: {{ loadError }}
+				</div>
+				<EventInformationFormComponent
+					v-else
+					ref="editEventInformationRef"
+					v-bind="{ event: currentEvent ?? undefined }" />
+			</template>
+			<template #right>
+				<div v-if="isLoading">
+					<LoaderComponent />
+				</div>
+				<div v-else-if="loadError" class="p-10 text-center text-red-500">
+					Възникна грешка: {{ loadError }}
+				</div>
+				<template v-else>
+					<div
+						v-if="updateError"
+						class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
+						{{ extractErrorMessage(updateError, "Грешка при обновяване на събитието") }}
+					</div>
 
-				<CreateForm
-					ref="editEventFormRef"
-					v-bind="{ fields: currentEvent?.fields ?? [] }" />
+					<CreateForm
+						ref="editEventFormRef"
+						v-bind="{ fields: currentEvent?.fields ?? [] }" />
 
-				<button
-					type="submit"
-					:disabled="!isFormValid || isUpdating"
-					:class="[
-						'w-full py-3 rounded-lg font-semibold transition-all cursor-pointer mt-6',
-						isFormValid && !isUpdating
-							? 'bg-yellow text-dark-grey hover:opacity-90'
-							: 'bg-grey-400 text-grey-200 cursor-not-allowed',
-					]">
-					{{ isUpdating ? "Запазва се..." : "Запази промените" }}
-				</button>
-			</form>
-		</template>
-	</TwoPanelLayout>
-
+					<button
+						type="submit"
+						class="w-full py-3 rounded-lg font-semibold transition-all cursor-pointer mt-6 bg-yellow text-dark-grey hover:opacity-90">
+						{{ isUpdating ? "Запазва се..." : "Запази промените" }}
+					</button>
+				</template>
+			</template>
+		</TwoPanelLayout>
+	</form>
 	<!-- Confirmation Dialog -->
 	<ConfirmationComponent
 		v-if="showConfirmDialog"

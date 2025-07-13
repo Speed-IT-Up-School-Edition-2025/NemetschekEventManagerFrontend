@@ -76,17 +76,22 @@ const showDeleteConfirmation = () => {
 	showDeleteConfirm.value = true;
 };
 
+const { execute: executeDeleteEvent, loading: deletingEvent } = useAsync(async () => {
+	if (!event.value) {
+		throw new Error("Event not found");
+	}
+	await deleteEvent(event.value.id.toString());
+	triggerToast("Събитието беше изтрито успешно!", "success");
+	await router.push("/events");
+});
+
 // Function to handle delete confirmation
 const handleDeleteConfirmation = async (confirmed: boolean) => {
 	showDeleteConfirm.value = false;
 
 	if (confirmed && event.value) {
 		try {
-			await deleteEvent(event.value.id.toString());
-
-			triggerToast("Събитието беше изтрито успешно!", "success");
-
-			router.push("/events");
+			await executeDeleteEvent();
 		} catch (error) {
 			console.error("Грешка при изтриване на събитието:", error);
 
@@ -165,7 +170,7 @@ const handleSimpleRegistration = async () => {
 <template>
 	<TwoPanelLayout action-name="">
 		<template #left>
-			<div v-if="loading">
+			<div v-if="loading || deletingEvent">
 				<LoaderComponent />
 			</div>
 			<div v-else-if="error" class="p-10 text-center text-red">
@@ -181,9 +186,7 @@ const handleSimpleRegistration = async () => {
 				</div>
 
 				<!-- Mobile Action Icons (only visible on mobile) -->
-				<div
-					v-if="userStore.isAdmin"
-					class="flex justify-center gap-4 py-2 lg:hidden">
+				<div v-if="userStore.isAdmin" class="flex justify-center gap-4 py-2 lg:hidden">
 					<!-- Event Administration Icons -->
 					<button
 						@click="showDeleteConfirmation"
@@ -233,9 +236,7 @@ const handleSimpleRegistration = async () => {
 						<div class="flex items-start gap-3">
 							<LocationIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">
-									Място
-								</h3>
+								<h3 class="text-lg font-semibold text-white">Място</h3>
 								<p class="text-white/80 break-words">
 									{{ event.location }}
 								</p>
@@ -259,16 +260,9 @@ const handleSimpleRegistration = async () => {
 						<div class="flex items-start gap-3">
 							<UserIcon />
 							<div class="min-w-0 flex-1">
-								<h3 class="text-lg font-semibold text-white">
-									Места
-								</h3>
-								<div
-									class="text-white/80 break-words space-y-1">
-									<p
-										v-if="
-											event.peopleLimit &&
-											event.peopleLimit > 0
-										">
+								<h3 class="text-lg font-semibold text-white">Места</h3>
+								<div class="text-white/80 break-words space-y-1">
+									<p v-if="event.peopleLimit && event.peopleLimit > 0">
 										Лимит участници: {{ event.peopleLimit }}
 									</p>
 									<p v-else>Без лимит на участници</p>
@@ -293,11 +287,8 @@ const handleSimpleRegistration = async () => {
 
 					<!-- Event Description -->
 					<div class="border-t border-white/20 pt-6">
-						<h3 class="text-xl font-semibold text-yellow mb-3">
-							За събитието
-						</h3>
-						<p
-							class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
+						<h3 class="text-xl font-semibold text-yellow mb-3">За събитието</h3>
+						<p class="text-white/90 leading-relaxed whitespace-pre-wrap break-words">
 							{{ event.description }}
 						</p>
 					</div>
@@ -316,9 +307,7 @@ const handleSimpleRegistration = async () => {
 				<div
 					v-if="cancelError"
 					class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
-					{{
-						extractErrorMessage(cancelError, "Грешка при отписване")
-					}}
+					{{ extractErrorMessage(cancelError, "Грешка при отписване") }}
 				</div>
 
 				<!-- Admin Actions Section (only visible on desktop) -->
@@ -366,29 +355,17 @@ const handleSimpleRegistration = async () => {
 					<div
 						v-if="cancelError"
 						class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
-						{{
-							extractErrorMessage(
-								cancelError,
-								"Грешка при отписване"
-							)
-						}}
+						{{ extractErrorMessage(cancelError, "Грешка при отписване") }}
 					</div>
 
 					<!-- Registration Error Display -->
 					<div
 						v-if="registerError"
 						class="bg-red/20 border border-red text-white px-4 py-3 rounded mb-4">
-						{{
-							extractErrorMessage(
-								registerError,
-								"Грешка при записване"
-							)
-						}}
+						{{ extractErrorMessage(registerError, "Грешка при записване") }}
 					</div>
 
-					<div
-						v-if="event.userSignedUp"
-						class="text-green-400 text-center mb-4 text-xl">
+					<div v-if="event.userSignedUp" class="text-green-400 text-center mb-4 text-xl">
 						Вече сте записани за това събитие.
 					</div>
 
@@ -396,9 +373,7 @@ const handleSimpleRegistration = async () => {
 						<button
 							v-if="!event.userSignedUp"
 							@click="() => handleSimpleRegistration()"
-							:disabled="
-								event.spotsLeft === 0 || registeringSubmission
-							"
+							:disabled="event.spotsLeft === 0 || registeringSubmission"
 							:class="[
 								'cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full transition duration-150 ease-in-out whitespace-nowrap',
 								event.spotsLeft === 0 || registeringSubmission
@@ -418,11 +393,7 @@ const handleSimpleRegistration = async () => {
 							:disabled="cancellingSubmission"
 							@click="cancelSubmissionButton"
 							class="cursor-pointer py-3 px-8 shadow-md text-base font-medium rounded-full text-white bg-red hover:bg-red-800 transition duration-150 ease-in-out whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
-							{{
-								cancellingSubmission
-									? "Отписва се..."
-									: "Отпиши се"
-							}}
+							{{ cancellingSubmission ? "Отписва се..." : "Отпиши се" }}
 						</button>
 					</div>
 				</div>
