@@ -81,7 +81,7 @@ const handleClearFilters = async () => {
 	</div>
 	<div
 		v-else
-		class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
+		class="sm:p-10 p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
 		<CardComponent
 			class="w-full min-h-[400px]"
 			v-for="event in searchedEvents.length === 0

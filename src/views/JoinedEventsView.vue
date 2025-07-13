@@ -77,6 +77,9 @@ const handleClearFilters = async () => {
 	<div v-else-if="error || errorMessage" class="p-10 text-center text-red">
 		Възникна грешка: {{ error || errorMessage }}
 	</div>
+	<div v-else-if="error" class="p-10 text-center text-red">
+		Възникна грешка: {{ error }}
+	</div>
 	<div
 		v-else-if="!events || events.length === 0"
 		class="p-10 text-center text-white">
@@ -84,9 +87,9 @@ const handleClearFilters = async () => {
 	</div>
 	<div v-else>
 		<div
-			class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
+			class="md:p-10 p-5 pt-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto auto-rows-fr">
 			<CardComponent
-				class="w-full min-h-[400px]"
+				class="w-full"
 				v-for="event in searchedEvents.length === 0
 					? events
 					: searchedEvents"

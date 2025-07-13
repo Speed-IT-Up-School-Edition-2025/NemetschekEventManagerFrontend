@@ -179,6 +179,16 @@ watch(() => props.userSignedUp, fetchSubmission);
 						</label>
 					</div>
 				</div>
+				<button
+					v-if="
+						field.type === 'radio' &&
+						!field.required &&
+						submission[fieldIndex].options.length !== 0
+					"
+					class="mt-3 text-black bg-yellow hover:bg-yellow-900 text-sm font-medium rounded-md px-3 py-1.5 transition-colors cursor-pointer"
+					@click.prevent="submission[fieldIndex].options = []">
+					Премахни избраната опция
+				</button>
 			</div>
 
 			<div class="pt-4 flex flex-wrap justify-center gap-4">
